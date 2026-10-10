@@ -1,0 +1,85 @@
+@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var isRtl = CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+}
+<!DOCTYPE html>
+<html lang="@currentCulture" dir="@(isRtl ? "rtl" : "ltr")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @Loc["AppTitle"]</title>
+
+    @* Google Fonts: Inter (Latin) + Cairo (Arabic) *@
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    @* Dynamic Bootstrap CSS: RTL or LTR according to active language *@
+    @if (isRtl)
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    }
+
+    @* Custom Aegis Rx Theme CSS *@
+    <link rel="stylesheet" href="~/css/pharmacy-theme.css" asp-append-version="true" />
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('ph_theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="ph-app-container">
+        @* Shared Navigation Sidebar *@
+        <partial name="_Sidebar" />
+
+        @* Main Content Area *@
+        <div class="ph-main-wrapper">
+            @* Top Navigation Header *@
+            <partial name="_Topbar" />
+
+            @* Page Main Content *@
+            <main class="ph-content" role="main">
+                @* Flash Alerts Container *@
+                <partial name="_AlertMessages" />
+
+                @RenderBody()
+            </main>
+
+            @* Medical App Footer *@
+            <footer class="ph-footer py-3 px-4 border-top bg-white text-muted small mt-auto">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+                    <div>
+                        &copy; @DateTime.UtcNow.Year <span class="fw-semibold text-dark">@Loc["AppTitle"]</span> — @Loc["AppSubtitle"]
+                    </div>
+                    <div class="text-secondary">
+                        <span class="badge bg-light text-secondary border">v1.0.0</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    @* Core Vendor & Application Scripts *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="~/js/pharmacy.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

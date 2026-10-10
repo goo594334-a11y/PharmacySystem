@@ -1,0 +1,1658 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- App Info -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>Pharmacy Management System</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>Professional Healthcare, Inventory &amp; Point of Sale Platform</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="QuickActions" xml:space="preserve">
+    <value>Quick Actions</value>
+  </data>
+  <!-- Navigation -->
+  <data name="Navigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>Products &amp; Medicines</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>Storage Locations</value>
+  </data>
+  <data name="Suppliers" xml:space="preserve">
+    <value>Suppliers</value>
+  </data>
+  <data name="Purchases" xml:space="preserve">
+    <value>Purchases</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Inventory &amp; Batches</value>
+  </data>
+  <data name="Batches" xml:space="preserve">
+    <value>Batches</value>
+  </data>
+  <data name="Sales" xml:space="preserve">
+    <value>Sales &amp; POS</value>
+  </data>
+  <data name="NewSale" xml:space="preserve">
+    <value>New Sale Invoice</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>Customers</value>
+  </data>
+  <data name="Returns" xml:space="preserve">
+    <value>Returns</value>
+  </data>
+  <data name="SalesReturns" xml:space="preserve">
+    <value>Sales Returns</value>
+  </data>
+  <data name="PurchaseReturns" xml:space="preserve">
+    <value>Purchase Returns</value>
+  </data>
+  <data name="Expenses" xml:space="preserve">
+    <value>Expenses</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users &amp; Roles</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="AuditLogs" xml:space="preserve">
+    <value>Audit Trail</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Sign Out</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>Sign In to Pharmacy System</value>
+  </data>
+  <data name="LoginSubtitle" xml:space="preserve">
+    <value>Enter your credentials to access the pharmacy workspace</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember me on this browser</value>
+  </data>
+  <!-- Actions -->
+  <data name="Create" xml:space="preserve">
+    <value>Create New</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save Changes</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Type to search...</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to List</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Activate</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Deactivate</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>-- Select --</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <!-- Statuses -->
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="Confirmed" xml:space="preserve">
+    <value>Confirmed</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="LowStock" xml:space="preserve">
+    <value>Low Stock</value>
+  </data>
+  <data name="OutOfStock" xml:space="preserve">
+    <value>Out of Stock</value>
+  </data>
+  <data name="InStock" xml:space="preserve">
+    <value>In Stock</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="NearExpiry" xml:space="preserve">
+    <value>Near Expiry</value>
+  </data>
+  <data name="Valid" xml:space="preserve">
+    <value>Valid</value>
+  </data>
+  <!-- Fields & Headers -->
+  <data name="Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Barcode</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="SellingPrice" xml:space="preserve">
+    <value>Selling Price</value>
+  </data>
+  <data name="MinimumStockLevel" xml:space="preserve">
+    <value>Minimum Stock Level</value>
+  </data>
+  <data name="PurchasePrice" xml:space="preserve">
+    <value>Purchase Price</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>Unit Cost</value>
+  </data>
+  <data name="UnitPrice" xml:space="preserve">
+    <value>Unit Price</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="QuantityOnHand" xml:space="preserve">
+    <value>Quantity On Hand</value>
+  </data>
+  <data name="AvailableQuantity" xml:space="preserve">
+    <value>Available Valid Quantity</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>Total Amount</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ExpiryDate" xml:space="preserve">
+    <value>Expiry Date</value>
+  </data>
+  <data name="AddedDate" xml:space="preserve">
+    <value>Added Date</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Storage Location</value>
+  </data>
+  <data name="Batch" xml:space="preserve">
+    <value>Batch</value>
+  </data>
+  <data name="BatchNumber" xml:space="preserve">
+    <value>Batch Number</value>
+  </data>
+  <data name="Supplier" xml:space="preserve">
+    <value>Supplier</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="WalkInCustomer" xml:space="preserve">
+    <value>Walk-in Customer (Cash)</value>
+  </data>
+  <data name="InvoiceNumber" xml:space="preserve">
+    <value>Invoice Number</value>
+  </data>
+  <data name="PaymentMethod" xml:space="preserve">
+    <value>Payment Method</value>
+  </data>
+  <data name="PaymentMethod_Cash" xml:space="preserve">
+    <value>Cash</value>
+  </data>
+  <data name="PaymentMethod_Card" xml:space="preserve">
+    <value>Card</value>
+  </data>
+  <data name="PaymentMethod_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Role_Pharmacist" xml:space="preserve">
+    <value>Pharmacist</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Date &amp; Time</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Responsible User</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <!-- Confirmation & Modals -->
+  <data name="DeleteConfirmTitle" xml:space="preserve">
+    <value>Confirm Deletion</value>
+  </data>
+  <data name="DeleteConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this item? This action cannot be undone.</value>
+  </data>
+  <data name="ConfirmPermanentDelete" xml:space="preserve">
+    <value>Yes, Delete Now</value>
+  </data>
+  <data name="CannotDeleteTitle" xml:space="preserve">
+    <value>Cannot Delete Record</value>
+  </data>
+  <data name="CannotDeleteProductHistory" xml:space="preserve">
+    <value>This product cannot be deleted because it is referenced by previous transactions. You can deactivate it instead.</value>
+  </data>
+  <data name="CannotDeleteCategoryProducts" xml:space="preserve">
+    <value>This category cannot be deleted because it contains active products.</value>
+  </data>
+  <data name="CannotDeleteSupplierPurchases" xml:space="preserve">
+    <value>This supplier cannot be deleted because they are associated with historical purchases.</value>
+  </data>
+  <data name="CannotDeleteLocationBatches" xml:space="preserve">
+    <value>This location cannot be deleted because stock batches are currently placed here.</value>
+  </data>
+  <data name="DeactivateInstead" xml:space="preserve">
+    <value>Deactivate Instead</value>
+  </data>
+  <data name="ConfirmationRequired" xml:space="preserve">
+    <value>Action Confirmation</value>
+  </data>
+  <!-- Empty States -->
+  <data name="NoDataFound" xml:space="preserve">
+    <value>No records available at the moment.</value>
+  </data>
+  <data name="NoResultsFound" xml:space="preserve">
+    <value>No results match your search criteria.</value>
+  </data>
+  <data name="NoProductsFound" xml:space="preserve">
+    <value>No products added yet.</value>
+  </data>
+  <data name="NoSalesFound" xml:space="preserve">
+    <value>No sales recorded today.</value>
+  </data>
+  <data name="NoPurchasesFound" xml:space="preserve">
+    <value>No purchase invoices recorded yet.</value>
+  </data>
+  <data name="NoLowStockItems" xml:space="preserve">
+    <value>All products are within safe stock levels.</value>
+  </data>
+  <data name="NoExpiryAlerts" xml:space="preserve">
+    <value>No batches approaching expiry date.</value>
+  </data>
+  <data name="TryAdjustingSearch" xml:space="preserve">
+    <value>Try adjusting your search terms or clearing filters to find what you are looking for.</value>
+  </data>
+  <data name="ClearFilters" xml:space="preserve">
+    <value>Clear Filters</value>
+  </data>
+  <data name="CreateFirstRecord" xml:space="preserve">
+    <value>Add your first entry now</value>
+  </data>
+  <!-- Notifications -->
+  <data name="NotificationsTitle" xml:space="preserve">
+    <value>Notification Center</value>
+  </data>
+  <data name="LowStockAlertNotification" xml:space="preserve">
+    <value>{0} products are approaching the minimum stock level.</value>
+  </data>
+  <data name="NearExpiryAlertNotification" xml:space="preserve">
+    <value>{0} batches will expire within the next 90 days.</value>
+  </data>
+  <data name="ExpiredBatchAlertNotification" xml:space="preserve">
+    <value>{0} expired batches require immediate disposal.</value>
+  </data>
+  <data name="MarkAllRead" xml:space="preserve">
+    <value>Mark all as read</value>
+  </data>
+  <data name="ViewAllNotifications" xml:space="preserve">
+    <value>View all notifications</value>
+  </data>
+  <data name="NoNewNotifications" xml:space="preserve">
+    <value>No new notifications</value>
+  </data>
+  <!-- Pagination -->
+  <data name="Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Of" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="TotalRecords" xml:space="preserve">
+    <value>Total Records: {0}</value>
+  </data>
+  <data name="ShowingEntries" xml:space="preserve">
+    <value>Showing {0} to {1} of {2} entries</value>
+  </data>
+  <data name="FirstPage" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="LastPage" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <!-- Validation Messages -->
+  <data name="RequiredField" xml:space="preserve">
+    <value>This field is required and cannot be empty.</value>
+  </data>
+  <data name="StringLengthMax" xml:space="preserve">
+    <value>The maximum allowed length is {1} characters.</value>
+  </data>
+  <data name="RangeBetween" xml:space="preserve">
+    <value>The value must be between {1} and {2}.</value>
+  </data>
+  <data name="PositiveQuantityRequired" xml:space="preserve">
+    <value>Please enter a valid quantity greater than zero.</value>
+  </data>
+  <data name="PositivePriceRequired" xml:space="preserve">
+    <value>Please enter a valid price (zero or greater).</value>
+  </data>
+  <data name="FutureDateRequired" xml:space="preserve">
+    <value>The date must be today or a future date.</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid username or password.</value>
+  </data>
+  <data name="AccountDeactivated" xml:space="preserve">
+    <value>This account is deactivated. Please contact the administrator.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Requested user was not found.</value>
+  </data>
+  <data name="ValueAlreadyExists" xml:space="preserve">
+    <value>This value already exists. Please choose a unique value.</value>
+  </data>
+  <!-- Errors & Messages -->
+  <data name="OperationSuccess" xml:space="preserve">
+    <value>Operation completed successfully.</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>Operation could not be completed. Please review inputs and try again.</value>
+  </data>
+  <data name="UnexpectedErrorOccurred" xml:space="preserve">
+    <value>An unexpected error occurred while processing your request. The issue has been logged.</value>
+  </data>
+  <data name="PageNotFoundTitle" xml:space="preserve">
+    <value>Page Not Found (404)</value>
+  </data>
+  <data name="PageNotFoundDescription" xml:space="preserve">
+    <value>Sorry, the page you are looking for could not be found. It may have been moved or deleted.</value>
+  </data>
+  <data name="AccessDeniedTitle" xml:space="preserve">
+    <value>Access Denied (403)</value>
+  </data>
+  <data name="AccessDeniedDescription" xml:space="preserve">
+    <value>You do not have the required permissions to access this page or perform this action.</value>
+  </data>
+  <data name="ReturnToDashboard" xml:space="preserve">
+    <value>Return to Dashboard</value>
+  </data>
+  <!-- Dashboard Metrics -->
+  <data name="TodaySales" xml:space="preserve">
+    <value>Today's Sales</value>
+  </data>
+  <data name="TodayPurchases" xml:space="preserve">
+    <value>Today's Purchases</value>
+  </data>
+  <data name="ActiveProductsCount" xml:space="preserve">
+    <value>Registered Products</value>
+  </data>
+  <data name="LowStockAlerts" xml:space="preserve">
+    <value>Low Stock Alerts</value>
+  </data>
+  <data name="NearExpiryAlerts" xml:space="preserve">
+    <value>Near Expiry</value>
+  </data>
+  <data name="ExpiredBatches" xml:space="preserve">
+    <value>Expired Batches</value>
+  </data>
+  <data name="RecentSales" xml:space="preserve">
+    <value>Recent Sales Invoices</value>
+  </data>
+  <data name="InventoryAlertsSummary" xml:space="preserve">
+    <value>Inventory Alerts Summary</value>
+  </data>
+  <data name="CurrencySymbol" xml:space="preserve">
+    <value>EGP</value>
+  </data>
+  <data name="LanguageSwitch" xml:space="preserve">
+    <value>Switch Language</value>
+  </data>
+  <data name="Language_Arabic" xml:space="preserve">
+    <value>العربية</value>
+  </data>
+  <data name="Language_English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <!-- Modules & Navigation -->
+  <data name="Nav_Users" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="Nav_Products" xml:space="preserve">
+    <value>Products &amp; Medicines</value>
+  </data>
+  <data name="Nav_Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="Nav_Locations" xml:space="preserve">
+    <value>Storage Locations</value>
+  </data>
+  <data name="Nav_Suppliers" xml:space="preserve">
+    <value>Suppliers</value>
+  </data>
+  <data name="Nav_Purchases" xml:space="preserve">
+    <value>Purchases &amp; Receiving</value>
+  </data>
+  <data name="Nav_Sales" xml:space="preserve">
+    <value>Sales &amp; POS</value>
+  </data>
+  <data name="Nav_Customers" xml:space="preserve">
+    <value>Customers &amp; Patients</value>
+  </data>
+  <data name="Nav_Inventory" xml:space="preserve">
+    <value>Inventory &amp; Batches</value>
+  </data>
+  <data name="Nav_Reports" xml:space="preserve">
+    <value>Reports &amp; Analytics</value>
+  </data>
+  <data name="Nav_Expenses" xml:space="preserve">
+    <value>Operating Expenses</value>
+  </data>
+  <data name="Nav_AuditLogs" xml:space="preserve">
+    <value>Audit Trail &amp; Logs</value>
+  </data>
+  <!-- Roles & Auth Extra -->
+  <data name="InvalidRoleSelected" xml:space="preserve">
+    <value>Selected role does not match account credentials in the database.</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Forgot Password</value>
+  </data>
+  <data name="ForgotPasswordSubtitle" xml:space="preserve">
+    <value>Enter your username to initiate account recovery</value>
+  </data>
+  <data name="SendResetLink" xml:space="preserve">
+    <value>Send Reset Link</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Back to Sign In</value>
+  </data>
+  <data name="ForgotPasswordConfirmationTitle" xml:space="preserve">
+    <value>Password Reset Request Received</value>
+  </data>
+  <data name="ForgotPasswordConfirmationMessage" xml:space="preserve">
+    <value>If the username is valid and active, a secure 15-minute reset token has been issued.</value>
+  </data>
+  <data name="DevelopmentResetLinkNotice" xml:space="preserve">
+    <value>Direct Reset Link (Development Mode)</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
+  <data name="ResetPasswordSubtitle" xml:space="preserve">
+    <value>Please enter and confirm your new password</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="PasswordMinLength" xml:space="preserve">
+    <value>Password must be at least 6 characters.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Passwords do not match.</value>
+  </data>
+  <data name="PasswordResetSuccessTitle" xml:space="preserve">
+    <value>Password Reset Successfully</value>
+  </data>
+  <data name="PasswordResetSuccessMessage" xml:space="preserve">
+    <value>Your password has been successfully updated. You may now sign in with your new credentials.</value>
+  </data>
+  <data name="LoginNow" xml:space="preserve">
+    <value>Sign In Now</value>
+  </data>
+  <data name="InvalidResetToken" xml:space="preserve">
+    <value>The reset token is invalid or has expired (15-minute limit).</value>
+  </data>
+  <data name="PasswordResetEmailGreeting" xml:space="preserve">
+    <value>Hello, a password reset was requested for your account:</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ChangePasswordSubtitle" xml:space="preserve">
+    <value>Update your personal account password</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Current Password</value>
+  </data>
+  <data name="IncorrectCurrentPassword" xml:space="preserve">
+    <value>The current password is incorrect.</value>
+  </data>
+  <data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>Password changed successfully.</value>
+  </data>
+  <data name="CannotDeactivateLastAdmin" xml:space="preserve">
+    <value>Cannot deactivate, change role of, or delete the last active administrator.</value>
+  </data>
+  <data name="CannotDeleteUserWithTransactionsNotice" xml:space="preserve">
+    <value>Cannot delete user because they have recorded transactions and invoices. Please deactivate the account instead.</value>
+  </data>
+  <data name="UserCreatedSuccessfully" xml:space="preserve">
+    <value>User account created successfully.</value>
+  </data>
+  <data name="UserUpdatedSuccessfully" xml:space="preserve">
+    <value>User account updated successfully.</value>
+  </data>
+  <data name="UsernameAlreadyExists" xml:space="preserve">
+    <value>Username already exists, please choose a different username.</value>
+  </data>
+  <data name="BarcodeAlreadyExists" xml:space="preserve">
+    <value>Barcode is already registered to another product.</value>
+  </data>
+  <data name="CannotDeleteProductWithHistoryNotice" xml:space="preserve">
+    <value>Cannot delete this product because it has stock or transaction history. You can deactivate it instead.</value>
+  </data>
+  <data name="CannotDeleteCategoryWithProductsNotice" xml:space="preserve">
+    <value>Cannot delete category because it contains associated products.</value>
+  </data>
+  <data name="CannotDeleteSupplierWithPurchasesNotice" xml:space="preserve">
+    <value>Cannot delete supplier because they have recorded purchase invoices.</value>
+  </data>
+  <data name="CannotDeleteCustomerWithSalesNotice" xml:space="preserve">
+    <value>Cannot delete customer because they have recorded sales invoices.</value>
+  </data>
+  <data name="CannotDeleteLocationWithBatchesNotice" xml:space="preserve">
+    <value>Cannot delete storage location because it currently holds batches.</value>
+  </data>
+  <!-- POS & Sales -->
+  <data name="POS_Terminal" xml:space="preserve">
+    <value>POS Terminal (Cashier)</value>
+  </data>
+  <data name="POS_Subtitle" xml:space="preserve">
+    <value>Medicine dispensing and sales interface with barcode scanner and FEFO allocation</value>
+  </data>
+  <data name="ScanBarcodeOrType" xml:space="preserve">
+    <value>Scan Barcode or Enter Code Manually</value>
+  </data>
+  <data name="BarcodeScannerPlaceholder" xml:space="preserve">
+    <value>Scan barcode or type code and press Enter...</value>
+  </data>
+  <data name="Lookup" xml:space="preserve">
+    <value>Lookup</value>
+  </data>
+  <data name="AvailableProducts" xml:space="preserve">
+    <value>Available In-Stock Products</value>
+  </data>
+  <data name="FilterByNameOrBarcode" xml:space="preserve">
+    <value>Filter by name or barcode...</value>
+  </data>
+  <data name="CurrentCart" xml:space="preserve">
+    <value>Current Cart</value>
+  </data>
+  <data name="ClearCart" xml:space="preserve">
+    <value>Clear Cart</value>
+  </data>
+  <data name="CartIsEmptyScanPrompt" xml:space="preserve">
+    <value>Cart is empty. Start by scanning barcodes or selecting products from the list.</value>
+  </data>
+  <data name="StockInsufficientNotice" xml:space="preserve">
+    <value>Requested quantity exceeds available non-expired stock in inventory!</value>
+  </data>
+  <data name="CompleteSaleAndPrint" xml:space="preserve">
+    <value>Complete Sale &amp; Print Invoice</value>
+  </data>
+  <data name="ProductOutOfStock" xml:space="preserve">
+    <value>Product is out of valid stock</value>
+  </data>
+  <data name="ProductNotFoundForBarcode" xml:space="preserve">
+    <value>No product found matching this barcode</value>
+  </data>
+  <data name="ErrorLookingUpBarcode" xml:space="preserve">
+    <value>An error occurred while looking up barcode</value>
+  </data>
+  <data name="SalesReturnsSubtitle" xml:space="preserve">
+    <value>Return items, process refunds, and restore batch stock</value>
+  </data>
+  <data name="PurchaseReturnsSubtitle" xml:space="preserve">
+    <value>Return items to suppliers and deduct batch stock</value>
+  </data>
+  <data name="ProcessSalesReturn" xml:space="preserve">
+    <value>Process Sales Return</value>
+  </data>
+  <data name="ProcessPurchaseReturn" xml:space="preserve">
+    <value>Process Purchase Return</value>
+  </data>
+  <data name="AtLeastOneItemMustBeReturned" xml:space="preserve">
+    <value>At least one item must have a valid quantity greater than zero.</value>
+  </data>
+  <data name="SalesReturnProcessedAndStockRestored" xml:space="preserve">
+    <value>Sales return processed and batch stock restored successfully.</value>
+  </data>
+  <data name="PurchaseReturnProcessedAndStockDeducted" xml:space="preserve">
+    <value>Purchase return processed and batch stock deducted successfully.</value>
+  </data>
+  <data name="ReturnReason" xml:space="preserve">
+    <value>Return Reason</value>
+  </data>
+  <data name="ReasonPlaceholder" xml:space="preserve">
+    <value>Enter return reason here...</value>
+  </data>
+  <data name="SelectItemsToReturn" xml:space="preserve">
+    <value>Select Items and Quantities to Return</value>
+  </data>
+  <data name="ConfirmReturnAndRefund" xml:space="preserve">
+    <value>Confirm Return &amp; Process Refund</value>
+  </data>
+  <data name="SelectLotsToReturnToSupplier" xml:space="preserve">
+    <value>Select Batches to Return to Supplier</value>
+  </data>
+  <data name="ConfirmReturnToSupplier" xml:space="preserve">
+    <value>Confirm Return &amp; Deduct Stock</value>
+  </data>
+  <data name="BatchTracking" xml:space="preserve">
+    <value>Batch Tracking (Lots)</value>
+  </data>
+  <data name="ExpiryTracking" xml:space="preserve">
+    <value>Expiry Tracking</value>
+  </data>
+  <data name="StockValuationAndBreakdown" xml:space="preserve">
+    <value>Inventory valuation and breakdown across categories</value>
+  </data>
+  <data name="FinancialCostAtRisk" xml:space="preserve">
+    <value>Cost at Risk of Expiry</value>
+  </data>
+  <data name="BatchesAtRisk" xml:space="preserve">
+    <value>Batches at Risk</value>
+  </data>
+  <data name="StockUnitsAtRisk" xml:space="preserve">
+    <value>Units at Risk</value>
+  </data>
+  <data name="NoBatchesAtRiskInThreshold" xml:space="preserve">
+    <value>Great! No batches approaching expiry within this threshold.</value>
+  </data>
+  <data name="TotalExpenditure" xml:space="preserve">
+    <value>Total Confirmed Purchases</value>
+  </data>
+  <data name="TotalRevenue" xml:space="preserve">
+    <value>Total Revenue</value>
+  </data>
+  <data name="InvoicesIssued" xml:space="preserve">
+    <value>Invoices Issued</value>
+  </data>
+  <data name="TotalUnitsSold" xml:space="preserve">
+    <value>Total Units Sold</value>
+  </data>
+  <data name="NoSalesRecordedInPeriod" xml:space="preserve">
+    <value>No sales recorded during this period.</value>
+  </data>
+  <data name="NoPurchasesRecordedInPeriod" xml:space="preserve">
+    <value>No purchases recorded during this period.</value>
+  </data>
+  <data name="EstimatedValuation" xml:space="preserve">
+    <value>Estimated Stock Valuation (Purchase Cost)</value>
+  </data>
+  <data name="TotalStockUnits" xml:space="preserve">
+    <value>Total Stock Units</value>
+  </data>
+  <data name="ActiveBatches" xml:space="preserve">
+    <value>Active Batches</value>
+  </data>
+  <data name="LowStockProducts" xml:space="preserve">
+    <value>Products Below Minimum Stock</value>
+  </data>
+  <data name="CategoryBreakdown" xml:space="preserve">
+    <value>Category Breakdown</value>
+  </data>
+  <data name="WarningWindow" xml:space="preserve">
+    <value>Warning Window</value>
+  </data>
+  <data name="ExpiredBatchesWithStock" xml:space="preserve">
+    <value>Expired Batches with Stock on Hand</value>
+  </data>
+  <data name="NoExpiredStockInPharmacy" xml:space="preserve">
+    <value>Great! There are no expired medicines in stock.</value>
+  </data>
+  <data name="NearExpiryBatches" xml:space="preserve">
+    <value>Batches Approaching Expiry</value>
+  </data>
+  <data name="NoNearExpiryBatchesInWindow" xml:space="preserve">
+    <value>No batches approaching expiry within this window.</value>
+  </data>
+  <data name="BlockedFromSale" xml:space="preserve">
+    <value>Blocked from Sale Automatically</value>
+  </data>
+  <data name="AllStockSufficient" xml:space="preserve">
+    <value>All stock levels are sufficient</value>
+  </data>
+  <data name="NoProductsBelowThreshold" xml:space="preserve">
+    <value>No products are below their minimum threshold.</value>
+  </data>
+  <data name="Reorder" xml:space="preserve">
+    <value>Reorder</value>
+  </data>
+  <data name="NewPurchaseOrder" xml:space="preserve">
+    <value>New Purchase Order</value>
+  </data>
+  <data name="PurchaseConfirmedAndStockAdded" xml:space="preserve">
+    <value>Purchase order confirmed and batches added to inventory successfully.</value>
+  </data>
+  <data name="PurchaseCreatedSuccessfully" xml:space="preserve">
+    <value>Purchase order draft saved successfully.</value>
+  </data>
+  <data name="ConfirmPurchasePrompt" xml:space="preserve">
+    <value>Are you sure you want to confirm receipt of this shipment and add it to active inventory?</value>
+  </data>
+  <data name="ConfirmAndReceiveStock" xml:space="preserve">
+    <value>Confirm Receipt &amp; Add Stock</value>
+  </data>
+  <data name="ProductBatchesAndLocations" xml:space="preserve">
+    <value>Product Batches and Storage Locations</value>
+  </data>
+  <data name="NoBatchesFoundForProduct" xml:space="preserve">
+    <value>No batches recorded for this product yet.</value>
+  </data>
+  <data name="PhysicalLocation" xml:space="preserve">
+    <value>Storage Shelf / Bin Location</value>
+  </data>
+  <data name="StorageLocation" xml:space="preserve">
+    <value>Storage Location</value>
+  </data>
+  <data name="LocationCode" xml:space="preserve">
+    <value>Location Code</value>
+  </data>
+  <data name="LocationName" xml:space="preserve">
+    <value>Location Name</value>
+  </data>
+  <data name="StoredBatches" xml:space="preserve">
+    <value>Stored Batches</value>
+  </data>
+  <data name="LocationCreatedSuccessfully" xml:space="preserve">
+    <value>Storage location created successfully.</value>
+  </data>
+  <data name="LocationUpdatedSuccessfully" xml:space="preserve">
+    <value>Storage location updated successfully.</value>
+  </data>
+  <data name="LocationCodeAlreadyExists" xml:space="preserve">
+    <value>Location code already exists.</value>
+  </data>
+  <data name="ExpenseCreatedSuccessfully" xml:space="preserve">
+    <value>Expense recorded successfully.</value>
+  </data>
+  <data name="ExpenseUpdatedSuccessfully" xml:space="preserve">
+    <value>Expense updated successfully.</value>
+  </data>
+  <data name="ExpenseDate" xml:space="preserve">
+    <value>Expense Date</value>
+  </data>
+  <data name="TotalExpensesSum" xml:space="preserve">
+    <value>Total Expenses</value>
+  </data>
+  <data name="Expense_Rent" xml:space="preserve">
+    <value>Rent</value>
+  </data>
+  <data name="Expense_Electricity" xml:space="preserve">
+    <value>Electricity &amp; Utilities</value>
+  </data>
+  <data name="Expense_Utilities" xml:space="preserve">
+    <value>Utilities</value>
+  </data>
+  <data name="Expense_Salaries" xml:space="preserve">
+    <value>Salaries &amp; Wages</value>
+  </data>
+  <data name="Expense_Supplies" xml:space="preserve">
+    <value>Supplies &amp; Consumables</value>
+  </data>
+  <data name="Expense_Maintenance" xml:space="preserve">
+    <value>Maintenance &amp; Repairs</value>
+  </data>
+  <data name="Expense_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="PrintInvoice" xml:space="preserve">
+    <value>Print Invoice</value>
+  </data>
+  <data name="PrintReport" xml:space="preserve">
+    <value>Print Report</value>
+  </data>
+  <data name="ThankYouForYourBusiness" xml:space="preserve">
+    <value>We wish you good health - Thank you for choosing our pharmacy</value>
+  </data>
+  <data name="ProductCreatedSuccessfully" xml:space="preserve">
+    <value>Product created successfully.</value>
+  </data>
+  <data name="ProductUpdatedSuccessfully" xml:space="preserve">
+    <value>Product updated successfully.</value>
+  </data>
+  <data name="ProductDeletedSuccessfully" xml:space="preserve">
+    <value>Product deleted successfully.</value>
+  </data>
+  <data name="CategoryCreatedSuccessfully" xml:space="preserve">
+    <value>Category created successfully.</value>
+  </data>
+  <data name="CategoryUpdatedSuccessfully" xml:space="preserve">
+    <value>Category updated successfully.</value>
+  </data>
+  <data name="CategoryDeletedSuccessfully" xml:space="preserve">
+    <value>Category deleted successfully.</value>
+  </data>
+  <data name="SupplierCreatedSuccessfully" xml:space="preserve">
+    <value>Supplier created successfully.</value>
+  </data>
+  <data name="SupplierUpdatedSuccessfully" xml:space="preserve">
+    <value>Supplier updated successfully.</value>
+  </data>
+  <data name="SupplierDeletedSuccessfully" xml:space="preserve">
+    <value>Supplier deleted successfully.</value>
+  </data>
+  <data name="CustomerCreatedSuccessfully" xml:space="preserve">
+    <value>Customer created successfully.</value>
+  </data>
+  <data name="CustomerUpdatedSuccessfully" xml:space="preserve">
+    <value>Customer updated successfully.</value>
+  </data>
+  <data name="CustomerDeletedSuccessfully" xml:space="preserve">
+    <value>Customer deleted successfully.</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Units</value>
+  </data>
+  <data name="AddExpense" xml:space="preserve">
+    <value>Add Expense</value>
+  </data>
+  <data name="CreateExpenseSubtitle" xml:space="preserve">
+    <value>Record operational overhead expense</value>
+  </data>
+  <data name="SearchPlaceholderExpenses" xml:space="preserve">
+    <value>Search expenses...</value>
+  </data>
+  <data name="AllCategories" xml:space="preserve">
+    <value>All Categories</value>
+  </data>
+  <data name="FromDate" xml:space="preserve">
+    <value>From Date</value>
+  </data>
+  <data name="ToDate" xml:space="preserve">
+    <value>To Date</value>
+  </data>
+  <!-- New Authentication, User Management, and Dashboard Keys -->
+  <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Please enter a valid email address.</value>
+  </data>
+  <data name="EmailAlreadyExists" xml:space="preserve">
+    <value>This email address is already registered to another user.</value>
+  </data>
+  <data name="TemporaryPasswordNotice" xml:space="preserve">
+    <value>Temporary Password Created Successfully</value>
+  </data>
+  <data name="TemporaryPasswordFor" xml:space="preserve">
+    <value>Temporary password for</value>
+  </data>
+  <data name="TemporaryPasswordWarning" xml:space="preserve">
+    <value>Please copy and save this password now and provide it to the user. It will not be shown again. The user must change it upon first login.</value>
+  </data>
+  <data name="ConfirmResetUserPassword" xml:space="preserve">
+    <value>Are you sure you want to reset this user's password? A new temporary password will be generated.</value>
+  </data>
+  <data name="MustChangePassword" xml:space="preserve">
+    <value>Password Change Required</value>
+  </data>
+  <data name="MustChangePasswordNotice" xml:space="preserve">
+    <value>Login successful. For security reasons, please set a new password for your account before proceeding.</value>
+  </data>
+  <data name="CreateUserTempPasswordInfo" xml:space="preserve">
+    <value>The system will automatically generate a secure temporary password and require the user to change it upon first login.</value>
+  </data>
+  <data name="AdminDashboard" xml:space="preserve">
+    <value>Administrator Dashboard</value>
+  </data>
+  <data name="PharmacistDashboard" xml:space="preserve">
+    <value>Pharmacist Dashboard</value>
+  </data>
+  <data name="TodayExpenses" xml:space="preserve">
+    <value>Today's Expenses</value>
+  </data>
+  <data name="TodayProfit" xml:space="preserve">
+    <value>Today's Estimated Profit</value>
+  </data>
+  <data name="NetGain" xml:space="preserve">
+    <value>Positive Net Profit</value>
+  </data>
+  <data name="NetLoss" xml:space="preserve">
+    <value>Net Deficit / Loss</value>
+  </data>
+  <data name="TotalProducts" xml:space="preserve">
+    <value>Total Products</value>
+  </data>
+  <data name="TotalUnits" xml:space="preserve">
+    <value>Total Units</value>
+  </data>
+  <data name="InventoryValue" xml:space="preserve">
+    <value>Estimated Inventory Value</value>
+  </data>
+  <data name="WeeklyFinancialTrends" xml:space="preserve">
+    <value>Weekly Financial Trends (Last 7 Days)</value>
+  </data>
+  <data name="RecentPurchases" xml:space="preserve">
+    <value>Recent Purchase Invoices</value>
+  </data>
+  <data name="ViewLowStock" xml:space="preserve">
+    <value>View Low Stock</value>
+  </data>
+  <data name="NoRecentActivity" xml:space="preserve">
+    <value>No recent activities recorded</value>
+  </data>
+  <data name="UnitsInStock" xml:space="preserve">
+    <value>units in stock</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Created At</value>
+  </data>
+  <data name="CompleteSale" xml:space="preserve">
+    <value>Complete Sale</value>
+  </data>
+  <data name="SaleCompletedSuccessfully" xml:space="preserve">
+    <value>Sale completed successfully and recorded.</value>
+  </data>
+  <data name="StartNewSale" xml:space="preserve">
+    <value>Start New Sale</value>
+  </data>
+  <data name="FirstAdminRegistrationTitle" xml:space="preserve">
+    <value>Initial Administrator Setup</value>
+  </data>
+  <data name="FirstAdminRegistrationSubtitle" xml:space="preserve">
+    <value>Please enter your details to create the Administrator account and start using the system</value>
+  </data>
+  <data name="FirstAdminSetupNotice" xml:space="preserve">
+    <value>This setup runs only once to create the chief administrator account for the pharmacy.</value>
+  </data>
+  <data name="RealEmailRecommendedNotice" xml:space="preserve">
+    <value>Using a real email address (such as Google / Gmail) is recommended to allow password recovery via email.</value>
+  </data>
+  <data name="CreateAdminAccountAndStart" xml:space="preserve">
+    <value>Create Administrator Account &amp; Start</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="CreateUserSubtitle" xml:space="preserve">
+    <value>Add new user (Admin or Pharmacist) with role and password</value>
+  </data>
+  <data name="SaleMustContainAtLeastOneItem" xml:space="preserve">
+    <value>The sale invoice must contain at least one product.</value>
+  </data>
+  <data name="PurchaseMustContainAtLeastOneItem" xml:space="preserve">
+    <value>The purchase invoice must contain at least one item.</value>
+  </data>
+  <data name="AccountLockedOut" xml:space="preserve">
+    <value>Account temporarily locked due to multiple failed login attempts. Please try again after 15 minutes or reset your password.</value>
+  </data>
+  <data name="PasswordResetInstructions" xml:space="preserve">
+    <value>We received a request to reset your password. Click the button below to complete the reset:</value>
+  </data>
+  <data name="TokenExpiresIn15Minutes" xml:space="preserve">
+    <value>This link is valid for single use only and expires in 15 minutes from issuance.</value>
+  </data>
+  <data name="PasswordResetIgnorePrompt" xml:space="preserve">
+    <value>If you did not request a password reset, you can safely ignore this email and your existing password will remain unchanged.</value>
+  </data>
+  <data name="LightMode" xml:space="preserve">
+    <value>Light Mode</value>
+  </data>
+  <data name="DarkMode" xml:space="preserve">
+    <value>Dark Mode</value>
+  </data>
+  <data name="ToggleTheme" xml:space="preserve">
+    <value>Toggle Theme (Light / Dark)</value>
+  </data>
+  <data name="AddStock" xml:space="preserve">
+    <value>Add Stock</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to delete?</value>
+  </data>
+  <data name="OpeningStockInfo" xml:space="preserve">
+    <value>Stock is added through purchases</value>
+  </data>
+  <data name="StockAddedViaPurchases" xml:space="preserve">
+    <value>Quantity is added via purchases</value>
+  </data>
+  <data name="ProductName" xml:space="preserve">
+    <value>Product Name</value>
+  </data>
+  <data name="AddProduct" xml:space="preserve">
+    <value>Add Product</value>
+  </data>
+  <data name="CreateProductSubtitle" xml:space="preserve">
+    <value>Add a new medicine or item to catalog</value>
+  </data>
+  <data name="EditProduct" xml:space="preserve">
+    <value>Edit Product</value>
+  </data>
+  <data name="EditProductSubtitle" xml:space="preserve">
+    <value>Update product details and price</value>
+  </data>
+  <data name="BarcodePlaceholder" xml:space="preserve">
+    <value>Scan or enter barcode...</value>
+  </data>
+  <data name="ProductsSubtitle" xml:space="preserve">
+    <value>Manage medicine catalog, products and prices</value>
+  </data>
+  <data name="AvailableStock" xml:space="preserve">
+    <value>Available Stock</value>
+  </data>
+  <data name="LowStockOnly" xml:space="preserve">
+    <value>Low Stock Only</value>
+  </data>
+  <data name="AllSuppliers" xml:space="preserve">
+    <value>All Suppliers</value>
+  </data>
+  <data name="AllLocations" xml:space="preserve">
+    <value>All Storage Locations</value>
+  </data>
+  <data name="AllRoles" xml:space="preserve">
+    <value>All Roles</value>
+  </data>
+  <data name="AllStatuses" xml:space="preserve">
+    <value>All Statuses</value>
+  </data>
+  <data name="AllStock" xml:space="preserve">
+    <value>All Stock</value>
+  </data>
+  <data name="AllActions" xml:space="preserve">
+    <value>All Actions</value>
+  </data>
+  <data name="AddCategory" xml:space="preserve">
+    <value>Add Category</value>
+  </data>
+  <data name="EditCategory" xml:space="preserve">
+    <value>Edit Category</value>
+  </data>
+  <data name="CategoriesSubtitle" xml:space="preserve">
+    <value>Manage medicine categories</value>
+  </data>
+  <data name="CreateCategorySubtitle" xml:space="preserve">
+    <value>Create new category</value>
+  </data>
+  <data name="EditCategorySubtitle" xml:space="preserve">
+    <value>Edit category details</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>Category Name</value>
+  </data>
+  <data name="AddCustomer" xml:space="preserve">
+    <value>Add Customer</value>
+  </data>
+  <data name="EditCustomer" xml:space="preserve">
+    <value>Edit Customer</value>
+  </data>
+  <data name="CustomersSubtitle" xml:space="preserve">
+    <value>Patients and customer directory</value>
+  </data>
+  <data name="CreateCustomerSubtitle" xml:space="preserve">
+    <value>Register new customer/patient</value>
+  </data>
+  <data name="EditCustomerSubtitle" xml:space="preserve">
+    <value>Edit customer/patient details</value>
+  </data>
+  <data name="CustomerInformation" xml:space="preserve">
+    <value>Customer Information</value>
+  </data>
+  <data name="CustomerName" xml:space="preserve">
+    <value>Customer Name</value>
+  </data>
+  <data name="AddSupplier" xml:space="preserve">
+    <value>Add Supplier</value>
+  </data>
+  <data name="EditSupplier" xml:space="preserve">
+    <value>Edit Supplier</value>
+  </data>
+  <data name="SuppliersSubtitle" xml:space="preserve">
+    <value>Suppliers and drug distributors directory</value>
+  </data>
+  <data name="CreateSupplierSubtitle" xml:space="preserve">
+    <value>Register new supplier or distributor</value>
+  </data>
+  <data name="EditSupplierSubtitle" xml:space="preserve">
+    <value>Edit supplier details</value>
+  </data>
+  <data name="SupplierInformation" xml:space="preserve">
+    <value>Supplier Information</value>
+  </data>
+  <data name="SupplierName" xml:space="preserve">
+    <value>Supplier Name</value>
+  </data>
+  <data name="SupplierSpend" xml:space="preserve">
+    <value>Total Spend</value>
+  </data>
+  <data name="AddLocation" xml:space="preserve">
+    <value>Add Location</value>
+  </data>
+  <data name="EditLocation" xml:space="preserve">
+    <value>Edit Location</value>
+  </data>
+  <data name="LocationsSubtitle" xml:space="preserve">
+    <value>Manage shelves, racks and cold storage</value>
+  </data>
+  <data name="CreateLocationSubtitle" xml:space="preserve">
+    <value>Define new storage location or shelf</value>
+  </data>
+  <data name="EditLocationSubtitle" xml:space="preserve">
+    <value>Edit storage location details</value>
+  </data>
+  <data name="EditExpense" xml:space="preserve">
+    <value>Edit Expense</value>
+  </data>
+  <data name="ExpensesSubtitle" xml:space="preserve">
+    <value>Track daily operating expenses</value>
+  </data>
+  <data name="EditExpenseSubtitle" xml:space="preserve">
+    <value>Edit expense details</value>
+  </data>
+  <data name="NewPurchase" xml:space="preserve">
+    <value>New Purchase Invoice</value>
+  </data>
+  <data name="PurchaseDetails" xml:space="preserve">
+    <value>Purchase Invoice Details</value>
+  </data>
+  <data name="PurchasesSubtitle" xml:space="preserve">
+    <value>Manage supplier invoices and receiving</value>
+  </data>
+  <data name="CreatePurchaseSubtitle" xml:space="preserve">
+    <value>Record receiving lots and purchase invoice</value>
+  </data>
+  <data name="PurchaseItemsAndBatches" xml:space="preserve">
+    <value>Invoice Items &amp; Batches</value>
+  </data>
+  <data name="PurchasedLotsAndBatches" xml:space="preserve">
+    <value>Received Batches &amp; Lots</value>
+  </data>
+  <data name="AddItem" xml:space="preserve">
+    <value>Add Item</value>
+  </data>
+  <data name="SaveDraftPurchase" xml:space="preserve">
+    <value>Save Draft Purchase</value>
+  </data>
+  <data name="PurchaseDate" xml:space="preserve">
+    <value>Purchase Date</value>
+  </data>
+  <data name="ReceivedBy" xml:space="preserve">
+    <value>Received By</value>
+  </data>
+  <data name="SalesSubtitle" xml:space="preserve">
+    <value>Sales invoices and POS transactions</value>
+  </data>
+  <data name="SaleDate" xml:space="preserve">
+    <value>Sale Date</value>
+  </data>
+  <data name="Cashier" xml:space="preserve">
+    <value>Cashier / Pharmacist</value>
+  </data>
+  <data name="SalesHistory" xml:space="preserve">
+    <value>Sales History</value>
+  </data>
+  <data name="SalesCount" xml:space="preserve">
+    <value>Sales Count</value>
+  </data>
+  <data name="TotalSales" xml:space="preserve">
+    <value>Total Sales</value>
+  </data>
+  <data name="TotalPurchases" xml:space="preserve">
+    <value>Total Purchases</value>
+  </data>
+  <data name="TotalSpend" xml:space="preserve">
+    <value>Total Spend</value>
+  </data>
+  <data name="TotalInvoices" xml:space="preserve">
+    <value>Total Invoices</value>
+  </data>
+  <data name="Invoices" xml:space="preserve">
+    <value>Invoices</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Orders</value>
+  </data>
+  <data name="OrdersCount" xml:space="preserve">
+    <value>Orders Count</value>
+  </data>
+  <data name="Transactions" xml:space="preserve">
+    <value>Transactions</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="DaysRemaining" xml:space="preserve">
+    <value>Days Remaining</value>
+  </data>
+  <data name="Within90Days" xml:space="preserve">
+    <value>Within 90 Days</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>items</value>
+  </data>
+  <data name="GenerateReport" xml:space="preserve">
+    <value>Generate Report</value>
+  </data>
+  <data name="BackToReports" xml:space="preserve">
+    <value>Back to Reports</value>
+  </data>
+  <data name="ReportsSubtitle" xml:space="preserve">
+    <value>Financial analytics and inventory reports</value>
+  </data>
+  <data name="SalesReport" xml:space="preserve">
+    <value>Sales Report</value>
+  </data>
+  <data name="SalesReportDescription" xml:space="preserve">
+    <value>Analyze sales and revenue for a date range</value>
+  </data>
+  <data name="PurchaseReport" xml:space="preserve">
+    <value>Purchase Report</value>
+  </data>
+  <data name="PurchaseReportDescription" xml:space="preserve">
+    <value>Track supplier purchases and orders</value>
+  </data>
+  <data name="InventoryReport" xml:space="preserve">
+    <value>Inventory Report</value>
+  </data>
+  <data name="InventoryReportDescription" xml:space="preserve">
+    <value>Full inventory counts and stock valuation</value>
+  </data>
+  <data name="ExpiryReport" xml:space="preserve">
+    <value>Expiry Report</value>
+  </data>
+  <data name="ExpiryReportDescription" xml:space="preserve">
+    <value>Audit expired lots and expiring stock</value>
+  </data>
+  <data name="RevenueAndVolume" xml:space="preserve">
+    <value>Revenue &amp; Sales Volume</value>
+  </data>
+  <data name="LossPrevention" xml:space="preserve">
+    <value>Loss Prevention</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="GrandTotal" xml:space="preserve">
+    <value>Grand Total</value>
+  </data>
+  <data name="LineTotal" xml:space="preserve">
+    <value>Line Total</value>
+  </data>
+  <data name="Card" xml:space="preserve">
+    <value>Card</value>
+  </data>
+  <data name="Cash" xml:space="preserve">
+    <value>Cash</value>
+  </data>
+  <data name="ActiveCart" xml:space="preserve">
+    <value>Active Cart</value>
+  </data>
+  <data name="PleaseFillRequiredFields" xml:space="preserve">
+    <value>Please fill in all required fields.</value>
+  </data>
+  <data name="PleaseFillItemRowFields" xml:space="preserve">
+    <value>Please fill in all item fields.</value>
+  </data>
+  <data name="AtLeastOneItemRequired" xml:space="preserve">
+    <value>At least one item is required.</value>
+  </data>
+  <data name="Stock" xml:space="preserve">
+    <value>Stock</value>
+  </data>
+  <data name="StockLevels" xml:space="preserve">
+    <value>Stock Levels</value>
+  </data>
+  <data name="StockValuation" xml:space="preserve">
+    <value>Stock Valuation</value>
+  </data>
+  <data name="TotalStock" xml:space="preserve">
+    <value>Total Stock</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="ProductsCount" xml:space="preserve">
+    <value>Products Count</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Deficit" xml:space="preserve">
+    <value>Deficit</value>
+  </data>
+  <data name="EstimatedLoss" xml:space="preserve">
+    <value>Estimated Loss</value>
+  </data>
+  <data name="ExpiredStock" xml:space="preserve">
+    <value>Expired Stock</value>
+  </data>
+  <data name="ExpiredUnits" xml:space="preserve">
+    <value>Expired Units</value>
+  </data>
+  <data name="ExpiredStockUnits" xml:space="preserve">
+    <value>Expired Units</value>
+  </data>
+  <data name="ExpiredOnly" xml:space="preserve">
+    <value>Expired Only</value>
+  </data>
+  <data name="ViewInvoice" xml:space="preserve">
+    <value>View Invoice</value>
+  </data>
+  <data name="ViewBatches" xml:space="preserve">
+    <value>View Batches</value>
+  </data>
+  <data name="ViewReport" xml:space="preserve">
+    <value>View Report</value>
+  </data>
+  <data name="ActivitySummary" xml:space="preserve">
+    <value>Activity Summary</value>
+  </data>
+  <data name="AuditEvents" xml:space="preserve">
+    <value>Audit Events</value>
+  </data>
+  <data name="AuditLogsSubtitle" xml:space="preserve">
+    <value>Security audit trail for all system actions</value>
+  </data>
+  <data name="Entity" xml:space="preserve">
+    <value>Entity</value>
+  </data>
+  <data name="EntityId" xml:space="preserve">
+    <value>Record ID</value>
+  </data>
+  <data name="RecordedBy" xml:space="preserve">
+    <value>Recorded By</value>
+  </data>
+  <data name="ProcessedBy" xml:space="preserve">
+    <value>Processed By</value>
+  </data>
+  <data name="UserManagementSubtitle" xml:space="preserve">
+    <value>Manage pharmacist and admin accounts</value>
+  </data>
+  <data name="AddUser" xml:space="preserve">
+    <value>Add User</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Edit User</value>
+  </data>
+  <data name="EditUserSubtitle" xml:space="preserve">
+    <value>Update user info and permissions</value>
+  </data>
+  <data name="AccountInformation" xml:space="preserve">
+    <value>Account Information</value>
+  </data>
+  <data name="UnreadCount" xml:space="preserve">
+    <value>Unread</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="SelectProduct" xml:space="preserve">
+    <value>Select Product</value>
+  </data>
+  <data name="SelectSupplier" xml:space="preserve">
+    <value>Select Supplier</value>
+  </data>
+  <data name="SelectLocation" xml:space="preserve">
+    <value>Select Storage Location</value>
+  </data>
+  <data name="SelectCategory" xml:space="preserve">
+    <value>Select Category</value>
+  </data>
+  <data name="OptionalNotes" xml:space="preserve">
+    <value>Optional notes...</value>
+  </data>
+  <data name="DeleteConfirmationPrompt" xml:space="preserve">
+    <value>Are you sure you want to permanently delete?</value>
+  </data>
+  <data name="StockAddedToInventoryNotice" xml:space="preserve">
+    <value>Stock quantities successfully added to inventory batches.</value>
+  </data>
+  <data name="OriginalInvoice" xml:space="preserve">
+    <value>Original Invoice</value>
+  </data>
+  <data name="QuantityToReturn" xml:space="preserve">
+    <value>Quantity to Return</value>
+  </data>
+  <data name="SoldQuantity" xml:space="preserve">
+    <value>Sold Quantity</value>
+  </data>
+  <data name="RefundAmount" xml:space="preserve">
+    <value>Refund Amount</value>
+  </data>
+  <data name="ReturnDate" xml:space="preserve">
+    <value>Return Date</value>
+  </data>
+  <data name="NoPurchasesRecorded" xml:space="preserve">
+    <value>No purchases recorded yet.</value>
+  </data>
+  <data name="NoSalesRecorded" xml:space="preserve">
+    <value>No sales recorded yet.</value>
+  </data>
+  <data name="BatchesExpiringWithin" xml:space="preserve">
+    <value>Batches expiring soon</value>
+  </data>
+  <data name="BatchTrackingSubtitle" xml:space="preserve">
+    <value>Track shelf batch expiry and lots</value>
+  </data>
+  <data name="SearchPlaceholderProducts" xml:space="preserve">
+    <value>Search by medicine name, code or barcode...</value>
+  </data>
+  <data name="SearchPlaceholderPurchases" xml:space="preserve">
+    <value>Search by invoice or supplier...</value>
+  </data>
+  <data name="SearchPlaceholderSales" xml:space="preserve">
+    <value>Search by invoice or customer...</value>
+  </data>
+  <data name="SearchPlaceholderCustomers" xml:space="preserve">
+    <value>Search by customer name or phone...</value>
+  </data>
+  <data name="SearchPlaceholderSuppliers" xml:space="preserve">
+    <value>Search by supplier name, phone or address...</value>
+  </data>
+  <data name="SearchPlaceholderCategories" xml:space="preserve">
+    <value>Search by category name or description...</value>
+  </data>
+  <data name="SearchPlaceholderLocations" xml:space="preserve">
+    <value>Search by shelf code or location...</value>
+  </data>
+  <data name="SearchPlaceholderBatches" xml:space="preserve">
+    <value>Search by batch/lot number...</value>
+  </data>
+  <data name="SearchPlaceholderAudit" xml:space="preserve">
+    <value>Search audit logs...</value>
+  </data>
+  <data name="SearchPlaceholderUsers" xml:space="preserve">
+    <value>Search users by name or email...</value>
+  </data>
+  <data name="SearchPlaceholderReturns" xml:space="preserve">
+    <value>Search returns...</value>
+  </data>
+</root>

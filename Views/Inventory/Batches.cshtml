@@ -1,0 +1,136 @@
+@model PharmacySystem.Models.Common.PaginatedList<PharmacySystem.Models.ViewModels.Inventory.BatchListItemViewModel>
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["BatchTracking"];
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">@Loc["BatchTracking"]</h4>
+            <p class="text-muted small mb-0">@Loc["BatchTrackingSubtitle"]</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["StockLevels"]</a>
+            <a asp-action="Expiry" class="btn btn-outline-danger">@Loc["ExpiryTracking"]</a>
+        </div>
+    </div>
+
+    @* Filters *@
+    <div class="card border-0 shadow-sm ph-card mb-4">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-center">
+                <div class="col-12 col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <svg class="ph-icon text-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="@Loc["SearchPlaceholderBatches"]" />
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select name="locationId" class="form-select" asp-items="@ViewBag.Locations">
+                        <option value="">-- @Loc["AllLocations"] --</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="form-check form-switch pt-2">
+                        <input class="form-check-input" type="checkbox" name="expiredOnly" value="true" id="expiredOnlySwitch" @(ViewBag.ExpiredOnly == true ? "checked" : "") />
+                        <label class="form-check-label small" for="expiredOnlySwitch">@Loc["ExpiredOnly"]</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-teal w-100">@Loc["Filter"]</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.Search) || ViewBag.LocationId != null || ViewBag.ExpiredOnly == true)
+                    {
+                        <a asp-action="Batches" class="btn btn-outline-secondary">@Loc["Clear"]</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* Batches Table *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        @if (!Model.Items.Any())
+        {
+            <div class="p-5 text-center">
+                <partial name="_EmptyState" model='new PharmacySystem.Models.Common.EmptyStateViewModel { Title = Loc["NoBatchesFound"], Message = Loc["NoBatchesMatchFilter"] }' />
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["BatchNumber"]</th>
+                            <th>@Loc["Product"]</th>
+                            <th>@Loc["PhysicalLocation"]</th>
+                            <th>@Loc["QuantityOnHand"]</th>
+                            <th>@Loc["PurchasePrice"]</th>
+                            <th>@Loc["ExpiryDate"]</th>
+                            <th>@Loc["DaysRemaining"]</th>
+                            <th class="text-end pe-4">@Loc["Status"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var b in Model.Items)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">
+                                    <code>@b.BatchNumber</code>
+                                </td>
+                                <td>@b.ProductName</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        <svg class="ph-icon me-1 text-muted" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                        @b.LocationCode — @b.LocationName
+                                    </span>
+                                </td>
+                                <td class="fw-bold">@b.QuantityOnHand</td>
+                                <td>@b.PurchasePrice.ToString("C2")</td>
+                                <td>@b.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (b.IsExpired)
+                                    {
+                                        <span class="badge bg-danger">@Loc["Expired"]</span>
+                                    }
+                                    else if (b.IsNearExpiry)
+                                    {
+                                        <span class="badge bg-warning text-dark">@b.DaysRemaining @Loc["Days"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">@b.DaysRemaining @Loc["Days"]</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    @if (b.IsExpired)
+                                    {
+                                        <span class="badge bg-danger">@Loc["Expired"]</span>
+                                    }
+                                    else if (b.QuantityOnHand == 0)
+                                    {
+                                        <span class="badge bg-secondary">@Loc["OutOfStock"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">@Loc["Valid"]</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer bg-white border-top p-3">
+                <partial name="_Pagination" model="Model.ToPaginationViewModel()" />
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,118 @@
+@model PharmacySystem.Models.ViewModels.Purchases.PurchaseDetailsViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@using PharmacySystem.Enums
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = $"{Loc["Invoice"]} #{Model.InvoiceNumber}";
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h4 class="fw-bold mb-0">#@Model.InvoiceNumber</h4>
+                <span class="badge @(Model.Status == PurchaseStatus.Confirmed ? "bg-success" : "bg-warning text-dark")">
+                    @(Model.Status == PurchaseStatus.Confirmed ? Loc["Confirmed"] : Loc["Draft"])
+                </span>
+            </div>
+            <p class="text-muted small mb-0 mt-1">@Model.PurchaseDate.ToString("yyyy-MM-dd HH:mm") &bull; @Loc["ReceivedBy"]: @Model.ReceivedByName</p>
+        </div>
+        <div class="d-flex gap-2">
+            @if (Model.Status == PurchaseStatus.Draft)
+            {
+                <form asp-action="Confirm" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('@Loc["ConfirmPurchasePrompt"]');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success d-inline-flex align-items-center gap-2 shadow-sm">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>@Loc["ConfirmAndReceiveStock"]</span>
+                    </button>
+                </form>
+            }
+            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["BackToList"]</a>
+        </div>
+    </div>
+
+    @* Purchase Info Cards *@
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm ph-card p-4">
+                <h6 class="card-title mb-3 fw-bold">@Loc["SupplierInformation"]</h6>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">@Loc["SupplierName"]</dt>
+                    <dd class="col-sm-8 fw-semibold">@Model.SupplierName</dd>
+
+                    <dt class="col-sm-4 text-muted">@Loc["Phone"]</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.SupplierPhone) ? "—" : Model.SupplierPhone)</dd>
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <dt class="col-sm-4 text-muted">@Loc["Notes"]</dt>
+                        <dd class="col-sm-8 text-secondary">@Model.Notes</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm ph-card p-4 text-center d-flex flex-column justify-content-center">
+                <div class="text-muted small">@Loc["TotalAmount"]</div>
+                <div class="display-6 fw-bold text-teal mt-2">@Model.TotalAmount.ToString("C2")</div>
+                @if (Model.Status == PurchaseStatus.Confirmed)
+                {
+                    <div class="text-success small mt-2">
+                        <svg class="ph-icon me-1" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        @Loc["StockAddedToInventoryNotice"]
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Received Items & Batches Table *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3">
+            <h6 class="card-title mb-0 fw-bold">@Loc["PurchasedLotsAndBatches"]</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 ph-table">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">@Loc["Product"]</th>
+                        <th>@Loc["BatchNumber"]</th>
+                        <th>@Loc["ExpiryDate"]</th>
+                        <th>@Loc["StorageLocation"]</th>
+                        <th class="text-center">@Loc["Quantity"]</th>
+                        <th>@Loc["UnitCost"]</th>
+                        <th class="text-end pe-4">@Loc["LineTotal"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-semibold text-dark">@item.ProductName</td>
+                            <td><code>@item.BatchNumber</code></td>
+                            <td>@item.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    @item.LocationCode — @item.LocationName
+                                </span>
+                            </td>
+                            <td class="text-center fw-bold">@item.Quantity</td>
+                            <td>@item.UnitPurchasePrice.ToString("C2")</td>
+                            <td class="text-end pe-4 fw-bold">@item.LineTotal.ToString("C2")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="6" class="text-end fw-bold">@Loc["GrandTotal"]:</th>
+                        <th class="text-end pe-4 fw-bold fs-5 text-teal">@Model.TotalAmount.ToString("C2")</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

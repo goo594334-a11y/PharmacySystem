@@ -1,0 +1,27 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var targetCulture = currentCulture == "ar" ? "en" : "ar";
+    // Show the target language name in its native script
+    var targetLanguageName = currentCulture == "ar" ? "English" : "العربية";
+    var currentPathAndQuery = Context.Request.Path + Context.Request.QueryString;
+}
+
+<form asp-controller="Culture" asp-action="SetLanguage" method="post" class="d-inline ph-lang-switcher-form ph-allow-multiple-submits">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="culture" value="@targetCulture" />
+    <input type="hidden" name="returnUrl" value="@currentPathAndQuery" />
+    <button type="submit" class="ph-topbar-btn ph-lang-btn d-flex align-items-center gap-1 border-0 bg-transparent" title="@Loc["LanguageSwitch"]">
+        <svg class="ph-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span class="small fw-semibold">@targetLanguageName</span>
+    </button>
+</form>

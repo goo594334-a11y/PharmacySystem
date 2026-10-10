@@ -1,0 +1,83 @@
+@model PharmacySystem.Models.ViewModels.Returns.CreatePurchaseReturnViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["ProcessPurchaseReturn"];
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">@Loc["ProcessPurchaseReturn"]</h4>
+            <p class="text-muted small mb-0">#@Model.PurchaseInvoiceNumber</p>
+        </div>
+        <a asp-action="Purchases" class="btn btn-outline-secondary">@Loc["BackToList"]</a>
+    </div>
+
+    <form asp-action="CreatePurchaseReturn" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="PurchaseId" />
+        <input type="hidden" asp-for="PurchaseInvoiceNumber" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3" role="alert"></div>
+
+        <div class="card border-0 shadow-sm ph-card mb-4">
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <label asp-for="Reason" class="form-label required">@Loc["ReturnReason"]</label>
+                    <input asp-for="Reason" class="form-control" placeholder="@Loc["ReasonPlaceholder"]" autofocus />
+                    <span asp-validation-for="Reason" class="field-validation-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm ph-card overflow-hidden mb-4">
+            <div class="card-header bg-white border-bottom py-3">
+                <h6 class="card-title mb-0 fw-bold">@Loc["SelectLotsToReturnToSupplier"]</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["Product"]</th>
+                            <th>@Loc["BatchNumber"]</th>
+                            <th>@Loc["AvailableStock"]</th>
+                            <th>@Loc["UnitCost"]</th>
+                            <th style="width: 20%;" class="pe-4">@Loc["QuantityToReturn"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Items.Count; i++)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">
+                                    @Model.Items[i].ProductName
+                                    <input type="hidden" asp-for="Items[i].PurchaseItemId" />
+                                    <input type="hidden" asp-for="Items[i].ProductName" />
+                                    <input type="hidden" asp-for="Items[i].BatchId" />
+                                    <input type="hidden" asp-for="Items[i].BatchNumber" />
+                                    <input type="hidden" asp-for="Items[i].PurchasedQuantity" />
+                                    <input type="hidden" asp-for="Items[i].CurrentStock" />
+                                    <input type="hidden" asp-for="Items[i].UnitPurchasePrice" />
+                                </td>
+                                <td><code>@Model.Items[i].BatchNumber</code></td>
+                                <td class="fw-bold">@Model.Items[i].CurrentStock</td>
+                                <td>@Model.Items[i].UnitPurchasePrice.ToString("C2")</td>
+                                <td class="pe-4">
+                                    <input asp-for="Items[i].QuantityToReturn" type="number" class="form-control" min="0" max="@Model.Items[i].CurrentStock" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Purchases" class="btn btn-outline-secondary">@Loc["Cancel"]</a>
+            <button type="submit" class="btn btn-danger px-4 fw-semibold">@Loc["ConfirmReturnToSupplier"]</button>
+        </div>
+    </form>
+</div>

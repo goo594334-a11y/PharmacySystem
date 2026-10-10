@@ -1,0 +1,296 @@
+@model PharmacySystem.Models.ViewModels.Purchases.CreatePurchaseViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["NewPurchase"];
+    var suppliers = ViewBag.Suppliers as List<PharmacySystem.Models.Entities.Supplier> ?? new();
+    var products = ViewBag.Products as List<PharmacySystem.Models.Entities.Product> ?? new();
+    var locations = ViewBag.Locations as List<PharmacySystem.Models.Entities.Location> ?? new();
+    var currency = Loc["CurrencySymbol"].Value;
+}
+
+<div class="container-fluid px-0">
+    @* Page Header *@
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                <span class="badge bg-primary-subtle text-primary p-2 rounded-3">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </span>
+                <span>@Loc["NewPurchase"]</span>
+            </h4>
+            <p class="text-muted small mb-0">@Loc["CreatePurchaseSubtitle"]</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span>@Loc["BackToList"]</span>
+            </a>
+        </div>
+    </div>
+
+    <form id="purchaseForm">
+        @Html.AntiForgeryToken()
+
+        @* Header Data: Supplier, Invoice Number, Notes *@
+        <div class="card border-0 shadow-sm ph-card mb-4">
+            <div class="card-header bg-white border-bottom py-3">
+                <h6 class="card-title mb-0 fw-bold d-flex align-items-center gap-2 text-dark">
+                    <svg class="ph-icon text-primary" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span>@Loc["PurchaseDetails"]</span>
+                </h6>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label required">@Loc["Supplier"]</label>
+                        <select id="supplierId" class="form-select form-select-lg" required>
+                            <option value="">-- @Loc["SelectSupplier"] --</option>
+                            @foreach (var s in suppliers)
+                            {
+                                <option value="@s.Id">@s.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label required">@Loc["InvoiceNumber"]</label>
+                        <input type="text" id="invoiceNumber" class="form-control form-control-lg" value="@Model.InvoiceNumber" required />
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">@Loc["Notes"]</label>
+                        <input type="text" id="purchaseNotes" class="form-control form-control-lg" placeholder="@Loc["OptionalNotes"]" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Items Table Card *@
+        <div class="card border-0 shadow-sm ph-card mb-4">
+            <div class="card-header bg-white border-bottom py-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                <div>
+                    <h6 class="card-title mb-0 fw-bold d-flex align-items-center gap-2 text-dark">
+                        <svg class="ph-icon text-teal" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"></path><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+                        <span>@Loc["PurchaseItemsAndBatches"]</span>
+                    </h6>
+                    <small class="text-muted">@Loc["StockAddedViaPurchases"]</small>
+                </div>
+                <button type="button" class="btn btn-teal d-flex align-items-center gap-2 shadow-sm" id="addItemRowBtn">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>@Loc["AddItem"]</span>
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 ph-table" id="itemsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="min-width: 200px;">@Loc["Product"] *</th>
+                                <th style="min-width: 140px;">@Loc["BatchNumber"] *</th>
+                                <th style="min-width: 150px;">@Loc["ExpiryDate"] *</th>
+                                <th style="min-width: 160px;">@Loc["Location"] *</th>
+                                <th style="min-width: 110px;">@Loc["Quantity"] *</th>
+                                <th style="min-width: 120px;">@Loc["UnitCost"] *</th>
+                                <th style="min-width: 120px;">@Loc["Total"]</th>
+                                <th style="width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody">
+                            @* Rows inserted via JavaScript *@
+                        </tbody>
+                        <tfoot class="table-light border-top-2">
+                            <tr>
+                                <td colspan="5" class="text-end fw-bold fs-6 py-3">
+                                    @Loc["TotalAmount"]:
+                                </td>
+                                <td colspan="3" class="py-3">
+                                    <span class="fs-4 fw-bold text-teal" id="grandTotalText">0.00</span>
+                                    <span class="text-muted fs-6 fw-semibold ms-1">@currency</span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @* Submit & Action Bar *@
+        <div class="d-flex justify-content-end gap-2 pt-2">
+            <a asp-action="Index" class="btn btn-outline-secondary px-4">@Loc["Cancel"]</a>
+            <button type="button" class="btn btn-teal btn-lg px-5 fw-bold shadow" id="submitPurchaseBtn">
+                @Loc["SaveDraftPurchase"]
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const productsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(products.Select(p => new { p.Id, p.Name })));
+        const locationsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(locations.Select(l => new { l.Id, Code = $"{l.Code} - {l.Name}" })));
+        const currencyText = '@currency';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const preselectedProductId = parseInt(urlParams.get('productId')) || 0;
+
+        function createRowHtml(selectedProductId = 0) {
+            let prodOptions = '<option value="">-- @Loc["SelectProduct"] --</option>';
+            productsData.forEach(p => {
+                const isSelected = (selectedProductId > 0 && p.Id === selectedProductId) ? 'selected' : '';
+                prodOptions += `<option value="${p.Id}" ${isSelected}>${p.Name}</option>`;
+            });
+
+            let locOptions = '<option value="">-- @Loc["SelectLocation"] --</option>';
+            locationsData.forEach(l => locOptions += `<option value="${l.Id}">${l.Code}</option>`);
+
+            const nextYear = new Date();
+            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            const defaultExpiry = nextYear.toISOString().split('T')[0];
+
+            return `
+                <tr class="item-row">
+                    <td>
+                        <select class="form-select item-product" required>${prodOptions}</select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control item-batch" placeholder="LOT-..." required />
+                    </td>
+                    <td>
+                        <input type="date" class="form-control item-expiry" value="${defaultExpiry}" required />
+                    </td>
+                    <td>
+                        <select class="form-select item-location" required>${locOptions}</select>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control item-qty text-center" min="1" value="10" required />
+                    </td>
+                    <td>
+                        <input type="number" class="form-control item-price text-center" min="0.01" step="0.01" value="1.00" required />
+                    </td>
+                    <td>
+                        <span class="fw-bold fs-6 text-dark line-total-val">10.00</span>
+                        <small class="text-muted ms-1">${currencyText}</small>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn" title="@Loc["Delete"]">&times;</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function recalculateTotals() {
+            let total = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const line = qty * price;
+                const lineValSpan = row.querySelector('.line-total-val');
+                if (lineValSpan) {
+                    lineValSpan.textContent = line.toFixed(2);
+                }
+                total += line;
+            });
+            const grandTotalEl = document.getElementById('grandTotalText');
+            if (grandTotalEl) {
+                grandTotalEl.textContent = total.toFixed(2);
+            }
+        }
+
+        document.getElementById('addItemRowBtn').addEventListener('click', function () {
+            document.getElementById('itemsBody').insertAdjacentHTML('beforeend', createRowHtml());
+            recalculateTotals();
+        });
+
+        document.getElementById('itemsBody').addEventListener('input', function (e) {
+            if (e.target.classList.contains('item-qty') || e.target.classList.contains('item-price')) {
+                recalculateTotals();
+            }
+        });
+
+        document.getElementById('itemsBody').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-row-btn')) {
+                if (document.querySelectorAll('.item-row').length > 1) {
+                    e.target.closest('tr').remove();
+                    recalculateTotals();
+                } else {
+                    alert('@Loc["AtLeastOneItemRequired"]');
+                }
+            }
+        });
+
+        // Initialize with 1 row (preselecting productId from URL if present)
+        document.getElementById('itemsBody').innerHTML = createRowHtml(preselectedProductId);
+        recalculateTotals();
+
+        // Submit form via fetch
+        document.getElementById('submitPurchaseBtn').addEventListener('click', async function () {
+            const supplierId = parseInt(document.getElementById('supplierId').value);
+            const invoiceNumber = document.getElementById('invoiceNumber').value.trim();
+            const notes = document.getElementById('purchaseNotes').value.trim();
+
+            if (!supplierId || !invoiceNumber) {
+                alert('@Loc["PleaseFillRequiredFields"]');
+                return;
+            }
+
+            const items = [];
+            const rows = document.querySelectorAll('.item-row');
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const productId = parseInt(row.querySelector('.item-product').value);
+                const batchNumber = row.querySelector('.item-batch').value.trim();
+                const expiryDate = row.querySelector('.item-expiry').value;
+                const locationId = parseInt(row.querySelector('.item-location').value);
+                const quantity = parseInt(row.querySelector('.item-qty').value);
+                const unitPurchasePrice = parseFloat(row.querySelector('.item-price').value);
+
+                if (!productId || !batchNumber || !expiryDate || !locationId || !quantity || !unitPurchasePrice) {
+                    alert('@Loc["PleaseFillItemRowFields"]');
+                    return;
+                }
+
+                items.push({
+                    productId,
+                    batchNumber,
+                    expiryDate,
+                    locationId,
+                    quantity,
+                    unitPurchasePrice
+                });
+            }
+
+            const btn = document.getElementById('submitPurchaseBtn');
+            btn.disabled = true;
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            try {
+                const response = await fetch('@Url.Action("Create", "Purchases")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        supplierId,
+                        invoiceNumber,
+                        notes,
+                        items
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    window.location.href = `@Url.Action("Details", "Purchases")/${result.purchaseId}`;
+                } else {
+                    alert(result.message || '@Loc["OperationFailed"]');
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert('@Loc["OperationFailed"]');
+                btn.disabled = false;
+            }
+        });
+    </script>
+}

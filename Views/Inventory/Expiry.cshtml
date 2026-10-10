@@ -1,0 +1,133 @@
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@using PharmacySystem.Models.Entities
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["ExpiryTracking"];
+    var nearExpiry = ViewBag.NearExpiryBatches as List<Batch> ?? new();
+    var expired = ViewBag.ExpiredBatches as List<Batch> ?? new();
+    var threshold = (int)(ViewBag.DaysThreshold ?? 90);
+    var today = DateOnly.FromDateTime(DateTime.Today);
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 text-danger">@Loc["ExpiryTracking"]</h4>
+            <p class="text-muted small mb-0">@Loc["ExpirySubtitle"]</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="small text-muted">@Loc["WarningWindow"]:</span>
+            <div class="btn-group btn-group-sm">
+                <a asp-action="Expiry" asp-route-days="30" class="btn @(threshold == 30 ? "btn-teal" : "btn-outline-secondary")">30 @Loc["Days"]</a>
+                <a asp-action="Expiry" asp-route-days="60" class="btn @(threshold == 60 ? "btn-teal" : "btn-outline-secondary")">60 @Loc["Days"]</a>
+                <a asp-action="Expiry" asp-route-days="90" class="btn @(threshold == 90 ? "btn-teal" : "btn-outline-secondary")">90 @Loc["Days"]</a>
+                <a asp-action="Expiry" asp-route-days="180" class="btn @(threshold == 180 ? "btn-teal" : "btn-outline-secondary")">180 @Loc["Days"]</a>
+            </div>
+        </div>
+    </div>
+
+    @* Expired Stock (Immediate Action Required) *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden mb-4 border-danger">
+        <div class="card-header bg-danger text-white py-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <h6 class="card-title mb-0 fw-bold">@Loc["ExpiredBatchesWithStock"]</h6>
+            </div>
+            <span class="badge bg-white text-danger fw-bold">@expired.Count @Loc["Batches"]</span>
+        </div>
+        @if (!expired.Any())
+        {
+            <div class="p-4 text-center text-success small">
+                @Loc["NoExpiredStockInPharmacy"]
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["Product"]</th>
+                            <th>@Loc["BatchNumber"]</th>
+                            <th>@Loc["StorageLocation"]</th>
+                            <th>@Loc["ExpiredStockUnits"]</th>
+                            <th>@Loc["ExpiryDate"]</th>
+                            <th class="text-end pe-4">@Loc["Action"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var b in expired)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">@b.Product.Name</td>
+                                <td><code>@b.BatchNumber</code></td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@b.Location.Code — @b.Location.Name</span>
+                                </td>
+                                <td class="fw-bold text-danger">@b.QuantityOnHand @Loc["Units"]</td>
+                                <td class="text-danger fw-semibold">@b.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                                <td class="text-end pe-4">
+                                    <span class="badge bg-danger">@Loc["BlockedFromSale"]</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    @* Near Expiry Batches *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        <div class="card-header bg-warning text-dark py-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <h6 class="card-title mb-0 fw-bold">@Loc["NearExpiryBatches"] (@threshold @Loc["Days"])</h6>
+            </div>
+            <span class="badge bg-dark text-white">@nearExpiry.Count @Loc["Batches"]</span>
+        </div>
+        @if (!nearExpiry.Any())
+        {
+            <div class="p-4 text-center text-muted small">
+                @Loc["NoNearExpiryBatchesInWindow"]
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["Product"]</th>
+                            <th>@Loc["BatchNumber"]</th>
+                            <th>@Loc["StorageLocation"]</th>
+                            <th>@Loc["QuantityOnHand"]</th>
+                            <th>@Loc["ExpiryDate"]</th>
+                            <th class="text-end pe-4">@Loc["DaysRemaining"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var b in nearExpiry)
+                        {
+                            var daysLeft = b.ExpiryDate.DayNumber - today.DayNumber;
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">@b.Product.Name</td>
+                                <td><code>@b.BatchNumber</code></td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@b.Location.Code — @b.Location.Name</span>
+                                </td>
+                                <td class="fw-bold">@b.QuantityOnHand</td>
+                                <td>@b.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                                <td class="text-end pe-4">
+                                    <span class="badge bg-warning text-dark fw-bold">@daysLeft @Loc["Days"]</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,54 @@
+@model PharmacySystem.Models.Common.ConfirmModalViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+<div class="modal fade ph-confirm-modal" id="@Model.ModalId" tabindex="-1" aria-labelledby="@(Model.ModalId)Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header @(Model.IsDestructive ? "bg-danger-subtle text-danger" : "bg-primary-subtle text-primary") border-0 py-3">
+                <div class="d-flex align-items-center gap-2">
+                    @if (Model.IsDestructive)
+                    {
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    }
+                    else
+                    {
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    }
+                    <h5 class="modal-title fw-bold fs-6" id="@(Model.ModalId)Label">@Model.Title</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Loc["Close"]"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="mb-2">@Model.Message</p>
+                @if (!string.IsNullOrWhiteSpace(Model.ItemIdentifier))
+                {
+                    <div class="p-2 mb-3 bg-light border rounded text-monospace fw-bold text-dark">
+                        @Model.ItemIdentifier
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.WarningNote))
+                {
+                    <div class="alert alert-warning small py-2 px-3 mb-0 d-flex align-items-center gap-2">
+                        <svg class="ph-icon flex-shrink-0" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <span>@Model.WarningNote</span>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer border-0 bg-light p-3">
+                <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">@Model.CancelButtonText</button>
+                <form action="@Model.FormActionUrl" method="@Model.HttpMethod" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    @foreach (var field in Model.HiddenFields)
+                    {
+                        <input type="hidden" name="@field.Key" value="@field.Value" />
+                    }
+                    <button type="submit" class="btn @(Model.IsDestructive ? "btn-danger" : "btn-primary") px-4">
+                        @Model.ConfirmButtonText
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

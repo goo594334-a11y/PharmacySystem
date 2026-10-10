@@ -1,0 +1,100 @@
+@model PharmacySystem.Models.ViewModels.Reports.ExpiryReportViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["ExpiryReport"];
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 text-danger">@Loc["ExpiryReport"]</h4>
+            <p class="text-muted small mb-0">@Loc["BatchesExpiringWithin"] @Model.DaysThreshold @Loc["Days"]</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-dark d-print-none" onclick="window.print();">
+                @Loc["PrintReport"]
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary d-print-none">@Loc["BackToReports"]</a>
+        </div>
+    </div>
+
+    @* Risk Metric Cards *@
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-4">
+            <div class="card border-0 shadow-sm ph-card p-3 text-center border-danger">
+                <div class="text-muted small">@Loc["FinancialCostAtRisk"]</div>
+                <div class="display-6 fw-bold text-danger mt-1">@Model.TotalCostAtRisk.ToString("C2")</div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4">
+            <div class="card border-0 shadow-sm ph-card p-3 text-center">
+                <div class="text-muted small">@Loc["BatchesAtRisk"]</div>
+                <div class="display-6 fw-bold text-dark mt-1">@Model.TotalBatchesAtRisk</div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4">
+            <div class="card border-0 shadow-sm ph-card p-3 text-center">
+                <div class="text-muted small">@Loc["StockUnitsAtRisk"]</div>
+                <div class="display-6 fw-bold text-warning mt-1">@Model.TotalUnitsAtRisk</div>
+            </div>
+        </div>
+    </div>
+
+    @* Risk Batches Table *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 ph-table">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">@Loc["Product"]</th>
+                        <th>@Loc["BatchNumber"]</th>
+                        <th>@Loc["StorageLocation"]</th>
+                        <th>@Loc["ExpiryDate"]</th>
+                        <th>@Loc["DaysRemaining"]</th>
+                        <th>@Loc["QuantityOnHand"]</th>
+                        <th>@Loc["UnitCost"]</th>
+                        <th class="text-end pe-4">@Loc["EstimatedLoss"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Batches.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-success small">
+                                @Loc["NoBatchesAtRiskInThreshold"]
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var b in Model.Batches)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">@b.ProductName</td>
+                                <td><code>@b.BatchNumber</code></td>
+                                <td><span class="badge bg-light text-dark border">@b.LocationCode</span></td>
+                                <td class="@(b.IsExpired ? "text-danger fw-bold" : "")">@b.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (b.IsExpired)
+                                    {
+                                        <span class="badge bg-danger">@Loc["Expired"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark fw-bold">@b.DaysRemaining @Loc["Days"]</span>
+                                    }
+                                </td>
+                                <td class="fw-bold">@b.Quantity</td>
+                                <td>@b.PurchasePrice.ToString("C2")</td>
+                                <td class="text-end pe-4 fw-bold text-danger">@b.TotalCost.ToString("C2")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,145 @@
+@model PharmacySystem.Models.ViewModels.Products.ProductDetailsViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">@Model.Name</h4>
+            <div class="d-flex align-items-center gap-2">
+                @if (!string.IsNullOrEmpty(Model.Barcode))
+                {
+                    <span class="badge bg-light text-dark border">
+                        <svg class="ph-icon me-1 text-muted" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="10" y1="8" x2="10" y2="16"></line><line x1="14" y1="8" x2="14" y2="16"></line><line x1="17" y1="8" x2="17" y2="16"></line></svg>
+                        @Model.Barcode
+                    </span>
+                }
+                <span class="badge bg-light text-teal border">@Model.CategoryName</span>
+                <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                    @(Model.IsActive ? Loc["Active"] : Loc["Inactive"])
+                </span>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary d-inline-flex align-items-center gap-1">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>@Loc["Edit"]</span>
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["BackToList"]</a>
+        </div>
+    </div>
+
+    @* Stock Overview Cards *@
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm ph-card p-3">
+                <div class="text-muted small">@Loc["SellingPrice"]</div>
+                <div class="fs-4 fw-bold text-dark mt-1">@Model.SellingPrice.ToString("C2")</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm ph-card p-3">
+                <div class="text-muted small">@Loc["AvailableStock"]</div>
+                <div class="fs-4 fw-bold @(Model.NonExpiredStock == 0 ? "text-danger" : Model.IsLowStock ? "text-warning" : "text-success") mt-1">
+                    @Model.NonExpiredStock
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm ph-card p-3">
+                <div class="text-muted small">@Loc["TotalStock"]</div>
+                <div class="fs-4 fw-bold text-dark mt-1">@Model.TotalStock</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm ph-card p-3">
+                <div class="text-muted small">@Loc["MinimumStockLevel"]</div>
+                <div class="fs-4 fw-bold text-secondary mt-1">@Model.MinimumStockLevel</div>
+            </div>
+        </div>
+    </div>
+
+    @* Batches & Physical Storage Location Table *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h6 class="card-title mb-0 fw-bold">@Loc["ProductBatchesAndLocations"]</h6>
+            <span class="badge bg-light text-muted border">@Model.Batches.Count @Loc["Batches"]</span>
+        </div>
+        @if (!Model.Batches.Any())
+        {
+            <div class="p-4 text-center text-muted small">
+                @Loc["NoBatchesFoundForProduct"]
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["BatchNumber"]</th>
+                            <th>@Loc["PhysicalLocation"]</th>
+                            <th>@Loc["QuantityOnHand"]</th>
+                            <th>@Loc["PurchasePrice"]</th>
+                            <th>@Loc["ExpiryDate"]</th>
+                            <th>@Loc["DaysRemaining"]</th>
+                            <th class="text-end pe-4">@Loc["Status"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var batch in Model.Batches)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">
+                                    <code>@batch.BatchNumber</code>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        <svg class="ph-icon me-1 text-muted" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                        @batch.LocationCode — @batch.LocationName
+                                    </span>
+                                </td>
+                                <td class="fw-bold">@batch.QuantityOnHand</td>
+                                <td>@batch.PurchasePrice.ToString("C2")</td>
+                                <td>@batch.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (batch.IsExpired)
+                                    {
+                                        <span class="badge bg-danger">@Loc["Expired"]</span>
+                                    }
+                                    else if (batch.DaysRemaining <= 90)
+                                    {
+                                        <span class="badge bg-warning text-dark">@batch.DaysRemaining @Loc["Days"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">@batch.DaysRemaining @Loc["Days"]</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    @if (batch.IsExpired)
+                                    {
+                                        <span class="badge bg-danger">@Loc["Expired"]</span>
+                                    }
+                                    else if (batch.QuantityOnHand == 0)
+                                    {
+                                        <span class="badge bg-secondary">@Loc["OutOfStock"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">@Loc["Valid"]</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

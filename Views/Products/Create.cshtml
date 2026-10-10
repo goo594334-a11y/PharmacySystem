@@ -1,0 +1,99 @@
+@model PharmacySystem.Models.ViewModels.Products.CreateProductViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["AddProduct"];
+}
+
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card border-0 shadow-sm ph-card">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold">@Loc["AddProduct"]</h5>
+                    <p class="text-muted small mb-0">@Loc["CreateProductSubtitle"]</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3" role="alert"></div>
+
+                        <div class="alert alert-info border-0 d-flex align-items-center gap-2 mb-3 py-2 px-3">
+                            <svg class="ph-icon text-info flex-shrink-0" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            <span class="small">@Loc["StockAddedViaPurchases"]</span>
+                        </div>
+
+                        <div class="row g-3">
+                            @* Name *@
+                            <div class="col-12 col-md-8">
+                                <label asp-for="Name" class="form-label required">@Loc["ProductName"]</label>
+                                <input asp-for="Name" class="form-control" autofocus />
+                                <span asp-validation-for="Name" class="field-validation-error"></span>
+                            </div>
+
+                            @* Barcode with scanner icon *@
+                            <div class="col-12 col-md-4">
+                                <label asp-for="Barcode" class="form-label">@Loc["Barcode"]</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <svg class="ph-icon text-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="10" y1="8" x2="10" y2="16"></line><line x1="14" y1="8" x2="14" y2="16"></line><line x1="17" y1="8" x2="17" y2="16"></line></svg>
+                                    </span>
+                                    <input asp-for="Barcode" class="form-control" placeholder="@Loc["BarcodePlaceholder"]" />
+                                </div>
+                                <span asp-validation-for="Barcode" class="field-validation-error"></span>
+                            </div>
+
+                            @* Category *@
+                            <div class="col-12 col-md-4">
+                                <label asp-for="CategoryId" class="form-label required">@Loc["Category"]</label>
+                                <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.Categories">
+                                    <option value="">-- @Loc["SelectCategory"] --</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="field-validation-error"></span>
+                            </div>
+
+                            @* Selling Price *@
+                            <div class="col-12 col-md-4">
+                                <label asp-for="SellingPrice" class="form-label required">@Loc["SellingPrice"]</label>
+                                <div class="input-group">
+                                    <input asp-for="SellingPrice" class="form-control" type="number" step="0.01" min="0.01" placeholder="0.00" />
+                                    <span class="input-group-text bg-light text-muted px-3">@Loc["CurrencySymbol"]</span>
+                                </div>
+                                <span asp-validation-for="SellingPrice" class="field-validation-error"></span>
+                            </div>
+
+                            @* Minimum Stock Level *@
+                            <div class="col-12 col-md-4">
+                                <label asp-for="MinimumStockLevel" class="form-label required">@Loc["MinimumStockLevel"]</label>
+                                <input asp-for="MinimumStockLevel" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="MinimumStockLevel" class="field-validation-error"></span>
+                            </div>
+
+                            @* Description *@
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label">@Loc["Description"]</label>
+                                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Description" class="field-validation-error"></span>
+                            </div>
+
+                            @* Status *@
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" id="productIsActiveSwitch" />
+                                    <label class="form-check-label" for="productIsActiveSwitch">@Loc["Active"]</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["Cancel"]</a>
+                            <button type="submit" class="btn btn-teal px-4 fw-semibold">@Loc["Save"]</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

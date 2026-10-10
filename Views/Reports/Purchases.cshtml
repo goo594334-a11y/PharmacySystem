@@ -1,0 +1,100 @@
+@model PharmacySystem.Models.ViewModels.Reports.PurchaseReportViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["PurchaseReport"];
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">@Loc["PurchaseReport"]</h4>
+            <p class="text-muted small mb-0">@Model.FromDate.ToString("yyyy-MM-dd") &rarr; @Model.ToDate.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-dark d-print-none" onclick="window.print();">
+                @Loc["PrintReport"]
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary d-print-none">@Loc["BackToReports"]</a>
+        </div>
+    </div>
+
+    @* Date Filter Form *@
+    <div class="card border-0 shadow-sm ph-card mb-4 d-print-none">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-center">
+                <div class="col-12 col-md-4">
+                    <label class="form-label small fw-bold mb-1">@Loc["FromDate"]</label>
+                    <input type="date" name="fromDate" value="@(Model.FromDate != default ? Model.FromDate.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label small fw-bold mb-1">@Loc["ToDate"]</label>
+                    <input type="date" name="toDate" value="@(Model.ToDate != default ? Model.ToDate.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-teal w-100">@Loc["GenerateReport"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* Summary Cards *@
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6">
+            <div class="card border-0 shadow-sm ph-card p-3 text-center">
+                <div class="text-muted small">@Loc["TotalExpenditure"]</div>
+                <div class="display-6 fw-bold text-primary mt-1">@Model.TotalExpenditure.ToString("C2")</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="card border-0 shadow-sm ph-card p-3 text-center">
+                <div class="text-muted small">@Loc["OrdersCount"]</div>
+                <div class="display-6 fw-bold text-dark mt-1">@Model.TotalPurchases</div>
+            </div>
+        </div>
+    </div>
+
+    @* Orders Table *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 ph-table">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">@Loc["InvoiceNumber"]</th>
+                        <th>@Loc["Date"]</th>
+                        <th>@Loc["Supplier"]</th>
+                        <th>@Loc["Status"]</th>
+                        <th class="text-end pe-4">@Loc["TotalAmount"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Purchases.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted small">
+                                @Loc["NoPurchasesRecordedInPeriod"]
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var p in Model.Purchases)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">#@p.InvoiceNumber</td>
+                                <td>@p.PurchaseDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@p.SupplierName</td>
+                                <td>
+                                    <span class="badge @(p.Status == "Confirmed" ? "bg-success" : "bg-warning text-dark")">@p.Status</span>
+                                </td>
+                                <td class="text-end pe-4 fw-bold">@p.TotalAmount.ToString("C2")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

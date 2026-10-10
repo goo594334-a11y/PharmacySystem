@@ -1,0 +1,109 @@
+@model PharmacySystem.Models.ViewModels.Suppliers.SupplierDetailsViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">@Model.Name</h4>
+            <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                @(Model.IsActive ? Loc["Active"] : Loc["Inactive"])
+            </span>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary d-inline-flex align-items-center gap-1">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>@Loc["Edit"]</span>
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["BackToList"]</a>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-5">
+            <div class="card border-0 shadow-sm ph-card">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="card-title mb-0 fw-bold">@Loc["SupplierInformation"]</h6>
+                </div>
+                <div class="card-body p-4">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">@Loc["Phone"]</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Phone) ? "—" : Model.Phone)</dd>
+
+                        <dt class="col-sm-4 text-muted">@Loc["Email"]</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Email) ? "—" : Model.Email)</dd>
+
+                        <dt class="col-sm-4 text-muted">@Loc["Address"]</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Address) ? "—" : Model.Address)</dd>
+
+                        <dt class="col-sm-4 text-muted">@Loc["Notes"]</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Notes) ? "—" : Model.Notes)</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-7">
+            <div class="card border-0 shadow-sm ph-card p-4">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded">
+                            <div class="fs-4 fw-bold text-teal">@Model.TotalPurchasesCount</div>
+                            <div class="text-muted small">@Loc["TotalPurchases"]</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded">
+                            <div class="fs-4 fw-bold text-primary">@Model.TotalPurchasesAmount.ToString("C2")</div>
+                            <div class="text-muted small">@Loc["TotalSpend"]</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Recent Purchases Table *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3">
+            <h6 class="card-title mb-0 fw-bold">@Loc["RecentPurchases"]</h6>
+        </div>
+        @if (!Model.RecentPurchases.Any())
+        {
+            <div class="p-4 text-center text-muted small">@Loc["NoPurchasesRecorded"]</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["InvoiceNumber"]</th>
+                            <th>@Loc["PurchaseDate"]</th>
+                            <th>@Loc["TotalAmount"]</th>
+                            <th class="text-end pe-4">@Loc["Status"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.RecentPurchases)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">@p.InvoiceNumber</td>
+                                <td>@p.PurchaseDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="fw-bold">@p.TotalAmount.ToString("C2")</td>
+                                <td class="text-end pe-4">
+                                    <span class="badge @(p.Status == "Confirmed" ? "bg-success" : "bg-warning text-dark")">@p.Status</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

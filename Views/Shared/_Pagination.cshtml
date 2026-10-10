@@ -1,0 +1,53 @@
+@model PharmacySystem.Models.Common.PaginationViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@if (Model.TotalPages > 1 || Model.TotalCount > 0)
+{
+    <nav aria-label="Page navigation" class="ph-pagination-container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4 pt-3 border-top">
+        <div class="ph-pagination-info text-muted small">
+            @string.Format(Loc["ShowingEntries"], Model.FirstItemIndex, Model.LastItemIndex, Model.TotalCount)
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <ul class="pagination pagination-sm mb-0 ph-pagination">
+                @* Previous Page Button *@
+                <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="@Model.Action"
+                       asp-controller="@Model.Controller"
+                       asp-all-route-data="@Model.GetRouteValuesForPage(Model.CurrentPage - 1)"
+                       aria-label="@Loc["Previous"]">
+                        <span aria-hidden="true">&laquo; @Loc["Previous"]</span>
+                    </a>
+                </li>
+
+                @* Numbered Pages *@
+                @foreach (var pageNum in Model.GetVisiblePageNumbers())
+                {
+                    <li class="page-item @(pageNum == Model.CurrentPage ? "active" : "")" aria-current="@(pageNum == Model.CurrentPage ? "page" : null)">
+                        <a class="page-link"
+                           asp-action="@Model.Action"
+                           asp-controller="@Model.Controller"
+                           asp-all-route-data="@Model.GetRouteValuesForPage(pageNum)">
+                            @pageNum
+                        </a>
+                    </li>
+                }
+
+                @* Next Page Button *@
+                <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="@Model.Action"
+                       asp-controller="@Model.Controller"
+                       asp-all-route-data="@Model.GetRouteValuesForPage(Model.CurrentPage + 1)"
+                       aria-label="@Loc["Next"]">
+                        <span aria-hidden="true">@Loc["Next"] &raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        }
+    </nav>
+}

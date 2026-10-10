@@ -1,0 +1,73 @@
+@model List<PharmacySystem.Services.ProductStockSummary>
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["LowStockAlerts"];
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 text-warning">@Loc["LowStockAlerts"]</h4>
+            <p class="text-muted small mb-0">@Loc["LowStockSubtitle"]</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["AllStock"]</a>
+            <a asp-controller="Purchases" asp-action="Create" class="btn btn-teal">
+                + @Loc["NewPurchaseOrder"]
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        @if (!Model.Any())
+        {
+            <div class="p-5 text-center">
+                <div class="text-success mb-3">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <h5 class="fw-bold mb-1">@Loc["AllStockSufficient"]</h5>
+                <p class="text-muted small mb-0">@Loc["NoProductsBelowThreshold"]</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["Product"]</th>
+                            <th>@Loc["AvailableStock"]</th>
+                            <th>@Loc["MinimumStockLevel"]</th>
+                            <th>@Loc["Deficit"]</th>
+                            <th class="text-end pe-4">@Loc["Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            var deficit = p.MinimumStockLevel - p.AvailableQuantity;
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">@p.ProductName</td>
+                                <td>
+                                    <span class="badge @(p.AvailableQuantity == 0 ? "bg-danger" : "bg-warning text-dark")">
+                                        @p.AvailableQuantity @Loc["Units"]
+                                    </span>
+                                </td>
+                                <td>@p.MinimumStockLevel</td>
+                                <td class="text-danger fw-bold">@(deficit > 0 ? $"-{deficit}" : "0")</td>
+                                <td class="text-end pe-4">
+                                    <a asp-controller="Purchases" asp-action="Create" class="btn btn-sm btn-teal">
+                                        @Loc["Reorder"]
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

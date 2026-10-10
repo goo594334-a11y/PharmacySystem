@@ -1,0 +1,31 @@
+@model IEnumerable<PharmacySystem.Models.Common.BreadcrumbItem>
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@if (Model != null && Model.Any())
+{
+    <nav aria-label="breadcrumb" class="ph-breadcrumb-nav mb-3">
+        <ol class="breadcrumb ph-breadcrumb py-2 px-3 rounded-pill bg-light border">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none d-flex align-items-center gap-1">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>@Loc["Dashboard"]</span>
+                </a>
+            </li>
+            @foreach (var item in Model)
+            {
+                if (item.IsActive || string.IsNullOrEmpty(item.Url))
+                {
+                    <li class="breadcrumb-item active text-secondary" aria-current="page">@item.Title</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item">
+                        <a href="@item.Url" class="text-decoration-none">@item.Title</a>
+                    </li>
+                }
+            }
+        </ol>
+    </nav>
+}

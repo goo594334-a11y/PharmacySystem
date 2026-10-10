@@ -1,0 +1,84 @@
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["Nav_Reports"];
+}
+
+<div class="container-fluid px-0">
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">@Loc["Nav_Reports"]</h4>
+        <p class="text-muted small mb-0">@Loc["ReportsSubtitle"]</p>
+    </div>
+
+    <div class="row g-4">
+        @* Sales Report Card *@
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm ph-card h-100 p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="ph-stat-icon bg-light text-teal rounded-circle p-3 d-inline-flex">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">@Loc["SalesReport"]</h6>
+                        <span class="text-muted small">@Loc["RevenueAndVolume"]</span>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4 flex-grow-1">@Loc["SalesReportDescription"]</p>
+                <a asp-action="Sales" class="btn btn-outline-teal w-100">@Loc["ViewReport"]</a>
+            </div>
+        </div>
+
+        @* Purchase Report Card *@
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm ph-card h-100 p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="ph-stat-icon bg-light text-primary rounded-circle p-3 d-inline-flex">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">@Loc["PurchaseReport"]</h6>
+                        <span class="text-muted small">@Loc["SupplierSpend"]</span>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4 flex-grow-1">@Loc["PurchaseReportDescription"]</p>
+                <a asp-action="Purchases" class="btn btn-outline-primary w-100">@Loc["ViewReport"]</a>
+            </div>
+        </div>
+
+        @* Inventory Valuation Card *@
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm ph-card h-100 p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="ph-stat-icon bg-light text-success rounded-circle p-3 d-inline-flex">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">@Loc["InventoryReport"]</h6>
+                        <span class="text-muted small">@Loc["StockValuation"]</span>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4 flex-grow-1">@Loc["InventoryReportDescription"]</p>
+                <a asp-action="Inventory" class="btn btn-outline-success w-100">@Loc["ViewReport"]</a>
+            </div>
+        </div>
+
+        @* Expiry Risk Report Card *@
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm ph-card h-100 p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="ph-stat-icon bg-light text-danger rounded-circle p-3 d-inline-flex">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">@Loc["ExpiryReport"]</h6>
+                        <span class="text-muted small">@Loc["LossPrevention"]</span>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4 flex-grow-1">@Loc["ExpiryReportDescription"]</p>
+                <a asp-action="Expiry" class="btn btn-outline-danger w-100">@Loc["ViewReport"]</a>
+            </div>
+        </div>
+    </div>
+</div>

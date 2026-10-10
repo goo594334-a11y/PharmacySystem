@@ -1,0 +1,37 @@
+@model ErrorViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["UnexpectedErrorOccurred"];
+}
+
+<div class="row justify-content-center my-5">
+    <div class="col-md-8 col-lg-6 text-center">
+        <div class="card border-0 shadow-sm ph-card p-5">
+            <div class="text-danger mb-4">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="fw-bold text-dark mb-2">@Loc["OperationFailed"]</h3>
+            <p class="text-muted mb-4">@Loc["UnexpectedErrorOccurred"]</p>
+            @if (Model.ShowRequestId)
+            {
+                <div class="mb-4">
+                    <span class="badge bg-light text-muted border py-2 px-3 text-monospace small">
+                        Trace ID: @Model.RequestId
+                    </span>
+                </div>
+            }
+            <div>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-teal px-4 py-2 shadow-sm">
+                    @Loc["ReturnToDashboard"]
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

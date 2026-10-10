@@ -1,0 +1,154 @@
+@model PharmacySystem.Models.ViewModels.Auth.LoginViewModel
+@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    Layout = null;
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var isRtl = CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+}
+<!DOCTYPE html>
+<html lang="@currentCulture" dir="@(isRtl ? "rtl" : "ltr")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Loc["LoginTitle"] - @Loc["AppTitle"]</title>
+
+    @if (isRtl)
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    }
+    <link rel="stylesheet" href="~/css/pharmacy-theme.css" asp-append-version="true" />
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center min-vh-100 py-4">
+    <div class="container" style="max-width: 440px;">
+        @* Language Switcher Bar *@
+        <div class="d-flex justify-content-end mb-3">
+            <partial name="_LanguageSwitcher" />
+        </div>
+
+        @* Flash Alerts *@
+        <partial name="_AlertMessages" />
+
+        @* Login Card *@
+        <div class="card border-0 shadow-lg ph-card overflow-hidden">
+            <div class="card-header bg-teal text-white text-center p-4 border-0">
+                <div class="ph-brand-icon bg-white text-teal rounded-circle mx-auto mb-3 p-3 d-inline-flex align-items-center justify-content-center shadow" style="width: 64px; height: 64px;">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+                        <path d="m8.5 8.5 7 7"></path>
+                    </svg>
+                </div>
+                <h4 class="fw-bold mb-1">@Loc["AppTitle"]</h4>
+                <p class="text-white-50 small mb-0">@Loc["LoginSubtitle"]</p>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form asp-controller="Account" asp-action="Login" method="post" id="loginForm" autocomplete="off">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ReturnUrl" />
+
+                    @* Validation Summary *@
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3" role="alert"></div>
+
+                    @* Email *@
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label required">@Loc["Email"]</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <svg class="ph-icon text-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            </span>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="user@pharmacy.local" autocomplete="username" autofocus />
+                        </div>
+                        <span asp-validation-for="Email" class="field-validation-error"></span>
+                    </div>
+
+                    @* Password with Show/Hide Eye Button *@
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label required">@Loc["Password"]</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <svg class="ph-icon text-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" id="loginPasswordInput" value="" />
+                            <button type="button" class="btn btn-outline-secondary toggle-password-btn" data-target="#loginPasswordInput" aria-label="Toggle Password">
+                                <svg class="ph-icon eye-open" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="ph-icon eye-closed d-none" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m1 1 22 22"></path><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path></svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="field-validation-error"></span>
+                    </div>
+
+                    @* Remember Me and Forgot Password *@
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label small text-muted">@Loc["RememberMe"]</label>
+                        </div>
+                        <a asp-action="ForgotPassword" class="small text-teal text-decoration-none">@Loc["ForgotPassword"]</a>
+                    </div>
+
+                    @* Submit Button *@
+                    <button type="submit" class="btn btn-teal w-100 py-2 fw-semibold shadow-sm" data-processing-text="@Loc["Processing"]">
+                        @Loc["Login"]
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center text-muted small mt-4">
+            &copy; @DateTime.UtcNow.Year @Loc["AppTitle"]
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/pharmacy.js" asp-append-version="true"></script>
+
+    <script>
+        // Inline handler ensuring password toggle and clearing always functions
+        (function() {
+            var passInput = document.getElementById('loginPasswordInput');
+            if (passInput) {
+                passInput.value = '';
+            }
+
+            window.addEventListener('pageshow', function() {
+                if (passInput) {
+                    passInput.value = '';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                var btn = e.target.closest('.toggle-password-btn');
+                if (!btn) return;
+                e.preventDefault();
+                var targetId = btn.getAttribute('data-target');
+                var input = targetId ? document.querySelector(targetId) : null;
+                if (!input) return;
+
+                var eyeOpen = btn.querySelector('.eye-open');
+                var eyeClosed = btn.querySelector('.eye-closed');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    if (eyeOpen) eyeOpen.classList.add('d-none');
+                    if (eyeClosed) eyeClosed.classList.remove('d-none');
+                } else {
+                    input.type = 'password';
+                    if (eyeOpen) eyeOpen.classList.remove('d-none');
+                    if (eyeClosed) eyeClosed.classList.add('d-none');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

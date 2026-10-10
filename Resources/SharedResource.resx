@@ -1,0 +1,1649 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- App Info -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>نظام إدارة الصيدلية</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>المنظومة الاحترافية لإدارة الصيدلية والمخزون والمبيعات</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>مرحبًا بك</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="QuickActions" xml:space="preserve">
+    <value>إجراءات سريعة</value>
+  </data>
+  <!-- Navigation -->
+  <data name="Navigation" xml:space="preserve">
+    <value>التنقل الرئيسي</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>المنتجات والأدوية</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>فئات الأدوية</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>أماكن التخزين والأرفف</value>
+  </data>
+  <data name="Suppliers" xml:space="preserve">
+    <value>الموردون</value>
+  </data>
+  <data name="Purchases" xml:space="preserve">
+    <value>المشتريات والواردات</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>المخزون والتشغيلات</value>
+  </data>
+  <data name="Batches" xml:space="preserve">
+    <value>التشغيلات والكميات</value>
+  </data>
+  <data name="Sales" xml:space="preserve">
+    <value>المبيعات ونقاط البيع</value>
+  </data>
+  <data name="NewSale" xml:space="preserve">
+    <value>فاتورة بيع جديدة</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>العملاء والمرضى</value>
+  </data>
+  <data name="Returns" xml:space="preserve">
+    <value>المرتجعات</value>
+  </data>
+  <data name="SalesReturns" xml:space="preserve">
+    <value>مرتجعات المبيعات</value>
+  </data>
+  <data name="PurchaseReturns" xml:space="preserve">
+    <value>مرتجعات المشتريات</value>
+  </data>
+  <data name="Expenses" xml:space="preserve">
+    <value>المصروفات التشغيلية</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>التقارير والإحصائيات</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>التنبيهات والإشعارات</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>المستخدمون والصلاحيات</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>الأدوار الوظيفية</value>
+  </data>
+  <data name="AuditLogs" xml:space="preserve">
+    <value>سجل النشاطات والمراجعة</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>الملف الشخصي</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>تسجيل الدخول إلى النظام</value>
+  </data>
+  <data name="LoginSubtitle" xml:space="preserve">
+    <value>أدخل بيانات الاعتماد الخاصة بك للمتابعة</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>تذكرني على هذا الجهاز</value>
+  </data>
+  <!-- Actions -->
+  <data name="Create" xml:space="preserve">
+    <value>إضافة جديد</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>جديد</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ التغييرات</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>اكتب للبحث...</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>إعادة تعيين</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>العودة إلى القائمة</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>تأكيد</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>تصدير</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>طباعة</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>إلغاء التفعيل</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>-- اختر --</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>جاري المعالجة...</value>
+  </data>
+  <!-- Statuses -->
+  <data name="Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="Confirmed" xml:space="preserve">
+    <value>مؤكد</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>ملغي</value>
+  </data>
+  <data name="LowStock" xml:space="preserve">
+    <value>مخزون منخفض</value>
+  </data>
+  <data name="OutOfStock" xml:space="preserve">
+    <value>نفد المخزون</value>
+  </data>
+  <data name="InStock" xml:space="preserve">
+    <value>متوفر</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+  </data>
+  <data name="NearExpiry" xml:space="preserve">
+    <value>يقترب من الانتهاء</value>
+  </data>
+  <data name="Valid" xml:space="preserve">
+    <value>صالح</value>
+  </data>
+  <!-- Fields & Headers -->
+  <data name="Id" xml:space="preserve">
+    <value>الرقم التعريفي</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>الكود</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>الباركود</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="SellingPrice" xml:space="preserve">
+    <value>سعر البيع</value>
+  </data>
+  <data name="MinimumStockLevel" xml:space="preserve">
+    <value>الحد الأدنى للطلب</value>
+  </data>
+  <data name="PurchasePrice" xml:space="preserve">
+    <value>سعر الشراء</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>تكلفة الوحدة</value>
+  </data>
+  <data name="UnitPrice" xml:space="preserve">
+    <value>سعر الوحدة</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="QuantityOnHand" xml:space="preserve">
+    <value>الكمية المتوفرة</value>
+  </data>
+  <data name="AvailableQuantity" xml:space="preserve">
+    <value>الكمية المتاحة الصالحة</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>المبلغ الإجمالي</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="ExpiryDate" xml:space="preserve">
+    <value>تاريخ انتهاء الصلاحية</value>
+  </data>
+  <data name="AddedDate" xml:space="preserve">
+    <value>تاريخ الإضافة</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>الموقع التخزيني</value>
+  </data>
+  <data name="Batch" xml:space="preserve">
+    <value>التشغيلة</value>
+  </data>
+  <data name="BatchNumber" xml:space="preserve">
+    <value>رقم التشغيلة</value>
+  </data>
+  <data name="Supplier" xml:space="preserve">
+    <value>المورد</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>العميل</value>
+  </data>
+  <data name="WalkInCustomer" xml:space="preserve">
+    <value>عميل بدون تسجيل (نقدي)</value>
+  </data>
+  <data name="InvoiceNumber" xml:space="preserve">
+    <value>رقم الفاتورة</value>
+  </data>
+  <data name="PaymentMethod" xml:space="preserve">
+    <value>طريقة الدفع</value>
+  </data>
+  <data name="PaymentMethod_Cash" xml:space="preserve">
+    <value>نقدًا (كاش)</value>
+  </data>
+  <data name="PaymentMethod_Card" xml:space="preserve">
+    <value>بطاقة بنكية / مدى</value>
+  </data>
+  <data name="PaymentMethod_Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>الدور الوظيفي</value>
+  </data>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>مدير النظام</value>
+  </data>
+  <data name="Role_Pharmacist" xml:space="preserve">
+    <value>صيدلي / كاشير</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>ملاحظات</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>الوقت والتاريخ</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>المستخدم المسؤول</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>المبلغ</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <!-- Confirmation & Modals -->
+  <data name="DeleteConfirmTitle" xml:space="preserve">
+    <value>تأكيد عملية الحذف</value>
+  </data>
+  <data name="DeleteConfirmMessage" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في حذف هذا العنصر؟ لن تتمكن من التراجع عن هذه الخطوة.</value>
+  </data>
+  <data name="ConfirmPermanentDelete" xml:space="preserve">
+    <value>نعم، قم بالحذف الآن</value>
+  </data>
+  <data name="CannotDeleteTitle" xml:space="preserve">
+    <value>تعذر تنفيذ الحذف</value>
+  </data>
+  <data name="CannotDeleteProductHistory" xml:space="preserve">
+    <value>لا يمكن حذف هذا المنتج لأنه مرتبط بعمليات سابقة ومخزون تاريخي. يمكنك إلغاء تفعيله بدلًا من حذفه.</value>
+  </data>
+  <data name="CannotDeleteCategoryProducts" xml:space="preserve">
+    <value>لا يمكن حذف هذه الفئة لوجود أدوية ومنتجات مرتبطة بها حاليًا.</value>
+  </data>
+  <data name="CannotDeleteSupplierPurchases" xml:space="preserve">
+    <value>لا يمكن حذف هذا المورد لوجود فواتير مشتريات تاريخية مسجلة باسمه.</value>
+  </data>
+  <data name="CannotDeleteLocationBatches" xml:space="preserve">
+    <value>لا يمكن حذف هذا الموقع التخزيني لوجود تشغيلات مخزنة فيه.</value>
+  </data>
+  <data name="DeactivateInstead" xml:space="preserve">
+    <value>إلغاء التفعيل بدلًا من الحذف</value>
+  </data>
+  <data name="ConfirmationRequired" xml:space="preserve">
+    <value>تأكيد الإجراء</value>
+  </data>
+  <!-- Empty States -->
+  <data name="NoDataFound" xml:space="preserve">
+    <value>لا توجد بيانات متاحة حاليًا.</value>
+  </data>
+  <data name="NoResultsFound" xml:space="preserve">
+    <value>لم يتم العثور على نتائج مطابقة لبحثك.</value>
+  </data>
+  <data name="NoProductsFound" xml:space="preserve">
+    <value>لا توجد منتجات مضافة حتى الآن.</value>
+  </data>
+  <data name="NoSalesFound" xml:space="preserve">
+    <value>لم يتم تسجيل أي عمليات بيع اليوم.</value>
+  </data>
+  <data name="NoPurchasesFound" xml:space="preserve">
+    <value>لم يتم تسجيل أي فواتير واردة بعد.</value>
+  </data>
+  <data name="NoLowStockItems" xml:space="preserve">
+    <value>جميع المنتجات ضمن الحدود الآمنة للمخزون.</value>
+  </data>
+  <data name="NoExpiryAlerts" xml:space="preserve">
+    <value>لا توجد تشغيلات تقترب من تاريخ انتهاء الصلاحية.</value>
+  </data>
+  <data name="TryAdjustingSearch" xml:space="preserve">
+    <value>جرب تعديل كلمات البحث أو مسح عوامل التصفية للوصول لنتائج أفضل.</value>
+  </data>
+  <data name="ClearFilters" xml:space="preserve">
+    <value>مسح التصفية</value>
+  </data>
+  <data name="CreateFirstRecord" xml:space="preserve">
+    <value>ابدأ بإضافة أول سجل الآن</value>
+  </data>
+  <!-- Notifications -->
+  <data name="NotificationsTitle" xml:space="preserve">
+    <value>مركز التنبيهات</value>
+  </data>
+  <data name="LowStockAlertNotification" xml:space="preserve">
+    <value>{0} منتجات اقتربت من الحد الأدنى للمخزون.</value>
+  </data>
+  <data name="NearExpiryAlertNotification" xml:space="preserve">
+    <value>{0} تشغيلات تنتهي صلاحيتها خلال الـ 90 يومًا القادمة.</value>
+  </data>
+  <data name="ExpiredBatchAlertNotification" xml:space="preserve">
+    <value>{0} تشغيلات منتهية الصلاحية تتطلب الاستبعاد فورًا.</value>
+  </data>
+  <data name="MarkAllRead" xml:space="preserve">
+    <value>تحديد الكل كمقروء</value>
+  </data>
+  <data name="ViewAllNotifications" xml:space="preserve">
+    <value>عرض كافة التنبيهات</value>
+  </data>
+  <data name="NoNewNotifications" xml:space="preserve">
+    <value>لا توجد إشعارات جديدة حاليًا</value>
+  </data>
+  <!-- Pagination -->
+  <data name="Page" xml:space="preserve">
+    <value>الصفحة</value>
+  </data>
+  <data name="Of" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="TotalRecords" xml:space="preserve">
+    <value>إجمالي السجلات: {0}</value>
+  </data>
+  <data name="ShowingEntries" xml:space="preserve">
+    <value>عرض {0} إلى {1} من أصل {2} سجل</value>
+  </data>
+  <data name="FirstPage" xml:space="preserve">
+    <value>الأولى</value>
+  </data>
+  <data name="LastPage" xml:space="preserve">
+    <value>الأخيرة</value>
+  </data>
+  <!-- Validation Messages -->
+  <data name="RequiredField" xml:space="preserve">
+    <value>هذا الحقل مطلوب ولا يمكن تركه فارغًا.</value>
+  </data>
+  <data name="StringLengthMax" xml:space="preserve">
+    <value>الحد الأقصى المسموح به هو {1} حرفًا.</value>
+  </data>
+  <data name="RangeBetween" xml:space="preserve">
+    <value>يجب أن تكون القيمة بين {1} و {2}.</value>
+  </data>
+  <data name="PositiveQuantityRequired" xml:space="preserve">
+    <value>يرجى إدخال كمية صحيحة أكبر من الصفر.</value>
+  </data>
+  <data name="PositivePriceRequired" xml:space="preserve">
+    <value>يرجى إدخال سعر صحيح (صفر أو أكثر).</value>
+  </data>
+  <data name="FutureDateRequired" xml:space="preserve">
+    <value>يجب أن يكون التاريخ في المستقبل أو تاريخ اليوم.</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>اسم المستخدم أو كلمة المرور غير صحيحة.</value>
+  </data>
+  <data name="AccountDeactivated" xml:space="preserve">
+    <value>تم تعطيل هذا الحساب. يرجى مراجعة مدير النظام.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>المستخدم المطلوب غير موجود.</value>
+  </data>
+  <data name="ValueAlreadyExists" xml:space="preserve">
+    <value>هذه القيمة مسجلة مسبقًا، يرجى اختيار قيمة فريدة.</value>
+  </data>
+  <!-- Errors & Messages -->
+  <data name="OperationSuccess" xml:space="preserve">
+    <value>تم تنفيذ العملية بنجاح.</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>تعذر تنفيذ العملية، يرجى التحقق من المدخلات والمحاولة مرة أخرى.</value>
+  </data>
+  <data name="UnexpectedErrorOccurred" xml:space="preserve">
+    <value>حدث خطأ غير متوقع أثناء معالجة طلبك. تم تسجيل الخطأ للمتابعة.</value>
+  </data>
+  <data name="PageNotFoundTitle" xml:space="preserve">
+    <value>الصفحة غير موجودة (404)</value>
+  </data>
+  <data name="PageNotFoundDescription" xml:space="preserve">
+    <value>عذرًا، لم نتمكن من العثور على الصفحة التي تبحث عنها. ربما تم نقلها أو حذفها.</value>
+  </data>
+  <data name="AccessDeniedTitle" xml:space="preserve">
+    <value>غير مصرح بالدخول (403)</value>
+  </data>
+  <data name="AccessDeniedDescription" xml:space="preserve">
+    <value>ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة أو تنفيذ هذا الإجراء.</value>
+  </data>
+  <data name="ReturnToDashboard" xml:space="preserve">
+    <value>العودة إلى لوحة التحكم الرئيسية</value>
+  </data>
+  <!-- Dashboard Metrics -->
+  <data name="TodaySales" xml:space="preserve">
+    <value>مبيعات اليوم</value>
+  </data>
+  <data name="TodayPurchases" xml:space="preserve">
+    <value>مشتريات اليوم</value>
+  </data>
+  <data name="ActiveProductsCount" xml:space="preserve">
+    <value>المنتجات المسجلة</value>
+  </data>
+  <data name="LowStockAlerts" xml:space="preserve">
+    <value>تنبيهات نقص المخزون</value>
+  </data>
+  <!-- Modules & Navigation -->
+  <data name="Nav_Users" xml:space="preserve">
+    <value>إدارة المستخدمين</value>
+  </data>
+  <data name="Nav_Products" xml:space="preserve">
+    <value>المنتجات والأدوية</value>
+  </data>
+  <data name="Nav_Categories" xml:space="preserve">
+    <value>فئات الأدوية</value>
+  </data>
+  <data name="Nav_Locations" xml:space="preserve">
+    <value>أماكن التخزين والأرفف</value>
+  </data>
+  <data name="Nav_Suppliers" xml:space="preserve">
+    <value>الموردون</value>
+  </data>
+  <data name="Nav_Purchases" xml:space="preserve">
+    <value>المشتريات والواردات</value>
+  </data>
+  <data name="Nav_Sales" xml:space="preserve">
+    <value>المبيعات وفواتير الصرف</value>
+  </data>
+  <data name="Nav_Customers" xml:space="preserve">
+    <value>العملاء والمرضى</value>
+  </data>
+  <data name="Nav_Inventory" xml:space="preserve">
+    <value>المخزون والتشغيلات</value>
+  </data>
+  <data name="Nav_Reports" xml:space="preserve">
+    <value>التقارير والإحصائيات</value>
+  </data>
+  <data name="Nav_Expenses" xml:space="preserve">
+    <value>المصروفات التشغيلية</value>
+  </data>
+  <data name="Nav_AuditLogs" xml:space="preserve">
+    <value>سجل الرقابة والأحداث</value>
+  </data>
+  <!-- Roles & Auth Extra -->
+  <data name="InvalidRoleSelected" xml:space="preserve">
+    <value>الدور المختار لا يتطابق مع صلاحيات هذا الحساب في قاعدة البيانات.</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>نسيت كلمة المرور</value>
+  </data>
+  <data name="ForgotPasswordSubtitle" xml:space="preserve">
+    <value>أدخل اسم المستخدم للبدء في استعادة الحساب</value>
+  </data>
+  <data name="SendResetLink" xml:space="preserve">
+    <value>إرسال رابط إعادة التعيين</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>العودة لتسجيل الدخول</value>
+  </data>
+  <data name="ForgotPasswordConfirmationTitle" xml:space="preserve">
+    <value>تم استلام طلب إعادة التعيين</value>
+  </data>
+  <data name="ForgotPasswordConfirmationMessage" xml:space="preserve">
+    <value>إذا كان اسم المستخدم صحيحًا ونشطًا، فقد تم إصدار رابط استعادة آمن صالح لمدة 15 دقيقة.</value>
+  </data>
+  <data name="DevelopmentResetLinkNotice" xml:space="preserve">
+    <value>رابط إعادة التعيين المباشر (وضع التطوير)</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>إعادة تعيين كلمة المرور</value>
+  </data>
+  <data name="ResetPasswordSubtitle" xml:space="preserve">
+    <value>يرجى إدخال كلمة المرور الجديدة وتأكيدها</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>كلمة المرور الجديدة</value>
+  </data>
+  <data name="PasswordMinLength" xml:space="preserve">
+    <value>يجب ألا تقل كلمة المرور عن 6 أحرف.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>كلمتا المرور غير متطابقتين.</value>
+  </data>
+  <data name="PasswordResetSuccessTitle" xml:space="preserve">
+    <value>تمت إعادة تعيين كلمة المرور بنجاح</value>
+  </data>
+  <data name="PasswordResetSuccessMessage" xml:space="preserve">
+    <value>تم تحديث كلمة المرور الخاصة بك بنجاح، يمكنك الآن تسجيل الدخول بها.</value>
+  </data>
+  <data name="LoginNow" xml:space="preserve">
+    <value>تسجيل الدخول الآن</value>
+  </data>
+  <data name="InvalidResetToken" xml:space="preserve">
+    <value>رمز الاستعادة غير صالح أو انتهت صلاحيته (المدة 15 دقيقة).</value>
+  </data>
+  <data name="PasswordResetEmailGreeting" xml:space="preserve">
+    <value>مرحبًا، لقد تم طلب إعادة تعيين كلمة المرور لحسابك:</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>تغيير كلمة المرور</value>
+  </data>
+  <data name="ChangePasswordSubtitle" xml:space="preserve">
+    <value>تحديث كلمة المرور الحالية لحسابك الشخصي</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>كلمة المرور الحالية</value>
+  </data>
+  <data name="IncorrectCurrentPassword" xml:space="preserve">
+    <value>كلمة المرور الحالية غير صحيحة.</value>
+  </data>
+  <data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>تم تغيير كلمة المرور بنجاح.</value>
+  </data>
+  <data name="CannotDeactivateLastAdmin" xml:space="preserve">
+    <value>لا يمكن تعطيل أو تغيير دور أو حذف المدير النشط الوحيد لحماية النظام من الإغلاق.</value>
+  </data>
+  <data name="CannotDeleteUserWithTransactionsNotice" xml:space="preserve">
+    <value>لا يمكن حذف هذا المستخدم لوجود معاملات وفواتير مسجلة باسمه. يرجى تعطيل الحساب بدلاً من الحذف للحفاظ على السجلات المحاسبية.</value>
+  </data>
+  <data name="UserCreatedSuccessfully" xml:space="preserve">
+    <value>تم إنشاء حساب المستخدم بنجاح.</value>
+  </data>
+  <data name="UserUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث بيانات المستخدم بنجاح.</value>
+  </data>
+  <data name="UsernameAlreadyExists" xml:space="preserve">
+    <value>اسم المستخدم مسجل مسبقًا، يرجى اختيار اسم مستخدم آخر.</value>
+  </data>
+  <data name="BarcodeAlreadyExists" xml:space="preserve">
+    <value>هذا الباركود مسجل بالفعل لمنتج آخر في النظام.</value>
+  </data>
+  <data name="CannotDeleteProductWithHistoryNotice" xml:space="preserve">
+    <value>لا يمكن حذف هذا المنتج لوجود رصيد أو فواتير سابقة مرتبطة به. يرجى تعطيل المنتج بدلاً من ذلك.</value>
+  </data>
+  <data name="CannotDeleteCategoryWithProductsNotice" xml:space="preserve">
+    <value>لا يمكن حذف التصنيف لأنه يحتوي على منتجات مرتبطة به.</value>
+  </data>
+  <data name="CannotDeleteSupplierWithPurchasesNotice" xml:space="preserve">
+    <value>لا يمكن حذف المورد لوجود فواتير توريد ومشتريات مسجلة له.</value>
+  </data>
+  <data name="CannotDeleteCustomerWithSalesNotice" xml:space="preserve">
+    <value>لا يمكن حذف العميل لوجود فواتير مبيعات مسجلة باسمه.</value>
+  </data>
+  <data name="CannotDeleteLocationWithBatchesNotice" xml:space="preserve">
+    <value>لا يمكن حذف مكان التخزين لوجود تشغيلات مخزنة به حاليًا.</value>
+  </data>
+  <!-- POS & Sales -->
+  <data name="POS_Terminal" xml:space="preserve">
+    <value>نقطة البيع (الكاشير)</value>
+  </data>
+  <data name="POS_Subtitle" xml:space="preserve">
+    <value>واجهة صرف الأدوية والمبيعات مع قارئ الباركود وتطبيق صرف FEFO</value>
+  </data>
+  <data name="ScanBarcodeOrType" xml:space="preserve">
+    <value>مسح الباركود أو إدخال الكود يدويًا</value>
+  </data>
+  <data name="BarcodeScannerPlaceholder" xml:space="preserve">
+    <value>امسح بالباركود أو اكتب الكود واضغط Enter...</value>
+  </data>
+  <data name="Lookup" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="AvailableProducts" xml:space="preserve">
+    <value>المنتجات المتاحة بالمخزون</value>
+  </data>
+  <data name="FilterByNameOrBarcode" xml:space="preserve">
+    <value>تصفية بالاسم أو الباركود...</value>
+  </data>
+  <data name="CurrentCart" xml:space="preserve">
+    <value>سلة المبيعات الحالية</value>
+  </data>
+  <data name="ClearCart" xml:space="preserve">
+    <value>تفريغ السلة</value>
+  </data>
+  <data name="CartIsEmptyScanPrompt" xml:space="preserve">
+    <value>السلة فارغة. ابدأ بمسح الباركود أو إضافة منتجات من القائمة.</value>
+  </data>
+  <data name="StockInsufficientNotice" xml:space="preserve">
+    <value>الكمية المطلوبة تتجاوز الرصيد الصالح المتاح من هذا المنتج بالمخزن!</value>
+  </data>
+  <data name="CompleteSaleAndPrint" xml:space="preserve">
+    <value>إتمام عملية البيع وطباعة الفاتورة</value>
+  </data>
+  <data name="ProductOutOfStock" xml:space="preserve">
+    <value>المنتج نافد من المخزون الصالح</value>
+  </data>
+  <data name="ProductNotFoundForBarcode" xml:space="preserve">
+    <value>لم يتم العثور على منتج مسجل بهذا الباركود</value>
+  </data>
+  <data name="ErrorLookingUpBarcode" xml:space="preserve">
+    <value>حدث خطأ أثناء فحص الباركود</value>
+  </data>
+  <data name="SalesReturnsSubtitle" xml:space="preserve">
+    <value>إرجاع الأصناف واسترداد المبالغ للعملاء واستعادة الرصيد للتشغيلات</value>
+  </data>
+  <data name="PurchaseReturnsSubtitle" xml:space="preserve">
+    <value>إرجاع الأصناف للموردين وتخفيض رصيد التشغيلات</value>
+  </data>
+  <data name="ProcessSalesReturn" xml:space="preserve">
+    <value>معالجة مرتجع مبيعات</value>
+  </data>
+  <data name="ProcessPurchaseReturn" xml:space="preserve">
+    <value>معالجة مرتجع مشتريات</value>
+  </data>
+  <data name="AtLeastOneItemMustBeReturned" xml:space="preserve">
+    <value>يجب إدخال كمية صالحة أكبر من الصفر لعنصر واحد على الأقل.</value>
+  </data>
+  <data name="SalesReturnProcessedAndStockRestored" xml:space="preserve">
+    <value>تمت معالجة المرتجع واستعادة الكميات للتشغيلات بنجاح.</value>
+  </data>
+  <data name="PurchaseReturnProcessedAndStockDeducted" xml:space="preserve">
+    <value>تمت معالجة مرتجع المشتريات وتخفيض المخزون بنجاح.</value>
+  </data>
+  <data name="ReturnReason" xml:space="preserve">
+    <value>سبب الإرجاع</value>
+  </data>
+  <data name="ReasonPlaceholder" xml:space="preserve">
+    <value>اكتب سبب الإرجاع هنا...</value>
+  </data>
+  <data name="SelectItemsToReturn" xml:space="preserve">
+    <value>حدد الأصناف والكميات المراد استرجاعها</value>
+  </data>
+  <data name="ConfirmReturnAndRefund" xml:space="preserve">
+    <value>تأكيد الإرجاع واسترداد المبلغ</value>
+  </data>
+  <data name="SelectLotsToReturnToSupplier" xml:space="preserve">
+    <value>حدد التشغيلات المراد إرجاعها للمورد</value>
+  </data>
+  <data name="ConfirmReturnToSupplier" xml:space="preserve">
+    <value>تأكيد الإرجاع للمورد وتخفيض المخزون</value>
+  </data>
+  <data name="BatchTracking" xml:space="preserve">
+    <value>تتبع التشغيلات (Lots)</value>
+  </data>
+  <data name="ExpiryTracking" xml:space="preserve">
+    <value>تتبع تواريخ الصلاحية</value>
+  </data>
+  <data name="StockValuationAndBreakdown" xml:space="preserve">
+    <value>تقييم إجمالي قيمة المخزون وتوزيعه حسب التصنيفات</value>
+  </data>
+  <data name="FinancialCostAtRisk" xml:space="preserve">
+    <value>التكلفة المعرضة للانتهاء</value>
+  </data>
+  <data name="BatchesAtRisk" xml:space="preserve">
+    <value>تشغيلات معرضة للانتهاء</value>
+  </data>
+  <data name="StockUnitsAtRisk" xml:space="preserve">
+    <value>وحدات معرضة للانتهاء</value>
+  </data>
+  <data name="NoBatchesAtRiskInThreshold" xml:space="preserve">
+    <value>ممتاز! لا توجد تشغيلات تقترب من تاريخ الانتهاء ضمن الفترة المحددة.</value>
+  </data>
+  <data name="TotalExpenditure" xml:space="preserve">
+    <value>إجمالي المشتريات المؤكدة</value>
+  </data>
+  <data name="TotalRevenue" xml:space="preserve">
+    <value>إجمالي الإيرادات</value>
+  </data>
+  <data name="InvoicesIssued" xml:space="preserve">
+    <value>عدد الفواتير الصادرة</value>
+  </data>
+  <data name="TotalUnitsSold" xml:space="preserve">
+    <value>إجمالي الوحدات المباعة</value>
+  </data>
+  <data name="NoSalesRecordedInPeriod" xml:space="preserve">
+    <value>لا توجد مبيعات مسجلة خلال هذه الفترة.</value>
+  </data>
+  <data name="NoPurchasesRecordedInPeriod" xml:space="preserve">
+    <value>لا توجد مشتريات مسجلة خلال هذه الفترة.</value>
+  </data>
+  <data name="EstimatedValuation" xml:space="preserve">
+    <value>القيمة التقديرية للمخزون (بسعر الشراء)</value>
+  </data>
+  <data name="TotalStockUnits" xml:space="preserve">
+    <value>إجمالي وحدات المخزون</value>
+  </data>
+  <data name="ActiveBatches" xml:space="preserve">
+    <value>التشغيلات النشطة</value>
+  </data>
+  <data name="LowStockProducts" xml:space="preserve">
+    <value>أصناف تحت الحد الأدنى</value>
+  </data>
+  <data name="CategoryBreakdown" xml:space="preserve">
+    <value>توزيع المخزون حسب التصنيف</value>
+  </data>
+  <data name="WarningWindow" xml:space="preserve">
+    <value>نافذة التحذير</value>
+  </data>
+  <data name="ExpiredBatchesWithStock" xml:space="preserve">
+    <value>تشغيلات منتهية الصلاحية وبها رصيد بالمخزن</value>
+  </data>
+  <data name="NoExpiredStockInPharmacy" xml:space="preserve">
+    <value>ممتاز! لا يوجد أي دواء منتهي الصلاحية داخل الصيدلية حاليًا.</value>
+  </data>
+  <data name="NearExpiryBatches" xml:space="preserve">
+    <value>تشغيلات تقترب من انتهاء الصلاحية</value>
+  </data>
+  <data name="NoNearExpiryBatchesInWindow" xml:space="preserve">
+    <value>لا توجد تشغيلات تقترب من الانتهاء ضمن هذه الفترة.</value>
+  </data>
+  <data name="BlockedFromSale" xml:space="preserve">
+    <value>محظور من البيع آليًا</value>
+  </data>
+  <data name="AllStockSufficient" xml:space="preserve">
+    <value>جميع الأرصدة كافية وآمنة</value>
+  </data>
+  <data name="NoProductsBelowThreshold" xml:space="preserve">
+    <value>لا توجد منتجات تقل كميتها عن الحد الأدنى المحدد للمخزون.</value>
+  </data>
+  <data name="Reorder" xml:space="preserve">
+    <value>طلب توريد</value>
+  </data>
+  <data name="NewPurchaseOrder" xml:space="preserve">
+    <value>أمر شراء جديد</value>
+  </data>
+  <data name="PurchaseConfirmedAndStockAdded" xml:space="preserve">
+    <value>تم تأكيد أمر الشراء وإضافة التشغيلات إلى المخزون بنجاح.</value>
+  </data>
+  <data name="PurchaseCreatedSuccessfully" xml:space="preserve">
+    <value>تم حفظ مسودة أمر الشراء بنجاح.</value>
+  </data>
+  <data name="ConfirmPurchasePrompt" xml:space="preserve">
+    <value>هل أنت متأكد من تأكيد استلام الشحنة وإضافتها إلى المخزون الفعلي؟</value>
+  </data>
+  <data name="ConfirmAndReceiveStock" xml:space="preserve">
+    <value>تأكيد الاستلام وإضافة للمخزون</value>
+  </data>
+  <data name="ProductBatchesAndLocations" xml:space="preserve">
+    <value>التشغيلات ومواقع التخزين الفيزيائية للمنتج</value>
+  </data>
+  <data name="NoBatchesFoundForProduct" xml:space="preserve">
+    <value>لا توجد تشغيلات مسجلة لهذا المنتج حاليًا.</value>
+  </data>
+  <data name="PhysicalLocation" xml:space="preserve">
+    <value>مكان التخزين (الرف/الدرج)</value>
+  </data>
+  <data name="StorageLocation" xml:space="preserve">
+    <value>مكان التخزين</value>
+  </data>
+  <data name="LocationCode" xml:space="preserve">
+    <value>كود المكان</value>
+  </data>
+  <data name="LocationName" xml:space="preserve">
+    <value>اسم مكان التخزين</value>
+  </data>
+  <data name="StoredBatches" xml:space="preserve">
+    <value>التشغيلات المخزنة</value>
+  </data>
+  <data name="LocationCreatedSuccessfully" xml:space="preserve">
+    <value>تم حفظ مكان التخزين بنجاح.</value>
+  </data>
+  <data name="LocationUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث بيانات مكان التخزين بنجاح.</value>
+  </data>
+  <data name="LocationCodeAlreadyExists" xml:space="preserve">
+    <value>كود مكان التخزين مسجل مسبقًا.</value>
+  </data>
+  <data name="ExpenseCreatedSuccessfully" xml:space="preserve">
+    <value>تم تسجيل المصروف بنجاح.</value>
+  </data>
+  <data name="ExpenseUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث المصروف بنجاح.</value>
+  </data>
+  <data name="ExpenseDate" xml:space="preserve">
+    <value>تاريخ المصروف</value>
+  </data>
+  <data name="TotalExpensesSum" xml:space="preserve">
+    <value>إجمالي المصروفات</value>
+  </data>
+  <data name="Expense_Rent" xml:space="preserve">
+    <value>إيجار</value>
+  </data>
+  <data name="Expense_Electricity" xml:space="preserve">
+    <value>كهرباء ومرافق</value>
+  </data>
+  <data name="Expense_Utilities" xml:space="preserve">
+    <value>مرافق وفواتير</value>
+  </data>
+  <data name="Expense_Salaries" xml:space="preserve">
+    <value>رواتب وأجور</value>
+  </data>
+  <data name="Expense_Supplies" xml:space="preserve">
+    <value>مستلزمات وأدوات</value>
+  </data>
+  <data name="Expense_Maintenance" xml:space="preserve">
+    <value>صيانة وتجهيزات</value>
+  </data>
+  <data name="Expense_Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="PrintInvoice" xml:space="preserve">
+    <value>طباعة الفاتورة</value>
+  </data>
+  <data name="PrintReport" xml:space="preserve">
+    <value>طباعة التقرير</value>
+  </data>
+  <data name="ThankYouForYourBusiness" xml:space="preserve">
+    <value>نتمنى لكم دوام الصحة والعافية - شكرًا لتعاملكم معنا</value>
+  </data>
+  <data name="ProductCreatedSuccessfully" xml:space="preserve">
+    <value>تم إضافة المنتج بنجاح.</value>
+  </data>
+  <data name="ProductUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث المنتج بنجاح.</value>
+  </data>
+  <data name="ProductDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف المنتج بنجاح.</value>
+  </data>
+  <data name="CategoryCreatedSuccessfully" xml:space="preserve">
+    <value>تم إضافة الفئة بنجاح.</value>
+  </data>
+  <data name="CategoryUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث الفئة بنجاح.</value>
+  </data>
+  <data name="CategoryDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف الفئة بنجاح.</value>
+  </data>
+  <data name="SupplierCreatedSuccessfully" xml:space="preserve">
+    <value>تم إضافة المورد بنجاح.</value>
+  </data>
+  <data name="SupplierUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث المورد بنجاح.</value>
+  </data>
+  <data name="SupplierDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف المورد بنجاح.</value>
+  </data>
+  <data name="CustomerCreatedSuccessfully" xml:space="preserve">
+    <value>تم إضافة العميل بنجاح.</value>
+  </data>
+  <data name="CustomerUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث العميل بنجاح.</value>
+  </data>
+  <data name="CustomerDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف العميل بنجاح.</value>
+  </data>
+  <!-- New Authentication, User Management, and Dashboard Keys -->
+  <data name="FullName" xml:space="preserve">
+    <value>الاسم الكامل</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>يرجى إدخال عنوان بريد إلكتروني صحيح.</value>
+  </data>
+  <data name="EmailAlreadyExists" xml:space="preserve">
+    <value>عنوان البريد الإلكتروني هذا مسجل مسبقًا لمستخدم آخر.</value>
+  </data>
+  <data name="TemporaryPasswordNotice" xml:space="preserve">
+    <value>تم إنشاء كلمة مرور مؤقتة للمستخدم بنجاح</value>
+  </data>
+  <data name="TemporaryPasswordFor" xml:space="preserve">
+    <value>كلمة المرور المؤقتة للحساب</value>
+  </data>
+  <data name="TemporaryPasswordWarning" xml:space="preserve">
+    <value>يرجى نسخ وحفظ كلمة المرور هذه الآن وتزويد المستخدم بها، فلن يتم عرضها مرة أخرى. سيُطلب من المستخدم تغييرها عند أول تسجيل دخول.</value>
+  </data>
+  <data name="ConfirmResetUserPassword" xml:space="preserve">
+    <value>هل أنت متأكد من إعادة تعيين كلمة مرور هذا المستخدم؟ سيتم إنشاء كلمة مرور مؤقتة جديدة.</value>
+  </data>
+  <data name="MustChangePassword" xml:space="preserve">
+    <value>تغيير كلمة المرور إلزامي</value>
+  </data>
+  <data name="MustChangePasswordNotice" xml:space="preserve">
+    <value>تم تسجيل دخولك بنجاح. لأسباب أمنية، يرجى تعيين كلمة مرور جديدة لحسابك قبل المتابعة.</value>
+  </data>
+  <data name="CreateUserTempPasswordInfo" xml:space="preserve">
+    <value>سيقوم النظام تلقائيًا بإنشاء كلمة مرور مؤقتة آمنة للحساب وتفعيل الإلزام بتغييرها فور الدخول الأول.</value>
+  </data>
+  <data name="AdminDashboard" xml:space="preserve">
+    <value>لوحة تحكم المدير</value>
+  </data>
+  <data name="PharmacistDashboard" xml:space="preserve">
+    <value>لوحة تحكم الصيدلي</value>
+  </data>
+  <data name="TodayExpenses" xml:space="preserve">
+    <value>مصروفات اليوم</value>
+  </data>
+  <data name="TodayProfit" xml:space="preserve">
+    <value>أرباح اليوم التقديرية</value>
+  </data>
+  <data name="NetGain" xml:space="preserve">
+    <value>صافي ربح إيجابي</value>
+  </data>
+  <data name="NetLoss" xml:space="preserve">
+    <value>صافي عجز / خسارة</value>
+  </data>
+  <data name="TotalProducts" xml:space="preserve">
+    <value>إجمالي المنتجات</value>
+  </data>
+  <data name="TotalUnits" xml:space="preserve">
+    <value>إجمالي الوحدات بالمخزن</value>
+  </data>
+  <data name="InventoryValue" xml:space="preserve">
+    <value>القيمة التقديرية للمخزون</value>
+  </data>
+  <data name="WeeklyFinancialTrends" xml:space="preserve">
+    <value>المؤشرات المالية الأسبوعية (آخر 7 أيام)</value>
+  </data>
+  <data name="RecentPurchases" xml:space="preserve">
+    <value>أحدث فواتير المشتريات</value>
+  </data>
+  <data name="ExpiredBatches" xml:space="preserve">
+    <value>التشغيلات المنتهية</value>
+  </data>
+  <data name="ViewLowStock" xml:space="preserve">
+    <value>عرض النواقص</value>
+  </data>
+  <data name="NoRecentActivity" xml:space="preserve">
+    <value>لا توجد أنشطة مسجلة مؤخرًا</value>
+  </data>
+  <data name="UnitsInStock" xml:space="preserve">
+    <value>وحدة في المخزون</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>تاريخ الإنشاء</value>
+  </data>
+  <data name="CompleteSale" xml:space="preserve">
+    <value>إتمام عملية البيع</value>
+  </data>
+  <data name="SaleCompletedSuccessfully" xml:space="preserve">
+    <value>تمت عملية البيع بنجاح وحفظ السجل في النظام.</value>
+  </data>
+  <data name="StartNewSale" xml:space="preserve">
+    <value>بدء عملية بيع جديدة</value>
+  </data>
+  <data name="FirstAdminRegistrationTitle" xml:space="preserve">
+    <value>إعداد حساب المدير الرئيسي</value>
+  </data>
+  <data name="FirstAdminRegistrationSubtitle" xml:space="preserve">
+    <value>يرجى إدخال بياناتك لإنشاء حساب المدير والبدء في استخدام النظام</value>
+  </data>
+  <data name="FirstAdminSetupNotice" xml:space="preserve">
+    <value>يتم تشغيل هذا الإعداد لمرة واحدة فقط لإنشاء حساب المدير المسؤول عن الصيدلية.</value>
+  </data>
+  <data name="RealEmailRecommendedNotice" xml:space="preserve">
+    <value>يفضل استخدام بريد إلكتروني حقيقي (مثل بريد Google) لتتمكن من استعادة كلمة المرور عبر الإيميل لاحقًا.</value>
+  </data>
+  <data name="CreateAdminAccountAndStart" xml:space="preserve">
+    <value>إنشاء حساب المدير وبدء الاستخدام</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>اختياري</value>
+  </data>
+  <data name="PurchaseMustContainAtLeastOneItem" xml:space="preserve">
+    <value>يجب أن تحتوي فاتورة الشراء على صنف واحد على الأقل.</value>
+  </data>
+  <data name="AccountLockedOut" xml:space="preserve">
+    <value>تم قفل الحساب مؤقتًا بسبب تكرار محاولات تسجيل الدخول الخاطئة. يرجى المحاولة مرة أخرى بعد 15 دقيقة أو استعادة كلمة المرور.</value>
+  </data>
+  <data name="PasswordResetInstructions" xml:space="preserve">
+    <value>تلقينا طلبًا لإعادة تعيين كلمة المرور لحسابك. يرجى النقر على الزر أدناه لإتمام العملية:</value>
+  </data>
+  <data name="TokenExpiresIn15Minutes" xml:space="preserve">
+    <value>هذا الرابط صالح للاستخدام مرة واحدة فقط وينتهي بعد 15 دقيقة من وقت إصداره.</value>
+  </data>
+  <data name="PasswordResetIgnorePrompt" xml:space="preserve">
+    <value>إذا لم تكن قد طلبت إعادة تعيين كلمة المرور بنفسك، يمكنك تجاهل هذه الرسالة بأمان وستظل كلمة مرورك الحالية نشطة دون تغيير.</value>
+  </data>
+  <data name="LightMode" xml:space="preserve">
+    <value>الوضع الفاتح</value>
+  </data>
+  <data name="DarkMode" xml:space="preserve">
+    <value>الوضع الداكن</value>
+  </data>
+  <data name="ToggleTheme" xml:space="preserve">
+    <value>تبديل المظهر (فاتح / داكن)</value>
+  </data>
+  <data name="AddStock" xml:space="preserve">
+    <value>إضافة مخزون</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>هل أنت متأكد من الحذف؟</value>
+  </data>
+  <data name="OpeningStockInfo" xml:space="preserve">
+    <value>يتم إضافة المخزون من خلال عمليات الشراء</value>
+  </data>
+  <data name="StockAddedViaPurchases" xml:space="preserve">
+    <value>يتم إضافة الكمية عبر المشتريات</value>
+  </data>
+  <data name="CurrencySymbol" xml:space="preserve">
+    <value>ج.م</value>
+  </data>
+  <data name="ProductName" xml:space="preserve">
+    <value>اسم المنتج</value>
+  </data>
+  <data name="AddProduct" xml:space="preserve">
+    <value>إضافة منتج</value>
+  </data>
+  <data name="CreateProductSubtitle" xml:space="preserve">
+    <value>إضافة صنف دوائي أو مستلزم جديد إلى الكتالوج</value>
+  </data>
+  <data name="EditProduct" xml:space="preserve">
+    <value>تعديل المنتج</value>
+  </data>
+  <data name="EditProductSubtitle" xml:space="preserve">
+    <value>تحديث بيانات وسعر المنتج</value>
+  </data>
+  <data name="BarcodePlaceholder" xml:space="preserve">
+    <value>امسح أو اكتب الباركود...</value>
+  </data>
+  <data name="ProductsSubtitle" xml:space="preserve">
+    <value>إدارة كتالوج الأدوية والمنتجات والأسعار</value>
+  </data>
+  <data name="AvailableStock" xml:space="preserve">
+    <value>المخزون المتاح</value>
+  </data>
+  <data name="LowStockOnly" xml:space="preserve">
+    <value>المخزون المنخفض فقط</value>
+  </data>
+  <data name="AllCategories" xml:space="preserve">
+    <value>جميع الفئات</value>
+  </data>
+  <data name="AllSuppliers" xml:space="preserve">
+    <value>جميع الموردين</value>
+  </data>
+  <data name="AllLocations" xml:space="preserve">
+    <value>جميع المواقع التخزينية</value>
+  </data>
+  <data name="AllRoles" xml:space="preserve">
+    <value>جميع الأدوار</value>
+  </data>
+  <data name="AllStatuses" xml:space="preserve">
+    <value>جميع الحالات</value>
+  </data>
+  <data name="AllStock" xml:space="preserve">
+    <value>كافة المخزون</value>
+  </data>
+  <data name="AllActions" xml:space="preserve">
+    <value>كافة الإجراءات</value>
+  </data>
+  <data name="AddCategory" xml:space="preserve">
+    <value>إضافة فئة</value>
+  </data>
+  <data name="EditCategory" xml:space="preserve">
+    <value>تعديل الفئة</value>
+  </data>
+  <data name="CategoriesSubtitle" xml:space="preserve">
+    <value>إدارة تصنيفات وفئات الأدوية</value>
+  </data>
+  <data name="CreateCategorySubtitle" xml:space="preserve">
+    <value>إنشاء فئة أو تصنيف جديد للأدوية</value>
+  </data>
+  <data name="EditCategorySubtitle" xml:space="preserve">
+    <value>تعديل بيانات التصنيف</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>اسم الفئة</value>
+  </data>
+  <data name="AddCustomer" xml:space="preserve">
+    <value>إضافة عميل</value>
+  </data>
+  <data name="EditCustomer" xml:space="preserve">
+    <value>تعديل العميل</value>
+  </data>
+  <data name="CustomersSubtitle" xml:space="preserve">
+    <value>سجل العملاء والمرضى وبيانات الاتصال</value>
+  </data>
+  <data name="CreateCustomerSubtitle" xml:space="preserve">
+    <value>تسجيل بيانات مريض أو عميل جديد</value>
+  </data>
+  <data name="EditCustomerSubtitle" xml:space="preserve">
+    <value>تحديث بيانات المريض أو العميل</value>
+  </data>
+  <data name="CustomerInformation" xml:space="preserve">
+    <value>بيانات العميل</value>
+  </data>
+  <data name="CustomerName" xml:space="preserve">
+    <value>اسم العميل</value>
+  </data>
+  <data name="AddSupplier" xml:space="preserve">
+    <value>إضافة مورد</value>
+  </data>
+  <data name="EditSupplier" xml:space="preserve">
+    <value>تعديل المورد</value>
+  </data>
+  <data name="SuppliersSubtitle" xml:space="preserve">
+    <value>سجل شركات الأدوية والموردين المعتمدين</value>
+  </data>
+  <data name="CreateSupplierSubtitle" xml:space="preserve">
+    <value>تسجيل مورد أو موزع أدوية جديد</value>
+  </data>
+  <data name="EditSupplierSubtitle" xml:space="preserve">
+    <value>تعديل بيانات المورد</value>
+  </data>
+  <data name="SupplierInformation" xml:space="preserve">
+    <value>بيانات المورد</value>
+  </data>
+  <data name="SupplierName" xml:space="preserve">
+    <value>اسم المورد</value>
+  </data>
+  <data name="SupplierSpend" xml:space="preserve">
+    <value>إجمالي التعاملات</value>
+  </data>
+  <data name="AddLocation" xml:space="preserve">
+    <value>إضافة موقع تخزين</value>
+  </data>
+  <data name="EditLocation" xml:space="preserve">
+    <value>تعديل موقع التخزين</value>
+  </data>
+  <data name="LocationsSubtitle" xml:space="preserve">
+    <value>إدارة الأرفف والأقسام وثلاجات حفظ الأدوية</value>
+  </data>
+  <data name="CreateLocationSubtitle" xml:space="preserve">
+    <value>تعريف رف أو ثلاجة أو قسم تخزين جديد</value>
+  </data>
+  <data name="EditLocationSubtitle" xml:space="preserve">
+    <value>تحديث بيانات الموقع التخزيني</value>
+  </data>
+  <data name="AddExpense" xml:space="preserve">
+    <value>إضافة مصروف</value>
+  </data>
+  <data name="EditExpense" xml:space="preserve">
+    <value>تعديل المصروف</value>
+  </data>
+  <data name="ExpensesSubtitle" xml:space="preserve">
+    <value>تسجيل ومتابعة المصروفات التشغيلية واليومية</value>
+  </data>
+  <data name="CreateExpenseSubtitle" xml:space="preserve">
+    <value>تسجيل مصروفات نقدية أو تشغيلية جديدة</value>
+  </data>
+  <data name="EditExpenseSubtitle" xml:space="preserve">
+    <value>تعديل بيانات المصروف المسجل</value>
+  </data>
+  <data name="NewPurchase" xml:space="preserve">
+    <value>فاتورة شراء جديدة</value>
+  </data>
+  <data name="PurchaseDetails" xml:space="preserve">
+    <value>بيانات فاتورة الشراء</value>
+  </data>
+  <data name="PurchasesSubtitle" xml:space="preserve">
+    <value>سجل فواتير الوارد والمشتريات من الموردين</value>
+  </data>
+  <data name="CreatePurchaseSubtitle" xml:space="preserve">
+    <value>تسجيل بضاعة وتوريدات واردة مع تشغيلاتها</value>
+  </data>
+  <data name="PurchaseItemsAndBatches" xml:space="preserve">
+    <value>أصناف الفاتورة والتشغيلات (Lots)</value>
+  </data>
+  <data name="PurchasedLotsAndBatches" xml:space="preserve">
+    <value>التشغيلات الواردة بالفاتورة</value>
+  </data>
+  <data name="AddItem" xml:space="preserve">
+    <value>إضافة صنف</value>
+  </data>
+  <data name="SaveDraftPurchase" xml:space="preserve">
+    <value>حفظ الفاتورة كمسودة</value>
+  </data>
+  <data name="PurchaseDate" xml:space="preserve">
+    <value>تاريخ الشراء</value>
+  </data>
+  <data name="ReceivedBy" xml:space="preserve">
+    <value>المستلم بواسطة</value>
+  </data>
+  <data name="SalesSubtitle" xml:space="preserve">
+    <value>سجل فواتير المبيعات ونقاط البيع</value>
+  </data>
+  <data name="SaleDate" xml:space="preserve">
+    <value>تاريخ البيع</value>
+  </data>
+  <data name="Cashier" xml:space="preserve">
+    <value>الكاشير / الصيدلي</value>
+  </data>
+  <data name="SalesHistory" xml:space="preserve">
+    <value>سجل المبيعات</value>
+  </data>
+  <data name="SalesCount" xml:space="preserve">
+    <value>عدد المبيعات</value>
+  </data>
+  <data name="TotalSales" xml:space="preserve">
+    <value>إجمالي المبيعات</value>
+  </data>
+  <data name="TotalPurchases" xml:space="preserve">
+    <value>إجمالي المشتريات</value>
+  </data>
+  <data name="TotalSpend" xml:space="preserve">
+    <value>إجمالي الإنفاق</value>
+  </data>
+  <data name="TotalInvoices" xml:space="preserve">
+    <value>إجمالي الفواتير</value>
+  </data>
+  <data name="Invoices" xml:space="preserve">
+    <value>الفواتير</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>الطلبات</value>
+  </data>
+  <data name="OrdersCount" xml:space="preserve">
+    <value>عدد الطلبات</value>
+  </data>
+  <data name="Transactions" xml:space="preserve">
+    <value>الحركات المالية</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>يوم</value>
+  </data>
+  <data name="DaysRemaining" xml:space="preserve">
+    <value>الأيام المتبقية</value>
+  </data>
+  <data name="Within90Days" xml:space="preserve">
+    <value>خلال 90 يوم</value>
+  </data>
+  <data name="NearExpiryAlerts" xml:space="preserve">
+    <value>تنبيهات قرب الانتهاء</value>
+  </data>
+  <data name="RecentSales" xml:space="preserve">
+    <value>أحدث المبيعات</value>
+  </data>
+  <data name="InventoryAlertsSummary" xml:space="preserve">
+    <value>ملخص تنبيهات المخزون</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>وحدة</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>أصناف</value>
+  </data>
+  <data name="FromDate" xml:space="preserve">
+    <value>من تاريخ</value>
+  </data>
+  <data name="ToDate" xml:space="preserve">
+    <value>إلى تاريخ</value>
+  </data>
+  <data name="GenerateReport" xml:space="preserve">
+    <value>عرض التقرير</value>
+  </data>
+  <data name="BackToReports" xml:space="preserve">
+    <value>العودة للتقارير</value>
+  </data>
+  <data name="ReportsSubtitle" xml:space="preserve">
+    <value>التقارير التحليلية والمالية وحركة المخزون</value>
+  </data>
+  <data name="SalesReport" xml:space="preserve">
+    <value>تقرير المبيعات</value>
+  </data>
+  <data name="SalesReportDescription" xml:space="preserve">
+    <value>تحليل المبيعات والإيرادات خلال فترة زمنية محددة</value>
+  </data>
+  <data name="PurchaseReport" xml:space="preserve">
+    <value>تقرير المشتريات</value>
+  </data>
+  <data name="PurchaseReportDescription" xml:space="preserve">
+    <value>متابعة المشتريات والتوريدات من الموردين خلال فترة</value>
+  </data>
+  <data name="InventoryReport" xml:space="preserve">
+    <value>تقرير المخزون</value>
+  </data>
+  <data name="InventoryReportDescription" xml:space="preserve">
+    <value>جرد شامل للأرصدة وقيمة المخزون الإجمالية</value>
+  </data>
+  <data name="ExpiryReport" xml:space="preserve">
+    <value>تقرير الصلاحيات</value>
+  </data>
+  <data name="ExpiryReportDescription" xml:space="preserve">
+    <value>حصر الأدوية منتهية الصلاحية والتي تقترب من الانتهاء</value>
+  </data>
+  <data name="RevenueAndVolume" xml:space="preserve">
+    <value>الإيرادات وحجم المبيعات</value>
+  </data>
+  <data name="LossPrevention" xml:space="preserve">
+    <value>الحماية والحد من الخسائر</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>السعر</value>
+  </data>
+  <data name="GrandTotal" xml:space="preserve">
+    <value>الإجمالي النهائي</value>
+  </data>
+  <data name="LineTotal" xml:space="preserve">
+    <value>إجمالي الصنف</value>
+  </data>
+  <data name="Card" xml:space="preserve">
+    <value>بطاقة بنكية</value>
+  </data>
+  <data name="Cash" xml:space="preserve">
+    <value>نقدًا</value>
+  </data>
+  <data name="ActiveCart" xml:space="preserve">
+    <value>السلة النشطة</value>
+  </data>
+  <data name="PleaseFillRequiredFields" xml:space="preserve">
+    <value>يرجى ملء جميع الحقول المطلوبة.</value>
+  </data>
+  <data name="PleaseFillItemRowFields" xml:space="preserve">
+    <value>يرجى استكمال بيانات الأصناف في الجدول.</value>
+  </data>
+  <data name="AtLeastOneItemRequired" xml:space="preserve">
+    <value>يجب إضافة صنف واحد على الأقل.</value>
+  </data>
+  <data name="Stock" xml:space="preserve">
+    <value>المخزون</value>
+  </data>
+  <data name="StockLevels" xml:space="preserve">
+    <value>مستويات المخزون</value>
+  </data>
+  <data name="StockValuation" xml:space="preserve">
+    <value>تقييم المخزون</value>
+  </data>
+  <data name="TotalStock" xml:space="preserve">
+    <value>إجمالي المخزون</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>المنتج</value>
+  </data>
+  <data name="ProductsCount" xml:space="preserve">
+    <value>عدد المنتجات</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>طبيعي</value>
+  </data>
+  <data name="Deficit" xml:space="preserve">
+    <value>عجز</value>
+  </data>
+  <data name="EstimatedLoss" xml:space="preserve">
+    <value>الخسارة التقديرية</value>
+  </data>
+  <data name="ExpiredStock" xml:space="preserve">
+    <value>المخزون المنتهي</value>
+  </data>
+  <data name="ExpiredUnits" xml:space="preserve">
+    <value>الوحدات المنتهية</value>
+  </data>
+  <data name="ExpiredStockUnits" xml:space="preserve">
+    <value>وحدات منتهية الصلاحية</value>
+  </data>
+  <data name="ExpiredOnly" xml:space="preserve">
+    <value>المنتهي فقط</value>
+  </data>
+  <data name="ViewInvoice" xml:space="preserve">
+    <value>عرض الفاتورة</value>
+  </data>
+  <data name="ViewBatches" xml:space="preserve">
+    <value>عرض التشغيلات</value>
+  </data>
+  <data name="ViewReport" xml:space="preserve">
+    <value>عرض التقرير</value>
+  </data>
+  <data name="ActivitySummary" xml:space="preserve">
+    <value>ملخص النشاط</value>
+  </data>
+  <data name="AuditEvents" xml:space="preserve">
+    <value>أحداث المراجعة</value>
+  </data>
+  <data name="AuditLogsSubtitle" xml:space="preserve">
+    <value>سجل التدقيق والأمان لكافة العمليات الحساسة في النظام</value>
+  </data>
+  <data name="Entity" xml:space="preserve">
+    <value>الكيان / الجدول</value>
+  </data>
+  <data name="EntityId" xml:space="preserve">
+    <value>معرّف السجل</value>
+  </data>
+  <data name="RecordedBy" xml:space="preserve">
+    <value>سُجّل بواسطة</value>
+  </data>
+  <data name="ProcessedBy" xml:space="preserve">
+    <value>المعالج بواسطة</value>
+  </data>
+  <data name="UserManagementSubtitle" xml:space="preserve">
+    <value>إدارة حسابات الصيادلة والمديرين وصلاحياتهم</value>
+  </data>
+  <data name="AddUser" xml:space="preserve">
+    <value>إضافة مستخدم</value>
+  </data>
+  <data name="CreateUserSubtitle" xml:space="preserve">
+    <value>إضافة مستخدم جديد وتحديد دوره وكلمة مروره</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>تعديل المستخدم</value>
+  </data>
+  <data name="EditUserSubtitle" xml:space="preserve">
+    <value>تحديث بيانات المستخدم وصلاحياته</value>
+  </data>
+  <data name="AccountInformation" xml:space="preserve">
+    <value>معلومات الحساب</value>
+  </data>
+  <data name="UnreadCount" xml:space="preserve">
+    <value>غير مقروءة</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>الإجراء</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="LanguageSwitch" xml:space="preserve">
+    <value>تغيير اللغة</value>
+  </data>
+  <data name="SelectProduct" xml:space="preserve">
+    <value>اختر الصنف / الدواء</value>
+  </data>
+  <data name="SelectSupplier" xml:space="preserve">
+    <value>اختر المورد</value>
+  </data>
+  <data name="SelectLocation" xml:space="preserve">
+    <value>اختر الموقع التخزيني</value>
+  </data>
+  <data name="SelectCategory" xml:space="preserve">
+    <value>اختر التصنيف</value>
+  </data>
+  <data name="OptionalNotes" xml:space="preserve">
+    <value>ملاحظات إضافية...</value>
+  </data>
+  <data name="DeleteConfirmationPrompt" xml:space="preserve">
+    <value>هل أنت متأكد من الحذف بشكل نهائي؟</value>
+  </data>
+  <data name="StockAddedToInventoryNotice" xml:space="preserve">
+    <value>تم ترحيل الكميات وإضافتها بنجاح إلى أرصدة المخزون.</value>
+  </data>
+  <data name="OriginalInvoice" xml:space="preserve">
+    <value>الفاتورة الأصلية</value>
+  </data>
+  <data name="QuantityToReturn" xml:space="preserve">
+    <value>الكمية المرتجعة</value>
+  </data>
+  <data name="SoldQuantity" xml:space="preserve">
+    <value>الكمية المباعة</value>
+  </data>
+  <data name="RefundAmount" xml:space="preserve">
+    <value>مبلغ الاسترداد</value>
+  </data>
+  <data name="ReturnDate" xml:space="preserve">
+    <value>تاريخ الإرجاع</value>
+  </data>
+  <data name="NoPurchasesRecorded" xml:space="preserve">
+    <value>لا توجد فواتير شراء مسجلة بعد.</value>
+  </data>
+  <data name="NoSalesRecorded" xml:space="preserve">
+    <value>لا توجد مبيعات مسجلة بعد.</value>
+  </data>
+  <data name="BatchesExpiringWithin" xml:space="preserve">
+    <value>التشغيلات التي تنتهي صلاحيتها قريبًا</value>
+  </data>
+  <data name="BatchTrackingSubtitle" xml:space="preserve">
+    <value>متابعة تواريخ انتهاء صلاحية الأدوية والتشغيلات بالأرفف</value>
+  </data>
+  <data name="SearchPlaceholderProducts" xml:space="preserve">
+    <value>ابحث باسم الدواء، الكود، أو الباركود...</value>
+  </data>
+  <data name="SearchPlaceholderPurchases" xml:space="preserve">
+    <value>ابحث برقم الفاتورة أو المورد...</value>
+  </data>
+  <data name="SearchPlaceholderSales" xml:space="preserve">
+    <value>ابحث برقم الفاتورة أو العميل...</value>
+  </data>
+  <data name="SearchPlaceholderCustomers" xml:space="preserve">
+    <value>ابحث باسم العميل أو رقم الهاتف...</value>
+  </data>
+  <data name="SearchPlaceholderSuppliers" xml:space="preserve">
+    <value>ابحث باسم المورد، الهاتف، أو العنوان...</value>
+  </data>
+  <data name="SearchPlaceholderCategories" xml:space="preserve">
+    <value>ابحث باسم الفئة أو الوصف...</value>
+  </data>
+  <data name="SearchPlaceholderLocations" xml:space="preserve">
+    <value>ابحث بكود الرف أو الموقع التخزيني...</value>
+  </data>
+  <data name="SearchPlaceholderExpenses" xml:space="preserve">
+    <value>ابحث في بنود المصروفات...</value>
+  </data>
+  <data name="SearchPlaceholderBatches" xml:space="preserve">
+    <value>ابحث برقم التشغيلة (Lot/Batch)...</value>
+  </data>
+  <data name="SearchPlaceholderAudit" xml:space="preserve">
+    <value>ابحث في سجل النشاطات...</value>
+  </data>
+  <data name="SearchPlaceholderUsers" xml:space="preserve">
+    <value>ابحث بالاسم أو البريد الإلكتروني...</value>
+  </data>
+  <data name="SearchPlaceholderReturns" xml:space="preserve">
+    <value>ابحث في المرتجعات...</value>
+  </data>
+</root>

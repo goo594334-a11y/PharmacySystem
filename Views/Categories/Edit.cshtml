@@ -1,0 +1,50 @@
+@model PharmacySystem.Models.ViewModels.Categories.EditCategoryViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["EditCategory"];
+}
+
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm ph-card">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold">@Loc["EditCategory"]</h5>
+                    <p class="text-muted small mb-0">@Loc["EditCategorySubtitle"]</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label required">@Loc["CategoryName"]</label>
+                            <input asp-for="Name" class="form-control" autofocus />
+                            <span asp-validation-for="Name" class="field-validation-error"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">@Loc["Description"]</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="field-validation-error"></span>
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" id="categoryIsActiveSwitch" />
+                            <label class="form-check-label" for="categoryIsActiveSwitch">@Loc["Active"]</label>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["Cancel"]</a>
+                            <button type="submit" class="btn btn-teal px-4 fw-semibold">@Loc["Save"]</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

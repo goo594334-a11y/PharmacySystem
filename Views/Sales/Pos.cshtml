@@ -1,0 +1,494 @@
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@using PharmacySystem.Enums
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["POS_Terminal"];
+    var customers = ViewBag.Customers as List<PharmacySystem.Models.Entities.Customer> ?? new();
+}
+
+<div class="container-fluid px-0">
+    @Html.AntiForgeryToken()
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">@Loc["POS_Terminal"]</h4>
+            <p class="text-muted small mb-0">@Loc["POS_Subtitle"]</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">@Loc["SalesHistory"]</a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        @* Left Column: Barcode Scanner & Product Search *@
+        <div class="col-12 col-lg-7">
+            @* Barcode Scanner Bar *@
+            <div class="card border-0 shadow-sm ph-card mb-3">
+                <div class="card-body p-3">
+                    <label class="form-label fw-bold small text-teal mb-1">
+                        <svg class="ph-icon me-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="10" y1="8" x2="10" y2="16"></line><line x1="14" y1="8" x2="14" y2="16"></line><line x1="17" y1="8" x2="17" y2="16"></line></svg>
+                        @Loc["ScanBarcodeOrType"]
+                    </label>
+                    <div class="input-group">
+                        <input type="text" id="barcodeScannerInput" class="form-control form-control-lg" placeholder="@Loc["BarcodeScannerPlaceholder"]" autofocus autocomplete="off" />
+                        <button type="button" id="barcodeSearchBtn" class="btn btn-teal px-4 fw-semibold">
+                            @Loc["Lookup"]
+                        </button>
+                    </div>
+                    <div id="barcodeFeedback" class="small mt-1 text-danger d-none"></div>
+                </div>
+            </div>
+
+            @* Quick Products Catalog Table *@
+            <div class="card border-0 shadow-sm ph-card overflow-hidden">
+                <div class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold small text-dark">@Loc["AvailableProducts"]</span>
+                    <input type="text" id="quickFilterInput" class="form-control form-control-sm w-50" placeholder="@Loc["FilterByNameOrBarcode"]" />
+                </div>
+                <div class="table-responsive" style="max-height: 440px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0 ph-table" id="productsCatalogTable">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th class="ps-3">@Loc["Product"]</th>
+                                <th>@Loc["PhysicalLocation"]</th>
+                                <th>@Loc["Price"]</th>
+                                <th>@Loc["Stock"]</th>
+                                <th class="text-end pe-3">@Loc["Action"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.Products != null)
+                            {
+                                foreach (var p in ViewBag.Products)
+                                {
+                                    <tr class="product-catalog-row" data-id="@p.Id" data-name="@p.Name" data-price="@p.SellingPrice" data-stock="@p.AvailableStock" data-location="@p.Location" data-barcode="@p.Barcode">
+                                        <td class="ps-3">
+                                            <div class="fw-bold text-dark small">@p.Name</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">@(string.IsNullOrEmpty(p.Barcode) ? "-" : p.Barcode)</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-secondary border">@(string.IsNullOrEmpty(p.Location) ? "-" : p.Location)</span>
+                                        </td>
+                                        <td class="fw-bold text-teal">@p.SellingPrice.ToString("N2") @Loc["CurrencySymbol"]</td>
+                                        <td>
+                                            <span class="badge @(p.AvailableStock > 0 ? "bg-success" : "bg-danger") product-stock-badge" data-product-id="@p.Id">
+                                                @p.AvailableStock
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <button type="button" class="btn btn-sm btn-outline-teal add-to-cart-btn" @(p.AvailableStock > 0 ? "" : "disabled")>
+                                                @Loc["Add"] +
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @* Right Column: Active Cart & Checkout *@
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm ph-card h-100 d-flex flex-column">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="card-title mb-0 fw-bold d-flex align-items-center gap-2">
+                        <svg class="ph-icon text-teal" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span>@Loc["ActiveCart"]</span>
+                    </h6>
+                    <button type="button" class="btn btn-sm btn-outline-danger" id="clearCartBtn">
+                        @Loc["ClearCart"]
+                    </button>
+                </div>
+
+                @* Cart Items Table *@
+                <div class="card-body p-0 flex-grow-1 overflow-auto" style="min-height: 250px; max-height: 360px;">
+                    <table class="table align-middle mb-0 ph-table" id="cartTable">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th class="ps-3" style="width: 45%;">@Loc["Product"]</th>
+                                <th style="width: 25%;">@Loc["Quantity"]</th>
+                                <th style="width: 20%;">@Loc["Total"]</th>
+                                <th style="width: 10%;" class="text-end pe-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartBody">
+                            <tr id="emptyCartRow">
+                                <td colspan="4" class="text-center py-5 text-muted small">
+                                    @Loc["CartIsEmptyScanPrompt"]
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                @* Checkout Panel *@
+                <div class="card-footer bg-white border-top p-3">
+                    @* Customer Selection *@
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted mb-1">@Loc["Customer"]</label>
+                        <select class="form-select form-select-sm" id="saleCustomerId">
+                            <option value="">-- @Loc["WalkInCustomer"] --</option>
+                            @foreach (var c in customers)
+                            {
+                                <option value="@c.Id">@c.Name (@(string.IsNullOrEmpty(c.Phone) ? "-" : c.Phone))</option>
+                            }
+                        </select>
+                    </div>
+
+                    @* Payment Method Selection *@
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted mb-1">@Loc["PaymentMethod"]</label>
+                        <div class="btn-group btn-group-sm w-100" role="group">
+                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payCash" value="@PaymentMethod.Cash" checked />
+                            <label class="btn btn-outline-teal" for="payCash">@Loc["PaymentMethod_Cash"]</label>
+
+                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payCard" value="@PaymentMethod.Card" />
+                            <label class="btn btn-outline-teal" for="payCard">@Loc["PaymentMethod_Card"]</label>
+
+                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payOther" value="@PaymentMethod.Other" />
+                            <label class="btn btn-outline-teal" for="payOther">@Loc["PaymentMethod_Other"]</label>
+                        </div>
+                    </div>
+
+                    @* Total Amount *@
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                        <span class="fw-bold text-dark">@Loc["TotalAmount"]:</span>
+                        <span class="fs-4 fw-bold text-teal" id="cartGrandTotal">0.00 @Loc["CurrencySymbol"]</span>
+                    </div>
+
+                    @* Action Buttons: Complete Sale (Primary) vs Complete & Print (Secondary) *@
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-teal py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" id="checkoutBtn" disabled>
+                            <svg class="ph-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>@Loc["CompleteSale"]</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary py-1 small d-flex align-items-center justify-content-center gap-1" id="checkoutAndPrintBtn" disabled>
+                            <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            <span>@Loc["CompleteSaleAndPrint"]</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Sale Success Modal *@
+<div class="modal fade" id="saleSuccessModal" tabindex="-1" aria-labelledby="saleSuccessModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-body text-center p-4">
+                <div class="ph-brand-icon bg-success-subtle text-success rounded-circle mx-auto mb-3 p-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 64px; height: 64px;">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h5 class="fw-bold text-dark mb-1" id="saleSuccessModalLabel">@Loc["SaleCompletedSuccessfully"]</h5>
+                <p class="text-muted small mb-3" id="saleSuccessDetails"></p>
+                <div class="p-3 bg-light rounded mb-4">
+                    <div class="small text-muted mb-1">@Loc["InvoiceNumber"]</div>
+                    <div class="fw-bold fs-5 text-teal" id="saleSuccessInvoiceNumber">INV-0000</div>
+                    <div class="small text-muted mt-2">@Loc["TotalAmount"]: <strong class="text-dark fs-6" id="saleSuccessTotalAmount">0.00</strong> @Loc["CurrencySymbol"]</div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                    <button type="button" class="btn btn-teal px-4 fw-semibold" id="modalStartNewSaleBtn" data-bs-dismiss="modal">
+                        @Loc["StartNewSale"]
+                    </button>
+                    <a href="#" target="_blank" class="btn btn-outline-secondary px-3 d-inline-flex align-items-center justify-content-center gap-1" id="modalPrintInvoiceLink">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                        <span>@Loc["PrintInvoice"] (@Loc["Optional"])</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const cart = [];
+        let successModal = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var modalEl = document.getElementById('saleSuccessModal');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                successModal = new bootstrap.Modal(modalEl);
+            }
+        });
+
+        function renderCart() {
+            const tbody = document.getElementById('cartBody');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const checkoutAndPrintBtn = document.getElementById('checkoutAndPrintBtn');
+
+            if (cart.length === 0) {
+                tbody.innerHTML = `<tr id="emptyCartRow"><td colspan="4" class="text-center py-5 text-muted small">@Loc["CartIsEmptyScanPrompt"]</td></tr>`;
+                document.getElementById('cartGrandTotal').textContent = '0.00 @Loc["CurrencySymbol"]';
+                checkoutBtn.disabled = true;
+                checkoutAndPrintBtn.disabled = true;
+                return;
+            }
+
+            let total = 0;
+            let html = '';
+            cart.forEach((item, index) => {
+                const lineTotal = item.quantity * item.price;
+                total += lineTotal;
+                html += `
+                    <tr>
+                        <td class="ps-3">
+                            <div class="fw-semibold text-dark small">${item.name}</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">${item.price.toFixed(2)} @Loc["CurrencySymbol"] &bull; ${item.location ? item.location : ''}</div>
+                        </td>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <button type="button" class="btn btn-outline-secondary btn-decrease" data-index="${index}">-</button>
+                                <input type="number" class="form-control text-center p-0 cart-qty-input" data-index="${index}" min="1" max="${item.maxStock}" value="${item.quantity}" />
+                                <button type="button" class="btn btn-outline-secondary btn-increase" data-index="${index}">+</button>
+                            </div>
+                        </td>
+                        <td class="fw-bold small text-dark">${lineTotal.toFixed(2)}</td>
+                        <td class="text-end pe-2">
+                            <button type="button" class="btn btn-sm btn-link text-danger p-0 btn-remove-item" data-index="${index}">&times;</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            document.getElementById('cartGrandTotal').textContent = `${total.toFixed(2)} @Loc["CurrencySymbol"]`;
+            checkoutBtn.disabled = false;
+            checkoutAndPrintBtn.disabled = false;
+        }
+
+        function addToCart(product) {
+            const existing = cart.find(i => i.id === product.id);
+            if (existing) {
+                if (existing.quantity < existing.maxStock) {
+                    existing.quantity += 1;
+                } else {
+                    alert('@Loc["StockInsufficientNotice"]');
+                }
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: parseFloat(product.price),
+                    maxStock: parseInt(product.stock),
+                    location: product.location,
+                    quantity: 1
+                });
+            }
+            renderCart();
+        }
+
+        // Add from catalog table
+        document.getElementById('productsCatalogTable').addEventListener('click', function (e) {
+            const btn = e.target.closest('.add-to-cart-btn');
+            if (!btn) return;
+            const row = btn.closest('tr');
+            addToCart({
+                id: parseInt(row.getAttribute('data-id')),
+                name: row.getAttribute('data-name'),
+                price: row.getAttribute('data-price'),
+                stock: row.getAttribute('data-stock'),
+                location: row.getAttribute('data-location')
+            });
+        });
+
+        // Cart table interactions (increase, decrease, remove)
+        document.getElementById('cartBody').addEventListener('click', function (e) {
+            if (e.target.closest('.btn-increase')) {
+                const idx = parseInt(e.target.closest('.btn-increase').getAttribute('data-index'));
+                if (cart[idx].quantity < cart[idx].maxStock) {
+                    cart[idx].quantity += 1;
+                    renderCart();
+                } else {
+                    alert('@Loc["StockInsufficientNotice"]');
+                }
+            } else if (e.target.closest('.btn-decrease')) {
+                const idx = parseInt(e.target.closest('.btn-decrease').getAttribute('data-index'));
+                if (cart[idx].quantity > 1) {
+                    cart[idx].quantity -= 1;
+                    renderCart();
+                }
+            } else if (e.target.closest('.btn-remove-item')) {
+                const idx = parseInt(e.target.closest('.btn-remove-item').getAttribute('data-index'));
+                cart.splice(idx, 1);
+                renderCart();
+            }
+        });
+
+        document.getElementById('cartBody').addEventListener('change', function (e) {
+            if (e.target.classList.contains('cart-qty-input')) {
+                const idx = parseInt(e.target.getAttribute('data-index'));
+                let val = parseInt(e.target.value) || 1;
+                if (val > cart[idx].maxStock) {
+                    alert('@Loc["StockInsufficientNotice"]');
+                    val = cart[idx].maxStock;
+                }
+                if (val < 1) val = 1;
+                cart[idx].quantity = val;
+                renderCart();
+            }
+        });
+
+        document.getElementById('clearCartBtn').addEventListener('click', function () {
+            cart.length = 0;
+            renderCart();
+        });
+
+        // Barcode Scanner input (handles Enter key from USB barcode scanners)
+        async function handleBarcodeLookup() {
+            const input = document.getElementById('barcodeScannerInput');
+            const code = input.value.trim();
+            const feedback = document.getElementById('barcodeFeedback');
+
+            if (!code) return;
+
+            try {
+                const res = await fetch(`@Url.Action("LookupByBarcode", "Products")?query=${encodeURIComponent(code)}`);
+                const json = await res.json();
+
+                if (json.found && json.data) {
+                    feedback.classList.add('d-none');
+                    if (json.data.availableStock <= 0) {
+                        feedback.textContent = `@Loc["ProductOutOfStock"] (${json.data.name})`;
+                        feedback.classList.remove('d-none');
+                    } else {
+                        addToCart({
+                            id: json.data.id,
+                            name: json.data.name,
+                            price: json.data.sellingPrice,
+                            stock: json.data.availableStock,
+                            location: json.data.physicalLocation
+                        });
+                        input.value = '';
+                    }
+                } else {
+                    feedback.textContent = `@Loc["ProductNotFoundForBarcode"]: ${code}`;
+                    feedback.classList.remove('d-none');
+                }
+            } catch (err) {
+                feedback.textContent = '@Loc["ErrorLookingUpBarcode"]';
+                feedback.classList.remove('d-none');
+            }
+            input.focus();
+        }
+
+        document.getElementById('barcodeSearchBtn').addEventListener('click', handleBarcodeLookup);
+        document.getElementById('barcodeScannerInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleBarcodeLookup();
+            }
+        });
+
+        // Quick Catalog Filter
+        document.getElementById('quickFilterInput').addEventListener('input', function (e) {
+            const filter = e.target.value.toLowerCase();
+            document.querySelectorAll('.product-catalog-row').forEach(row => {
+                const name = (row.getAttribute('data-name') || '').toLowerCase();
+                const barcode = (row.getAttribute('data-barcode') || '').toLowerCase();
+                row.style.display = (name.includes(filter) || barcode.includes(filter)) ? '' : 'none';
+            });
+        });
+
+        // Core Checkout Process (handles both Complete Sale & Complete and Print)
+        async function executeCheckout(shouldPrint) {
+            if (cart.length === 0) return;
+
+            const btn = shouldPrint ? document.getElementById('checkoutAndPrintBtn') : document.getElementById('checkoutBtn');
+            const otherBtn = shouldPrint ? document.getElementById('checkoutBtn') : document.getElementById('checkoutAndPrintBtn');
+
+            btn.disabled = true;
+            otherBtn.disabled = true;
+
+            const customerIdVal = document.getElementById('saleCustomerId').value;
+            const customerId = customerIdVal ? parseInt(customerIdVal) : null;
+            const paymentMethod = document.querySelector('input[name="paymentMethodRadio"]:checked')?.value || 'Cash';
+
+            const payload = {
+                customerId: customerId,
+                paymentMethod: paymentMethod,
+                items: cart.map(i => ({ productId: i.id, quantity: i.quantity }))
+            };
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+            try {
+                const res = await fetch('@Url.Action("ProcessSale", "Sales")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const json = await res.json();
+                if (json.success) {
+                    // Update catalog stock counts on page dynamically
+                    cart.forEach(item => {
+                        const stockBadge = document.querySelector(`.product-stock-badge[data-product-id="${item.id}"]`);
+                        const row = document.querySelector(`.product-catalog-row[data-id="${item.id}"]`);
+                        if (stockBadge && row) {
+                            let curr = parseInt(row.getAttribute('data-stock')) || 0;
+                            let updated = Math.max(0, curr - item.quantity);
+                            row.setAttribute('data-stock', updated);
+                            stockBadge.textContent = updated;
+                            if (updated <= 0) {
+                                stockBadge.className = 'badge bg-danger product-stock-badge';
+                                const addBtn = row.querySelector('.add-to-cart-btn');
+                                if (addBtn) addBtn.disabled = true;
+                            }
+                        }
+                    });
+
+                    // Clear cart
+                    cart.length = 0;
+                    renderCart();
+
+                    if (shouldPrint) {
+                        // Redirect or open print receipt
+                        window.location.href = json.redirectUrl;
+                    } else {
+                        // Display success modal without forcing print
+                        document.getElementById('saleSuccessInvoiceNumber').textContent = json.invoiceNumber || 'INV-SUCCESS';
+                        document.getElementById('saleSuccessTotalAmount').textContent = (json.totalAmount || 0).toFixed(2);
+                        document.getElementById('modalPrintInvoiceLink').href = json.redirectUrl || '#';
+
+                        if (successModal) {
+                            successModal.show();
+                        } else {
+                            alert('@Loc["SaleCompletedSuccessfully"] #' + json.invoiceNumber);
+                        }
+                    }
+                } else {
+                    alert(json.message || '@Loc["OperationFailed"]');
+                    btn.disabled = false;
+                    otherBtn.disabled = false;
+                }
+            } catch (err) {
+                alert('@Loc["OperationFailed"]');
+                btn.disabled = false;
+                otherBtn.disabled = false;
+            }
+        }
+
+        document.getElementById('checkoutBtn').addEventListener('click', function () {
+            executeCheckout(false);
+        });
+
+        document.getElementById('checkoutAndPrintBtn').addEventListener('click', function () {
+            executeCheckout(true);
+        });
+
+        document.getElementById('modalStartNewSaleBtn').addEventListener('click', function () {
+            document.getElementById('barcodeScannerInput').focus();
+        });
+    </script>
+}

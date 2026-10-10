@@ -1,0 +1,112 @@
+@model PharmacySystem.Models.ViewModels.Sales.SaleDetailsViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = $"{Loc["Invoice"]} #{Model.InvoiceNumber}";
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+        <div>
+            <h4 class="fw-bold mb-0">#@Model.InvoiceNumber</h4>
+            <p class="text-muted small mb-0">@Model.SaleDate.ToString("yyyy-MM-dd HH:mm") &bull; @Loc["Cashier"]: @Model.SoldByName</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-dark d-inline-flex align-items-center gap-2" onclick="window.print();">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                <span>@Loc["PrintInvoice"]</span>
+            </button>
+            <a asp-action="Pos" class="btn btn-teal d-inline-flex align-items-center gap-2">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>@Loc["NewSale"]</span>
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["BackToList"]</a>
+        </div>
+    </div>
+
+    @* Printable Invoice Sheet *@
+    <div class="card border-0 shadow-sm ph-card p-4 p-md-5">
+        <div class="row align-items-center border-bottom pb-4 mb-4">
+            <div class="col-sm-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="ph-brand-icon bg-teal text-white rounded p-2 d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>
+                    </div>
+                    <h4 class="fw-bold mb-0 text-dark">@Loc["AppTitle"]</h4>
+                </div>
+                <div class="text-muted small">@Loc["AppSubtitle"]</div>
+            </div>
+            <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                <h5 class="fw-bold text-teal mb-1">#@Model.InvoiceNumber</h5>
+                <div class="text-muted small">@Model.SaleDate.ToString("yyyy-MM-dd HH:mm")</div>
+                <div class="small">
+                    <span class="text-muted">@Loc["PaymentMethod"]:</span>
+                    <span class="badge bg-light text-dark border">@Model.PaymentMethod</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="text-muted small">@Loc["Customer"]:</div>
+                <div class="fw-bold text-dark fs-6">@Model.CustomerName</div>
+                @if (!string.IsNullOrEmpty(Model.CustomerPhone))
+                {
+                    <div class="text-muted small">@Model.CustomerPhone</div>
+                }
+            </div>
+            <div class="col-6 text-end">
+                <div class="text-muted small">@Loc["Cashier"] / @Loc["Role_Pharmacist"]:</div>
+                <div class="fw-bold text-dark fs-6">@Model.SoldByName</div>
+            </div>
+        </div>
+
+        @* Items & FEFO Allocations Table *@
+        <div class="table-responsive mb-4">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3" style="width: 40%;">@Loc["Product"]</th>
+                        <th style="width: 15%;">@Loc["Price"]</th>
+                        <th class="text-center" style="width: 15%;">@Loc["Quantity"]</th>
+                        <th class="text-end pe-3" style="width: 30%;">@Loc["LineTotal"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="ps-3">
+                                <div class="fw-bold text-dark">@item.ProductName</div>
+                                @* Batch Allocations under product *@
+                                <div class="mt-1 small">
+                                    @foreach (var alloc in item.Allocations)
+                                    {
+                                        <span class="badge bg-light text-secondary border me-1">
+                                            @Loc["Batch"]: <code>@alloc.BatchNumber</code> | @Loc["Location"]: @alloc.LocationCode | @Loc["Exp"]: @alloc.ExpiryDate.ToString("yyyy-MM-dd") (@alloc.Quantity @Loc["Units"])
+                                        </span>
+                                    }
+                                </div>
+                            </td>
+                            <td>@item.UnitPrice.ToString("C2")</td>
+                            <td class="text-center fw-semibold">@item.Quantity</td>
+                            <td class="text-end pe-3 fw-bold">@item.LineTotal.ToString("C2")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="3" class="text-end fw-bold">@Loc["TotalAmount"]:</th>
+                        <th class="text-end pe-3 fw-bold fs-4 text-teal">@Model.TotalAmount.ToString("C2")</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="text-center text-muted small mt-4 pt-3 border-top">
+            <p class="mb-0">@Loc["ThankYouForYourBusiness"]</p>
+        </div>
+    </div>
+</div>

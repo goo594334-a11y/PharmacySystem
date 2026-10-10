@@ -1,0 +1,117 @@
+@model PharmacySystem.Models.Common.PaginatedList<PharmacySystem.Models.ViewModels.Purchases.PurchaseListItemViewModel>
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@using PharmacySystem.Enums
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["Nav_Purchases"];
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">@Loc["Nav_Purchases"]</h4>
+            <p class="text-muted small mb-0">@Loc["PurchasesSubtitle"]</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-teal d-inline-flex align-items-center gap-2 shadow-sm">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>@Loc["NewPurchase"]</span>
+            </a>
+        </div>
+    </div>
+
+    @* Filters *@
+    <div class="card border-0 shadow-sm ph-card mb-4">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-center">
+                <div class="col-12 col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <svg class="ph-icon text-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="@Loc["SearchPlaceholderPurchases"]" />
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select name="supplierId" class="form-select" asp-items="@ViewBag.Suppliers">
+                        <option value="">-- @Loc["AllSuppliers"] --</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">-- @Loc["AllStatuses"] --</option>
+                        <option value="@PurchaseStatus.Draft" selected="@(ViewBag.Status == PurchaseStatus.Draft ? "selected" : null)">@Loc["Draft"]</option>
+                        <option value="@PurchaseStatus.Confirmed" selected="@(ViewBag.Status == PurchaseStatus.Confirmed ? "selected" : null)">@Loc["Confirmed"]</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-teal w-100">@Loc["Filter"]</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.Search) || ViewBag.SupplierId != null || ViewBag.Status != null)
+                    {
+                        <a asp-action="Index" class="btn btn-outline-secondary">@Loc["Clear"]</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* Purchases Table Card *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        @if (!Model.Items.Any())
+        {
+            <div class="p-5 text-center">
+                <partial name="_EmptyState" model='new PharmacySystem.Models.Common.EmptyStateViewModel { Title = Loc["NoPurchasesFound"], Message = Loc["NoPurchasesFoundMessage"], ActionText = Loc["NewPurchase"], ActionUrl = Url.Action("Create") }' />
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["InvoiceNumber"]</th>
+                            <th>@Loc["Supplier"]</th>
+                            <th>@Loc["Date"]</th>
+                            <th>@Loc["Items"]</th>
+                            <th>@Loc["TotalAmount"]</th>
+                            <th>@Loc["Status"]</th>
+                            <th class="text-end pe-4">@Loc["Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Items)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">
+                                    <a asp-action="Details" asp-route-id="@p.Id" class="text-decoration-none text-teal">
+                                        @p.InvoiceNumber
+                                    </a>
+                                </td>
+                                <td>@p.SupplierName</td>
+                                <td class="text-muted small">@p.PurchaseDate.ToLocalTime().ToString("g")</td>
+                                <td><span class="badge bg-light text-dark border">@p.ItemsCount @Loc["Items"]</span></td>
+                                <td class="fw-bold">@p.TotalAmount.ToString("C2")</td>
+                                <td>
+                                    <span class="badge @(p.Status == PurchaseStatus.Confirmed ? "bg-success" : "bg-warning text-dark")">
+                                        @(p.Status == PurchaseStatus.Confirmed ? Loc["Confirmed"] : Loc["Draft"])
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">
+                                        @Loc["ViewInvoice"]
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer bg-white border-top p-3">
+                <partial name="_Pagination" model="Model.ToPaginationViewModel()" />
+            </div>
+        }
+    </div>
+</div>

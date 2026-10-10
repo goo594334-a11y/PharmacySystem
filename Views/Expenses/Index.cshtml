@@ -1,0 +1,121 @@
+@model PharmacySystem.Models.Common.PaginatedList<PharmacySystem.Models.ViewModels.Expenses.ExpenseListItemViewModel>
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@using PharmacySystem.Enums
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["Nav_Expenses"];
+    var totalExpenses = (decimal)(ViewBag.TotalExpensesSum ?? 0m);
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">@Loc["Nav_Expenses"]</h4>
+            <p class="text-muted small mb-0">@Loc["ExpensesSubtitle"]</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-teal d-inline-flex align-items-center gap-2 shadow-sm">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>@Loc["AddExpense"]</span>
+            </a>
+        </div>
+    </div>
+
+    @* Filters & Total Card *@
+    <div class="card border-0 shadow-sm ph-card mb-4">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-center">
+                <div class="col-12 col-md-3">
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="@Loc["SearchPlaceholderExpenses"]" />
+                </div>
+                <div class="col-6 col-md-3">
+                    <select name="category" class="form-select">
+                        <option value="">-- @Loc["AllCategories"] --</option>
+                        <option value="@ExpenseCategory.Rent" selected="@(ViewBag.Category == ExpenseCategory.Rent ? "selected" : null)">@Loc["Expense_Rent"]</option>
+                        <option value="@ExpenseCategory.Electricity" selected="@(ViewBag.Category == ExpenseCategory.Electricity ? "selected" : null)">@Loc["Expense_Electricity"]</option>
+                        <option value="@ExpenseCategory.Salaries" selected="@(ViewBag.Category == ExpenseCategory.Salaries ? "selected" : null)">@Loc["Expense_Salaries"]</option>
+                        <option value="@ExpenseCategory.Maintenance" selected="@(ViewBag.Category == ExpenseCategory.Maintenance ? "selected" : null)">@Loc["Expense_Maintenance"]</option>
+                        <option value="@ExpenseCategory.Other" selected="@(ViewBag.Category == ExpenseCategory.Other ? "selected" : null)">@Loc["Expense_Other"]</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="fromDate" value="@ViewBag.FromDate" class="form-control" />
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="toDate" value="@ViewBag.ToDate" class="form-control" />
+                </div>
+                <div class="col-6 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-teal w-100">@Loc["Filter"]</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.Search) || ViewBag.Category != null || ViewBag.FromDate != null)
+                    {
+                        <a asp-action="Index" class="btn btn-outline-secondary">@Loc["Clear"]</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* Expenses Table *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        @if (!Model.Items.Any())
+        {
+            <div class="p-5 text-center">
+                <partial name="_EmptyState" model='new PharmacySystem.Models.Common.EmptyStateViewModel { Title = Loc["NoExpensesFound"], Message = Loc["NoExpensesRecorded"], ActionText = Loc["AddExpense"], ActionUrl = Url.Action("Create") }' />
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["Date"]</th>
+                            <th>@Loc["Category"]</th>
+                            <th>@Loc["Description"]</th>
+                            <th>@Loc["Amount"]</th>
+                            <th>@Loc["RecordedBy"]</th>
+                            <th class="text-end pe-4">@Loc["Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var exp in Model.Items)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">@exp.ExpenseDate.ToLocalTime().ToString("d")</td>
+                                <td><span class="badge bg-light text-dark border">@exp.Category</span></td>
+                                <td class="text-muted small">@(string.IsNullOrEmpty(exp.Description) ? "—" : exp.Description)</td>
+                                <td class="fw-bold text-dark">@exp.Amount.ToString("C2")</td>
+                                <td class="small text-secondary">@exp.RecordedByName</td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Edit" asp-route-id="@exp.Id" class="btn btn-outline-primary" title="@Loc["Edit"]">
+                                            <svg class="ph-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@exp.Id" method="post" class="d-inline" onsubmit="return confirm('@Loc["DeleteConfirmationPrompt"]');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger" title="@Loc["Delete"]">
+                                                <svg class="ph-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="3" class="text-end fw-bold">@Loc["TotalExpensesSum"]:</th>
+                            <th colspan="3" class="ps-3 fw-bold text-danger fs-5">@totalExpenses.ToString("C2")</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="card-footer bg-white border-top p-3">
+                <partial name="_Pagination" model="Model.ToPaginationViewModel()" />
+            </div>
+        }
+    </div>
+</div>
