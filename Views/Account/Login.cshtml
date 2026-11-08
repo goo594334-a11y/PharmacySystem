@@ -121,7 +121,7 @@
     <script src="~/js/pharmacy.js" asp-append-version="true"></script>
 
     <script>
-        // Inline handler ensuring password toggle and clearing always functions
+        // Clear sensitive password fields on initial load and bfcache restore
         (function() {
             var passInput = document.getElementById('loginPasswordInput');
             if (passInput) {
@@ -131,28 +131,6 @@
             window.addEventListener('pageshow', function() {
                 if (passInput) {
                     passInput.value = '';
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                var btn = e.target.closest('.toggle-password-btn');
-                if (!btn) return;
-                e.preventDefault();
-                var targetId = btn.getAttribute('data-target');
-                var input = targetId ? document.querySelector(targetId) : null;
-                if (!input) return;
-
-                var eyeOpen = btn.querySelector('.eye-open');
-                var eyeClosed = btn.querySelector('.eye-closed');
-
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    if (eyeOpen) eyeOpen.classList.add('d-none');
-                    if (eyeClosed) eyeClosed.classList.remove('d-none');
-                } else {
-                    input.type = 'password';
-                    if (eyeOpen) eyeOpen.classList.remove('d-none');
-                    if (eyeClosed) eyeClosed.classList.add('d-none');
                 }
             });
         })();
