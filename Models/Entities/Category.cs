@@ -3,9 +3,11 @@ namespace PharmacySystem.Models.Entities;
 /// <summary>
 /// Represents a product category.
 /// </summary>
-public class Category
+public class Category : ITenantEntity
 {
     public int Id { get; set; }
+    public int PharmacyId { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public bool IsActive { get; set; } = true;

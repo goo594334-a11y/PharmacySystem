@@ -33,8 +33,13 @@ public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
         builder.HasIndex(e => e.ExpenseDate);
         builder.HasIndex(e => e.Category);
         builder.HasIndex(e => e.UserId);
+        builder.HasIndex(e => e.PharmacyId);
 
         // Relationships
+        builder.HasOne(e => e.Pharmacy)
+            .WithMany(ph => ph.Expenses)
+            .HasForeignKey(e => e.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(e => e.User)
             .WithMany(u => u.Expenses)
             .HasForeignKey(e => e.UserId)

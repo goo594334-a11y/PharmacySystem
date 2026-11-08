@@ -57,7 +57,7 @@
                                     </span>
                                 </td>
                                 <td>@p.MinimumStockLevel</td>
-                                <td class="text-danger fw-bold">@(deficit > 0 ? $"-{deficit}" : "0")</td>
+                                <td class="text-danger fw-bold">@(deficit > 0 ? $"{deficit}" : "0")</td>
                                 <td class="text-end pe-4">
                                     <a asp-controller="Purchases" asp-action="Create" class="btn btn-sm btn-teal">
                                         @Loc["Reorder"]

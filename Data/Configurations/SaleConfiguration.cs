@@ -31,14 +31,19 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
             .HasPrecision(18, 2);
 
         // Indexes
-        builder.HasIndex(s => s.InvoiceNumber)
+        builder.HasIndex(s => new { s.PharmacyId, s.InvoiceNumber })
             .IsUnique();
 
         builder.HasIndex(s => s.SaleDate);
         builder.HasIndex(s => s.CustomerId);
         builder.HasIndex(s => s.UserId);
+        builder.HasIndex(s => s.PharmacyId);
 
         // Relationships
+        builder.HasOne(s => s.Pharmacy)
+            .WithMany(ph => ph.Sales)
+            .HasForeignKey(s => s.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(s => s.Customer)
             .WithMany(c => c.Sales)
             .HasForeignKey(s => s.CustomerId)

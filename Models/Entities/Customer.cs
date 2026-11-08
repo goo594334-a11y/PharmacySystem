@@ -4,9 +4,11 @@ namespace PharmacySystem.Models.Entities;
 /// Represents a pharmacy customer.
 /// Customers are optional for sales (walk-in customers are supported).
 /// </summary>
-public class Customer
+public class Customer : ITenantEntity
 {
     public int Id { get; set; }
+    public int PharmacyId { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
     public string Name { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string? Address { get; set; }

@@ -3,9 +3,11 @@ namespace PharmacySystem.Models.Entities;
 /// <summary>
 /// Physical storage location where stock batches are placed in the pharmacy.
 /// </summary>
-public class Location
+public class Location : ITenantEntity
 {
     public int Id { get; set; }
+    public int PharmacyId { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
     public string Code { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;

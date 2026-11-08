@@ -28,10 +28,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (toggleBtn) {
         toggleBtn.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (sidebar && sidebar.classList.contains('show')) {
-                closeSidebar();
+            if (window.innerWidth >= 992) {
+                const isCollapsed = document.documentElement.classList.toggle('ph-sidebar-collapsed');
+                localStorage.setItem('ph_sidebar_collapsed', isCollapsed ? 'true' : 'false');
             } else {
-                openSidebar();
+                if (sidebar && sidebar.classList.contains('show')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
             }
         });
     }
@@ -44,24 +49,66 @@ document.addEventListener('DOMContentLoaded', function () {
         backdrop.addEventListener('click', closeSidebar);
     }
 
-    // 2. Prevent Double Submissions on Forms
-    const forms = document.querySelectorAll('form:not(.ph-allow-multiple-submits)');
-    forms.forEach(function (form) {
-        form.addEventListener('submit', function () {
-            if (form.checkValidity && form.checkValidity()) {
-                const submitBtn = form.querySelector('button[type="submit"]');
-                if (submitBtn && !submitBtn.disabled) {
-                    submitBtn.disabled = true;
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.setAttribute('data-original-text', originalText);
-                    submitBtn.innerHTML = `
-                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                        ${submitBtn.getAttribute('data-processing-text') || '...'}
-                    `;
-                }
+    // 2. Prevent Double Submissions on Forms (Validation-Safe)
+    if (window.jQuery) {
+        $(document).on('submit', 'form:not(.ph-allow-multiple-submits)', function (e) {
+            const $form = $(this);
+            // If jQuery unobtrusive validation is active, don't disable if form is invalid
+            if ($form.data('validator') && !$form.valid()) {
+                return;
+            }
+            if (this.checkValidity && !this.checkValidity()) {
+                return;
+            }
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.disabled) {
+                // Short timeout allows the submit event to propagate to the browser pipeline cleanly
+                setTimeout(function () {
+                    if (submitBtn && !e.isDefaultPrevented()) {
+                        submitBtn.disabled = true;
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.setAttribute('data-original-text', originalText);
+                        submitBtn.innerHTML = `
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            ${submitBtn.getAttribute('data-processing-text') || '...'}
+                        `;
+                    }
+                }, 20);
             }
         });
-    });
+
+        // Re-enable submit button if validation fails or form reports invalid
+        $(document).on('invalid-form.validate', 'form', function () {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn && submitBtn.hasAttribute('data-original-text')) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = submitBtn.getAttribute('data-original-text');
+            }
+        });
+    } else {
+        const forms = document.querySelectorAll('form:not(.ph-allow-multiple-submits)');
+        forms.forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                if (form.checkValidity && form.checkValidity()) {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn && !submitBtn.disabled) {
+                        setTimeout(function () {
+                            if (submitBtn && !e.defaultPrevented) {
+                                submitBtn.disabled = true;
+                                const originalText = submitBtn.innerHTML;
+                                submitBtn.setAttribute('data-original-text', originalText);
+                                submitBtn.innerHTML = `
+                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                    ${submitBtn.getAttribute('data-processing-text') || '...'}
+                                `;
+                            }
+                        }, 20);
+                    }
+                }
+            });
+        });
+    }
 
     // 3. Auto-hide alerts after 6 seconds
     const autoDismissAlerts = document.querySelectorAll('.ph-alert.alert-dismissible');
@@ -136,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const initialTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    document.documentElement.setAttribute('data-bs-theme', initialTheme);
     syncThemeIcons(initialTheme);
 
     if (themeToggleBtn) {
@@ -143,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const current = document.documentElement.getAttribute('data-theme') || 'light';
             const next = current === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
+            document.documentElement.setAttribute('data-bs-theme', next);
             localStorage.setItem('ph_theme', next);
             syncThemeIcons(next);
         });

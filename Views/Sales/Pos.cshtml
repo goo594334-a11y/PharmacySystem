@@ -63,7 +63,7 @@
                             {
                                 foreach (var p in ViewBag.Products)
                                 {
-                                    <tr class="product-catalog-row" data-id="@p.Id" data-name="@p.Name" data-price="@p.SellingPrice" data-stock="@p.AvailableStock" data-location="@p.Location" data-barcode="@p.Barcode">
+                                    <tr class="product-catalog-row" data-id="@p.Id" data-name="@p.Name" data-price="@p.SellingPrice" data-stock="@p.AvailableStock" data-location="@p.Location" data-barcode="@p.Barcode" data-baseunit="@p.BaseUnit" data-units='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(p.Units))'>
                                         <td class="ps-3">
                                             <div class="fw-bold text-dark small">@p.Name</div>
                                             <div class="text-muted" style="font-size: 0.75rem;">@(string.IsNullOrEmpty(p.Barcode) ? "-" : p.Barcode)</div>
@@ -142,15 +142,41 @@
                     @* Payment Method Selection *@
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted mb-1">@Loc["PaymentMethod"]</label>
-                        <div class="btn-group btn-group-sm w-100" role="group">
+                        <div class="btn-group btn-group-sm w-100 flex-wrap" role="group">
                             <input type="radio" class="btn-check" name="paymentMethodRadio" id="payCash" value="@PaymentMethod.Cash" checked />
                             <label class="btn btn-outline-teal" for="payCash">@Loc["PaymentMethod_Cash"]</label>
 
                             <input type="radio" class="btn-check" name="paymentMethodRadio" id="payCard" value="@PaymentMethod.Card" />
                             <label class="btn btn-outline-teal" for="payCard">@Loc["PaymentMethod_Card"]</label>
 
-                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payOther" value="@PaymentMethod.Other" />
-                            <label class="btn btn-outline-teal" for="payOther">@Loc["PaymentMethod_Other"]</label>
+                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payVodafoneCash" value="@PaymentMethod.VodafoneCash" />
+                            <label class="btn btn-outline-teal" for="payVodafoneCash">@Loc["PaymentMethod_VodafoneCash"]</label>
+
+                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="paySplit" value="@PaymentMethod.Split" />
+                            <label class="btn btn-outline-teal" for="paySplit">@Loc["PaymentMethod_Split"]</label>
+                        </div>
+                    </div>
+
+                    @* Split Payment Breakdown Section *@
+                    <div id="splitPaymentSection" class="p-2 mb-3 bg-light rounded border d-none">
+                        <div class="small fw-bold text-dark mb-2">@Loc["SplitPaymentBreakdown"]</div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-4">
+                                <label class="small text-muted mb-0">@Loc["PaymentMethod_Cash"]</label>
+                                <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input" id="splitCashInput" value="0.00" />
+                            </div>
+                            <div class="col-4">
+                                <label class="small text-muted mb-0">@Loc["PaymentMethod_Card"]</label>
+                                <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input" id="splitCardInput" value="0.00" />
+                            </div>
+                            <div class="col-4">
+                                <label class="small text-muted mb-0">@Loc["PaymentMethod_VodafoneCash"]</label>
+                                <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input" id="splitVodafoneInput" value="0.00" />
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center small">
+                            <span class="text-muted">@Loc["RemainingToCover"]</span>
+                            <span class="fw-bold text-danger" id="splitRemainingBadge">0.00 @Loc["CurrencySymbol"]</span>
                         </div>
                     </div>
 
@@ -197,9 +223,9 @@
                     <button type="button" class="btn btn-teal px-4 fw-semibold" id="modalStartNewSaleBtn" data-bs-dismiss="modal">
                         @Loc["StartNewSale"]
                     </button>
-                    <a href="#" target="_blank" class="btn btn-outline-secondary px-3 d-inline-flex align-items-center justify-content-center gap-1" id="modalPrintInvoiceLink">
+                    <a href="#" target="_blank" class="btn btn-teal px-3 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm" id="modalPrintInvoiceLink">
                         <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                        <span>@Loc["PrintInvoice"] (@Loc["Optional"])</span>
+                        <span>@Loc["PrintCustomerReceipt"]</span>
                     </a>
                 </div>
             </div>
@@ -207,8 +233,46 @@
     </div>
 </div>
 
+@* POS Toast Notification Container *@
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div id="posToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fs-6 fw-medium" id="posToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        const posMessages = {
+            stockInsufficient: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["StockInsufficientNotice"].Value)),
+            productOutOfStock: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["ProductOutOfStock"].Value)),
+            saleCompletedSuccessfully: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["SaleCompletedSuccessfully"].Value)),
+            operationFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["OperationFailed"].Value)),
+            cartIsEmptyPrompt: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["CartIsEmptyScanPrompt"].Value)),
+            currencySymbol: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["CurrencySymbol"].Value)),
+            splitMismatch: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["SplitSumMismatchError"].Value)),
+            fullyCovered: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["FullyCovered"].Value)),
+            errorLookingUpBarcode: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["ErrorLookingUpBarcode"].Value)),
+            productNotFoundForBarcode: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["ProductNotFoundForBarcode"].Value)),
+            posAvailableLabel: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["POS_AvailableLabel"].Value)),
+            posBaseUnitsInStock: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["POS_BaseUnitsInStock"].Value))
+        };
+
+        function showToast(msg, type = 'danger') {
+            const toastEl = document.getElementById('posToast');
+            const bodyEl = document.getElementById('posToastBody');
+            if (toastEl && bodyEl && typeof bootstrap !== 'undefined') {
+                toastEl.className = `toast align-items-center text-white border-0 shadow bg-${type}`;
+                bodyEl.textContent = msg;
+                const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+                toast.show();
+            } else {
+                alert(msg);
+            }
+        }
+
         const cart = [];
         let successModal = null;
 
@@ -217,7 +281,50 @@
             if (modalEl && typeof bootstrap !== 'undefined') {
                 successModal = new bootstrap.Modal(modalEl);
             }
+
+            // Split payment radio listener
+            document.querySelectorAll('input[name="paymentMethodRadio"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const splitSec = document.getElementById('splitPaymentSection');
+                    if (this.value === '@PaymentMethod.Split' || this.value === '5' || this.value === 'Split') {
+                        splitSec.classList.remove('d-none');
+                        let grandTotal = 0;
+                        cart.forEach(i => grandTotal += (i.quantity * i.price));
+                        document.getElementById('splitCashInput').value = grandTotal.toFixed(2);
+                        document.getElementById('splitCardInput').value = '0.00';
+                        document.getElementById('splitVodafoneInput').value = '0.00';
+                        updateSplitRemaining();
+                    } else {
+                        splitSec.classList.add('d-none');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.split-input').forEach(input => {
+                input.addEventListener('input', updateSplitRemaining);
+            });
         });
+
+        function updateSplitRemaining() {
+            let grandTotal = 0;
+            cart.forEach(i => grandTotal += (i.quantity * i.price));
+
+            const cash = parseFloat(document.getElementById('splitCashInput')?.value) || 0;
+            const card = parseFloat(document.getElementById('splitCardInput')?.value) || 0;
+            const vodafone = parseFloat(document.getElementById('splitVodafoneInput')?.value) || 0;
+
+            const remaining = grandTotal - (cash + card + vodafone);
+            const badge = document.getElementById('splitRemainingBadge');
+            if (badge) {
+                if (Math.abs(remaining) < 0.01) {
+                    badge.textContent = posMessages.fullyCovered;
+                    badge.className = 'fw-bold text-success';
+                } else {
+                    badge.textContent = `${remaining.toFixed(2)} ${posMessages.currencySymbol}`;
+                    badge.className = 'fw-bold text-danger';
+                }
+            }
+        }
 
         function renderCart() {
             const tbody = document.getElementById('cartBody');
@@ -225,10 +332,11 @@
             const checkoutAndPrintBtn = document.getElementById('checkoutAndPrintBtn');
 
             if (cart.length === 0) {
-                tbody.innerHTML = `<tr id="emptyCartRow"><td colspan="4" class="text-center py-5 text-muted small">@Loc["CartIsEmptyScanPrompt"]</td></tr>`;
-                document.getElementById('cartGrandTotal').textContent = '0.00 @Loc["CurrencySymbol"]';
+                tbody.innerHTML = `<tr id="emptyCartRow"><td colspan="4" class="text-center py-5 text-muted small">${posMessages.cartIsEmptyPrompt}</td></tr>`;
+                document.getElementById('cartGrandTotal').textContent = `0.00 ${posMessages.currencySymbol}`;
                 checkoutBtn.disabled = true;
                 checkoutAndPrintBtn.disabled = true;
+                updateSplitRemaining();
                 return;
             }
 
@@ -237,11 +345,35 @@
             cart.forEach((item, index) => {
                 const lineTotal = item.quantity * item.price;
                 total += lineTotal;
+
+                let unitOptions = '';
+                if (item.units && item.units.length > 0) {
+                    item.units.forEach(u => {
+                        const sel = u.unitName === item.selectedUnit ? 'selected' : '';
+                        unitOptions += `<option value="${u.unitName}" ${sel}>${u.unitName} (${u.sellingPrice.toFixed(2)})</option>`;
+                    });
+                } else {
+                    unitOptions = `<option value="${item.selectedUnit}" selected>${item.selectedUnit}</option>`;
+                }
+
                 html += `
                     <tr>
                         <td class="ps-3">
                             <div class="fw-semibold text-dark small">${item.name}</div>
-                            <div class="text-muted" style="font-size: 0.75rem;">${item.price.toFixed(2)} @Loc["CurrencySymbol"] &bull; ${item.location ? item.location : ''}</div>
+                            <div class="btn-group btn-group-sm cart-unit-pill-group flex-wrap gap-1 mt-1" role="group">
+                                ${(item.units || []).map(u => {
+                                    const isActive = u.unitName === item.selectedUnit;
+                                    const btnClass = isActive ? 'btn-teal text-white fw-bold shadow-xs' : 'btn-outline-secondary bg-light text-dark';
+                                    return `<button type="button" class="btn btn-sm py-0 px-2 rounded-2 cart-unit-btn ${btnClass}" data-index="${index}" data-unit="${u.unitName}" style="font-size: 0.75rem;">
+                                        ${u.unitName} (${u.sellingPrice.toFixed(2)})
+                                    </button>`;
+                                }).join('')}
+                            </div>
+                            <div class="text-muted mt-1 d-flex align-items-center gap-1" style="font-size: 0.72rem;">
+                                <span>${posMessages.posAvailableLabel} <strong class="text-teal">${item.maxStock}</strong> ${item.selectedUnit}</span>
+                                <span>&bull; ${item.totalBaseStock} ${posMessages.posBaseUnitsInStock}</span>
+                                ${item.location ? `<span>&bull; ${item.location}</span>` : ''}
+                            </div>
                         </td>
                         <td>
                             <div class="input-group input-group-sm">
@@ -259,25 +391,60 @@
             });
 
             tbody.innerHTML = html;
-            document.getElementById('cartGrandTotal').textContent = `${total.toFixed(2)} @Loc["CurrencySymbol"]`;
+            document.getElementById('cartGrandTotal').textContent = `${total.toFixed(2)} ${posMessages.currencySymbol}`;
             checkoutBtn.disabled = false;
             checkoutAndPrintBtn.disabled = false;
+            updateSplitRemaining();
         }
 
         function addToCart(product) {
-            const existing = cart.find(i => i.id === product.id);
+            let units = [];
+            if (typeof product.units === 'string' && product.units.trim().length > 0) {
+                try { units = JSON.parse(product.units); } catch (e) {}
+            } else if (Array.isArray(product.units)) {
+                units = product.units;
+            }
+
+            if (!units || units.length === 0) {
+                units = [{
+                    unitName: product.baseUnit || 'Piece',
+                    conversionFactor: 1,
+                    sellingPrice: parseFloat(product.price) || 0,
+                    isBaseUnit: true
+                }];
+            } else {
+                // Normalize property naming (support both PascalCase and camelCase)
+                units = units.map(u => ({
+                    unitName: u.unitName || u.UnitName || product.baseUnit || 'Piece',
+                    conversionFactor: parseInt(u.conversionFactor || u.ConversionFactor) || 1,
+                    sellingPrice: parseFloat(u.sellingPrice || u.SellingPrice) || parseFloat(product.price) || 0,
+                    isBaseUnit: !!(u.isBaseUnit || u.IsBaseUnit)
+                }));
+            }
+
+            const selectedUnitName = product.selectedUnit || units[0].unitName;
+            const currentUnit = units.find(u => u.unitName === selectedUnitName) || units[0];
+            const totalBaseStock = parseInt(product.stock) || 0;
+            const conversionFactor = currentUnit.conversionFactor || 1;
+            const maxStock = Math.max(1, Math.floor(totalBaseStock / conversionFactor));
+
+            const existing = cart.find(i => i.id === product.id && i.selectedUnit === currentUnit.unitName);
             if (existing) {
                 if (existing.quantity < existing.maxStock) {
                     existing.quantity += 1;
                 } else {
-                    alert('@Loc["StockInsufficientNotice"]');
+                    showToast(posMessages.stockInsufficient, 'warning');
                 }
             } else {
                 cart.push({
                     id: product.id,
                     name: product.name,
-                    price: parseFloat(product.price),
-                    maxStock: parseInt(product.stock),
+                    totalBaseStock: totalBaseStock,
+                    price: currentUnit.sellingPrice,
+                    units: units,
+                    selectedUnit: currentUnit.unitName,
+                    conversionFactor: conversionFactor,
+                    maxStock: maxStock,
                     location: product.location,
                     quantity: 1
                 });
@@ -295,11 +462,13 @@
                 name: row.getAttribute('data-name'),
                 price: row.getAttribute('data-price'),
                 stock: row.getAttribute('data-stock'),
-                location: row.getAttribute('data-location')
+                location: row.getAttribute('data-location'),
+                baseUnit: row.getAttribute('data-baseunit'),
+                units: row.getAttribute('data-units')
             });
         });
 
-        // Cart table interactions (increase, decrease, remove)
+        // Cart table interactions (increase, decrease, remove, unit change)
         document.getElementById('cartBody').addEventListener('click', function (e) {
             if (e.target.closest('.btn-increase')) {
                 const idx = parseInt(e.target.closest('.btn-increase').getAttribute('data-index'));
@@ -307,7 +476,7 @@
                     cart[idx].quantity += 1;
                     renderCart();
                 } else {
-                    alert('@Loc["StockInsufficientNotice"]');
+                    showToast(posMessages.stockInsufficient, 'warning');
                 }
             } else if (e.target.closest('.btn-decrease')) {
                 const idx = parseInt(e.target.closest('.btn-decrease').getAttribute('data-index'));
@@ -319,6 +488,22 @@
                 const idx = parseInt(e.target.closest('.btn-remove-item').getAttribute('data-index'));
                 cart.splice(idx, 1);
                 renderCart();
+            } else if (e.target.closest('.cart-unit-btn')) {
+                const btn = e.target.closest('.cart-unit-btn');
+                const idx = parseInt(btn.getAttribute('data-index'));
+                const newUnitName = btn.getAttribute('data-unit');
+                const item = cart[idx];
+                const newUnit = item.units.find(u => u.unitName === newUnitName);
+                if (newUnit) {
+                    item.selectedUnit = newUnit.unitName;
+                    item.conversionFactor = newUnit.conversionFactor || 1;
+                    item.price = newUnit.sellingPrice;
+                    item.maxStock = Math.max(1, Math.floor(item.totalBaseStock / item.conversionFactor));
+                    if (item.quantity > item.maxStock) {
+                        item.quantity = item.maxStock;
+                    }
+                    renderCart();
+                }
             }
         });
 
@@ -327,12 +512,27 @@
                 const idx = parseInt(e.target.getAttribute('data-index'));
                 let val = parseInt(e.target.value) || 1;
                 if (val > cart[idx].maxStock) {
-                    alert('@Loc["StockInsufficientNotice"]');
+                    showToast(posMessages.stockInsufficient, 'warning');
                     val = cart[idx].maxStock;
                 }
                 if (val < 1) val = 1;
                 cart[idx].quantity = val;
                 renderCart();
+            } else if (e.target.classList.contains('cart-unit-select')) {
+                const idx = parseInt(e.target.getAttribute('data-index'));
+                const newUnitName = e.target.value;
+                const item = cart[idx];
+                const newUnit = item.units.find(u => u.unitName === newUnitName);
+                if (newUnit) {
+                    item.selectedUnit = newUnit.unitName;
+                    item.conversionFactor = newUnit.conversionFactor || 1;
+                    item.price = newUnit.sellingPrice;
+                    item.maxStock = Math.max(1, Math.floor(item.totalBaseStock / item.conversionFactor));
+                    if (item.quantity > item.maxStock) {
+                        item.quantity = item.maxStock;
+                    }
+                    renderCart();
+                }
             }
         });
 
@@ -341,7 +541,7 @@
             renderCart();
         });
 
-        // Barcode Scanner input (handles Enter key from USB barcode scanners)
+        // Barcode Scanner input
         async function handleBarcodeLookup() {
             const input = document.getElementById('barcodeScannerInput');
             const code = input.value.trim();
@@ -356,7 +556,7 @@
                 if (json.found && json.data) {
                     feedback.classList.add('d-none');
                     if (json.data.availableStock <= 0) {
-                        feedback.textContent = `@Loc["ProductOutOfStock"] (${json.data.name})`;
+                        feedback.textContent = `${posMessages.productOutOfStock} (${json.data.name})`;
                         feedback.classList.remove('d-none');
                     } else {
                         addToCart({
@@ -364,16 +564,19 @@
                             name: json.data.name,
                             price: json.data.sellingPrice,
                             stock: json.data.availableStock,
-                            location: json.data.physicalLocation
+                            location: json.data.physicalLocation,
+                            baseUnit: json.data.baseUnitName,
+                            selectedUnit: json.data.selectedUnitName,
+                            units: json.data.units
                         });
                         input.value = '';
                     }
                 } else {
-                    feedback.textContent = `@Loc["ProductNotFoundForBarcode"]: ${code}`;
+                    feedback.textContent = `${posMessages.productNotFoundForBarcode}: ${code}`;
                     feedback.classList.remove('d-none');
                 }
             } catch (err) {
-                feedback.textContent = '@Loc["ErrorLookingUpBarcode"]';
+                feedback.textContent = posMessages.errorLookingUpBarcode;
                 feedback.classList.remove('d-none');
             }
             input.focus();
@@ -397,7 +600,7 @@
             });
         });
 
-        // Core Checkout Process (handles both Complete Sale & Complete and Print)
+        // Core Checkout Process
         async function executeCheckout(shouldPrint) {
             if (cart.length === 0) return;
 
@@ -411,10 +614,37 @@
             const customerId = customerIdVal ? parseInt(customerIdVal) : null;
             const paymentMethod = document.querySelector('input[name="paymentMethodRadio"]:checked')?.value || 'Cash';
 
+            let cashAmount = null, cardAmount = null, vodafoneCashAmount = null;
+
+            if (paymentMethod === '@PaymentMethod.Split' || paymentMethod === '5' || paymentMethod === 'Split') {
+                cashAmount = parseFloat(document.getElementById('splitCashInput')?.value) || 0;
+                cardAmount = parseFloat(document.getElementById('splitCardInput')?.value) || 0;
+                vodafoneCashAmount = parseFloat(document.getElementById('splitVodafoneInput')?.value) || 0;
+
+                let grandTotal = 0;
+                cart.forEach(i => grandTotal += (i.quantity * i.price));
+
+                if (Math.abs(grandTotal - (cashAmount + cardAmount + vodafoneCashAmount)) > 0.05) {
+                    showToast(`${posMessages.splitMismatch} (${grandTotal.toFixed(2)})`, 'warning');
+                    btn.disabled = false;
+                    otherBtn.disabled = false;
+                    return;
+                }
+            }
+
             const payload = {
                 customerId: customerId,
                 paymentMethod: paymentMethod,
-                items: cart.map(i => ({ productId: i.id, quantity: i.quantity }))
+                cashAmount: cashAmount,
+                cardAmount: cardAmount,
+                vodafoneCashAmount: vodafoneCashAmount,
+                items: cart.map(i => ({
+                    productId: i.id,
+                    quantity: i.quantity,
+                    unitName: i.selectedUnit,
+                    conversionFactor: i.conversionFactor,
+                    unitPrice: i.price
+                }))
             };
 
             const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
@@ -437,7 +667,8 @@
                         const row = document.querySelector(`.product-catalog-row[data-id="${item.id}"]`);
                         if (stockBadge && row) {
                             let curr = parseInt(row.getAttribute('data-stock')) || 0;
-                            let updated = Math.max(0, curr - item.quantity);
+                            let allocatedBase = item.quantity * item.conversionFactor;
+                            let updated = Math.max(0, curr - allocatedBase);
                             row.setAttribute('data-stock', updated);
                             stockBadge.textContent = updated;
                             if (updated <= 0) {
@@ -453,10 +684,8 @@
                     renderCart();
 
                     if (shouldPrint) {
-                        // Redirect or open print receipt
                         window.location.href = json.redirectUrl;
                     } else {
-                        // Display success modal without forcing print
                         document.getElementById('saleSuccessInvoiceNumber').textContent = json.invoiceNumber || 'INV-SUCCESS';
                         document.getElementById('saleSuccessTotalAmount').textContent = (json.totalAmount || 0).toFixed(2);
                         document.getElementById('modalPrintInvoiceLink').href = json.redirectUrl || '#';
@@ -464,16 +693,16 @@
                         if (successModal) {
                             successModal.show();
                         } else {
-                            alert('@Loc["SaleCompletedSuccessfully"] #' + json.invoiceNumber);
+                            showToast(`${posMessages.saleCompletedSuccessfully} #${json.invoiceNumber}`, 'success');
                         }
                     }
                 } else {
-                    alert(json.message || '@Loc["OperationFailed"]');
+                    showToast(json.message || posMessages.operationFailed, 'danger');
                     btn.disabled = false;
                     otherBtn.disabled = false;
                 }
             } catch (err) {
-                alert('@Loc["OperationFailed"]');
+                showToast(posMessages.operationFailed, 'danger');
                 btn.disabled = false;
                 otherBtn.disabled = false;
             }

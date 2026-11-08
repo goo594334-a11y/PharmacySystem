@@ -5,6 +5,7 @@ namespace PharmacySystem.Authorization;
 /// </summary>
 public static class AppPolicies
 {
+    public const string RequireDeveloper = "RequireDeveloper";
     public const string RequireAdmin = "RequireAdmin";
     public const string RequirePharmacistOrAdmin = "RequirePharmacistOrAdmin";
 }

@@ -23,8 +23,13 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .IsRequired()
             .HasDefaultValue(true);
 
-        builder.HasIndex(c => c.Name)
+        builder.HasIndex(c => new { c.PharmacyId, c.Name })
             .IsUnique();
+
+        builder.HasOne(c => c.Pharmacy)
+            .WithMany(ph => ph.Categories)
+            .HasForeignKey(c => c.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(c => c.Products)
             .WithOne(p => p.Category)

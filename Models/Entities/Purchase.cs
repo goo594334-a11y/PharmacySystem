@@ -6,9 +6,11 @@ namespace PharmacySystem.Models.Entities;
 /// Represents a purchase order / incoming receipt from a supplier.
 /// Stock increases only when Purchase.Status transitions to Confirmed.
 /// </summary>
-public class Purchase
+public class Purchase : ITenantEntity
 {
     public int Id { get; set; }
+    public int PharmacyId { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
     public int SupplierId { get; set; }
     public int UserId { get; set; }
     public DateTime PurchaseDate { get; set; }

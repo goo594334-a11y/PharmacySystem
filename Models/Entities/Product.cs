@@ -4,9 +4,11 @@ namespace PharmacySystem.Models.Entities;
 /// Represents a master product catalog entry.
 /// Note: Quantity, ExpiryDate, Location, and PurchasePrice belong to the Batch concept, not Product.
 /// </summary>
-public class Product
+public class Product : ITenantEntity
 {
     public int Id { get; set; }
+    public int PharmacyId { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
     public string Name { get; set; } = string.Empty;
     public string? Barcode { get; set; }
     public int CategoryId { get; set; }

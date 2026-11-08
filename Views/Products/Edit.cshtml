@@ -9,85 +9,1259 @@
 
 <div class="container-fluid px-0">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-10 col-lg-8">
-            <div class="card border-0 shadow-sm ph-card">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h5 class="card-title mb-0 fw-bold">@Loc["EditProduct"]</h5>
+        <div class="col-12 col-xl-10">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="fw-bold mb-1 text-dark d-flex align-items-center gap-2">
+                        <span class="ph-brand-icon bg-teal text-white rounded p-2 d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <svg class="ph-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>
+                        </span>
+                        <span>@Loc["EditProduct"]: @Model.Name</span>
+                    </h4>
                     <p class="text-muted small mb-0">@Loc["EditProductSubtitle"]</p>
                 </div>
-                <div class="card-body p-4">
-                    <form asp-action="Edit" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" asp-for="Id" />
-                        <div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3" role="alert"></div>
+                <div>
+                    <a asp-action="Index" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        <span>@Loc["BackToList"]</span>
+                    </a>
+                </div>
+            </div>
 
+            <form asp-action="Edit" method="post" id="editProductForm" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 shadow-sm mb-4" role="alert"></div>
+
+                <!-- SECTION 1: Basic Information -->
+                <div class="card border-0 shadow-sm ph-card mb-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                            <span class="badge bg-teal-subtle text-teal rounded-circle p-1" style="width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;">1</span>
+                            <span>@Loc["BasicInformation"]</span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
                         <div class="row g-3">
-                            @* Name *@
+                            <!-- Product Name -->
                             <div class="col-12 col-md-8">
-                                <label asp-for="Name" class="form-label required">@Loc["ProductName"]</label>
-                                <input asp-for="Name" class="form-control" autofocus />
-                                <span asp-validation-for="Name" class="field-validation-error"></span>
+                                <label asp-for="Name" class="form-label required fw-semibold">@Loc["ProductName"]</label>
+                                <input asp-for="Name" class="form-control form-control-lg" required />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
                             </div>
 
-                            @* Barcode *@
+                            <!-- Barcode -->
                             <div class="col-12 col-md-4">
-                                <label asp-for="Barcode" class="form-label">@Loc["Barcode"]</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
-                                        <svg class="ph-icon text-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="10" y1="8" x2="10" y2="16"></line><line x1="14" y1="8" x2="14" y2="16"></line><line x1="17" y1="8" x2="17" y2="16"></line></svg>
+                                <label asp-for="Barcode" class="form-label fw-semibold">@Loc["Barcode"]</label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light text-muted border-end-0">
+                                        <svg class="ph-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="10" y1="8" x2="10" y2="16"></line><line x1="14" y1="8" x2="14" y2="16"></line><line x1="17" y1="8" x2="17" y2="16"></line></svg>
                                     </span>
-                                    <input asp-for="Barcode" class="form-control" />
+                                    <input asp-for="Barcode" class="form-control" placeholder="@Loc["BarcodePlaceholder"]" id="productBarcodeInput" />
                                 </div>
-                                <span asp-validation-for="Barcode" class="field-validation-error"></span>
+                                <span asp-validation-for="Barcode" class="text-danger small"></span>
                             </div>
 
-                            @* Category *@
+                            <!-- Selling Price -->
                             <div class="col-12 col-md-4">
-                                <label asp-for="CategoryId" class="form-label required">@Loc["Category"]</label>
-                                <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.Categories"></select>
-                                <span asp-validation-for="CategoryId" class="field-validation-error"></span>
-                            </div>
-
-                            @* Selling Price *@
-                            <div class="col-12 col-md-4">
-                                <label asp-for="SellingPrice" class="form-label required">@Loc["SellingPrice"]</label>
+                                <label asp-for="SellingPrice" class="form-label required fw-semibold">@Loc["SellingPrice"]</label>
                                 <div class="input-group">
-                                    <input asp-for="SellingPrice" class="form-control" type="number" step="0.01" min="0.01" placeholder="0.00" />
+                                    <input asp-for="SellingPrice" id="productSellingPrice" class="form-control" type="number" step="0.01" min="0.01" required />
                                     <span class="input-group-text bg-light text-muted px-3">@Loc["CurrencySymbol"]</span>
                                 </div>
-                                <span asp-validation-for="SellingPrice" class="field-validation-error"></span>
+                                <span asp-validation-for="SellingPrice" class="text-danger small"></span>
+                                <div class="form-text small text-muted">@Loc["BaseUnitDescription"]</div>
                             </div>
 
-                            @* Minimum Stock Level *@
+                            <!-- Minimum Stock Level -->
                             <div class="col-12 col-md-4">
-                                <label asp-for="MinimumStockLevel" class="form-label required">@Loc["MinimumStockLevel"]</label>
-                                <input asp-for="MinimumStockLevel" class="form-control" type="number" min="0" />
-                                <span asp-validation-for="MinimumStockLevel" class="field-validation-error"></span>
+                                <label asp-for="MinimumStockLevel" class="form-label required fw-semibold">@Loc["MinimumStockLevel"]</label>
+                                <input asp-for="MinimumStockLevel" class="form-control" type="number" min="0" required />
+                                <span asp-validation-for="MinimumStockLevel" class="text-danger small"></span>
                             </div>
 
-                            @* Description *@
-                            <div class="col-12">
-                                <label asp-for="Description" class="form-label">@Loc["Description"]</label>
-                                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                                <span asp-validation-for="Description" class="field-validation-error"></span>
-                            </div>
-
-                            @* Status *@
-                            <div class="col-12">
-                                <div class="form-check form-switch">
+                            <!-- Active Switch -->
+                            <div class="col-12 col-md-4 d-flex align-items-center pt-md-3">
+                                <div class="form-check form-switch mt-2">
                                     <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" id="productIsActiveSwitch" />
-                                    <label class="form-check-label" for="productIsActiveSwitch">@Loc["Active"]</label>
+                                    <label class="form-check-label fw-semibold" for="productIsActiveSwitch">@Loc["Active"]</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Classification & Dosage Form -->
+                <div class="card border-0 shadow-sm ph-card mb-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                            <span class="badge bg-teal-subtle text-teal rounded-circle p-1" style="width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;">2</span>
+                            <span>@Loc["ProductClassification"]</span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <!-- Category Selection + Quick Add -->
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label asp-for="CategoryId" class="form-label required fw-semibold mb-0">@Loc["Category"]</label>
+                                    <button type="button" class="btn btn-sm btn-link text-teal p-0 text-decoration-none fw-semibold" data-bs-toggle="modal" data-bs-target="#quickCategoryModal">
+                                        + @Loc["QuickAddCategory"]
+                                    </button>
+                                </div>
+                                <select asp-for="CategoryId" class="form-select form-select-lg" asp-items="@ViewBag.Categories" id="productCategorySelect" required></select>
+                                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+
+                                <!-- Category Suggestions Pills -->
+                                <div class="mt-2">
+                                    <span class="text-muted small d-block mb-1">@Loc["CategoryQuickSuggestions"]:</span>
+                                    <div class="d-flex flex-wrap gap-1" id="categorySuggestionsGroup">
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="مسكنات الآلام" data-cat-en="Analgesics (Painkillers)">@Loc["Category_Analgesics"]</button>
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="مضادات حيوية" data-cat-en="Antibiotics">@Loc["Category_Antibiotics"]</button>
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="فيتامينات ومكملات غذائية" data-cat-en="Vitamins &amp; Supplements">@Loc["Category_Vitamins"]</button>
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="أدوية الجهاز الهضمي" data-cat-en="Digestive System">@Loc["Category_Digestive"]</button>
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="أدوية القلب والأوعية الدموية" data-cat-en="Cardiovascular">@Loc["Category_Cardiovascular"]</button>
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="أدوية الحساسية" data-cat-en="Allergy">@Loc["Category_Allergy"]</button>
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="أدوية الجهاز التنفسي" data-cat-en="Respiratory">@Loc["Category_Respiratory"]</button>
+                                        <button type="button" class="btn btn-sm btn-light border py-0 px-2 category-pill" data-cat-name="مستلزمات طبية" data-cat-en="Medical Supplies">@Loc["Category_MedicalSupplies"]</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dosage Form -->
+                            <div class="col-12 col-lg-6">
+                                <label asp-for="DosageForm" class="form-label fw-semibold mb-1">@Loc["DosageForm"]</label>
+                                <input type="hidden" asp-for="DosageForm" id="dosageFormHiddenInput" value="@(Model.DosageForm ?? "أقراص / Tablets")" />
+                                
+                                <div class="d-flex flex-wrap gap-1 mb-2" id="dosageFormsContainer">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="أقراص / Tablets" data-preset="tablets">
+                                        💊 @Loc["DosageForm_Tablets"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="كبسولات / Capsules" data-preset="capsules">
+                                        💊 @Loc["DosageForm_Capsules"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="شراب / Syrup" data-preset="syrup">
+                                        🍶 @Loc["DosageForm_Syrup"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="حقن / Injection" data-preset="injection">
+                                        💉 @Loc["DosageForm_Injection"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="أمبول / Ampoule" data-preset="ampoule">
+                                        🧪 @Loc["DosageForm_Ampoule"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="فيال / Vial" data-preset="vial">
+                                        🧪 @Loc["DosageForm_Vial"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="كريم / Cream" data-preset="cream">
+                                        🧴 @Loc["DosageForm_Cream"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="مرهم / Ointment" data-preset="ointment">
+                                        🧴 @Loc["DosageForm_Ointment"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="قطرات / Drops" data-preset="drops">
+                                        💧 @Loc["DosageForm_Drops"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="أكياس وفوار / Sachets" data-preset="sachets">
+                                        📦 @Loc["DosageForm_Sachet"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="بخاخ / Spray" data-preset="spray">
+                                        💨 @Loc["DosageForm_Spray"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="مستلزمات طبية / Medical Supplies" data-preset="supplies">
+                                        🩹 @Loc["DosageForm_MedicalSupplies"]
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dosage-form-btn" data-form="أخرى / Other" data-preset="custom">
+                                        ✨ @Loc["DosageForm_Custom"]
+                                    </button>
+                                </div>
+
+                                <div id="customDosageFormDiv" class="input-group input-group-sm d-none mt-2">
+                                    <input type="text" id="customDosageFormInput" class="form-control" placeholder="أدخل الشكل الصيدلاني المخصص..." />
+                                    <button type="button" id="applyCustomDosageFormBtn" class="btn btn-teal">تطبيق</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Smart Packaging & Units -->
+                <div class="card border-0 shadow-sm ph-card mb-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                            <span class="badge bg-teal-subtle text-teal rounded-circle p-1" style="width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;">3</span>
+                            <span>@Loc["PackagingUnits"]</span>
+                        </h6>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <!-- Primary Splitting Control Toggle -->
+                        <div class="p-3 rounded-3 mb-4 border" style="background-color: #f8fafc;">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                <div>
+                                    <label class="form-check-label fw-bold text-dark fs-6 d-block mb-1" for="canSplitProductSwitch">
+                                        @Loc["CanBeSoldInSmallerUnits"]
+                                    </label>
+                                    <span class="text-muted small">
+                                        @Loc["CanBeSoldInSmallerUnitsHint"]
+                                    </span>
+                                </div>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input fs-4" type="checkbox" role="switch" id="canSplitProductSwitch" @(Model.SellFullPackageOnly ? "" : "checked") />
                                 </div>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                            <a asp-action="Index" class="btn btn-outline-secondary">@Loc["Cancel"]</a>
-                            <button type="submit" class="btn btn-teal px-4 fw-semibold">@Loc["Save"]</button>
+                        <!-- Hidden fields bound to ViewModel -->
+                        <input type="hidden" asp-for="SellFullPackageOnly" id="sellFullPackageOnlyHidden" />
+                        <input type="hidden" asp-for="BaseUnitName" id="baseUnitNameHidden" />
+                        <input type="hidden" asp-for="UnitsJson" id="unitsJsonHidden" />
+
+                        <!-- Case A: Non-Splittable (Sell Full Package Only) -->
+                        <div id="nonSplittableContainer" class="@(Model.SellFullPackageOnly ? "" : "d-none")">
+                            <div class="card border border-teal-subtle bg-teal-subtle bg-opacity-10 rounded-3 p-4 mb-2">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="rounded-circle bg-white p-2 text-teal shadow-xs d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                                        <svg class="ph-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold text-dark mb-1">@Loc["SoldAsFullPackageOnlyTitle"]</h6>
+                                        <p class="text-muted small mb-3">@Loc["SoldAsFullPackageOnlyDescription"]</p>
+                                        <div class="d-flex flex-wrap gap-3 align-items-center">
+                                            <div class="bg-white border rounded px-3 py-2 shadow-xs">
+                                                <span class="text-muted small d-block">@Loc["MainPackageName"]</span>
+                                                <span class="fw-bold text-dark fs-6" id="nonSplittableUnitBadge">@(Model.BaseUnitName ?? "علبة / Box")</span>
+                                            </div>
+                                            <div class="bg-white border rounded px-3 py-2 shadow-xs">
+                                                <span class="text-muted small d-block">@Loc["MainPackagePrice"]</span>
+                                                <span class="fw-bold text-teal fs-6" id="nonSplittablePriceBadge">@Model.SellingPrice.ToString("N2") @Loc["EGP"]</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+
+                        <!-- Case B: Splittable (Guided Breakdown & Smaller Units) -->
+                        <div id="splittableContainer" class="@(Model.SellFullPackageOnly ? "d-none" : "")">
+                            <!-- Live Packaging Hierarchy Preview Banner -->
+                            <div class="p-3 bg-light rounded-3 border mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold small text-teal d-flex align-items-center gap-1">
+                                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                                        <span>@Loc["FormulaPreview"]</span>
+                                    </span>
+                                    <span class="badge bg-white text-secondary border small" id="packagingPresetBadge">هيكل الوحدات الحالي</span>
+                                </div>
+                                <div class="d-flex align-items-center flex-wrap gap-2 py-2" id="packagingFlowVisual"></div>
+                                <div class="small fw-semibold text-dark mt-2 border-top pt-2" id="packagingEquationText"></div>
+                            </div>
+
+                            <!-- Main Package (Top Unit) Row -->
+                            <div class="row g-3 mb-3 p-3 bg-white border rounded-3 align-items-center">
+                                <div class="col-12 col-md-5">
+                                    <label class="form-label fw-semibold small mb-1">@Loc["MainPackageName"]</label>
+                                    <input type="text" class="form-control" id="mainPackageNameInput" value="علبة / Box" placeholder="علبة / Box..." />
+                                    <div class="form-text small text-muted">اسم العبوة الكبرى المشتراة والمباعة بالكامل</div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label fw-semibold small mb-1">@Loc["MainPackagePrice"]</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light fw-bold text-teal" id="mainPackagePriceDisplay" readonly />
+                                        <span class="input-group-text small">@Loc["EGP"]</span>
+                                    </div>
+                                    <div class="form-text small text-muted">مربوط بسعر البيع الرئيسي للصنف</div>
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label fw-semibold small mb-1">إتاحة البيع بالعبوة</label>
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" id="mainPackageAllowSale" checked disabled />
+                                        <label class="form-check-label small" for="mainPackageAllowSale">متاح دائماً</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Guided Packaging Cards by Selected Dosage Form -->
+                            <div id="guidedPackagingCards" class="d-flex flex-column gap-3 mb-3">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+
+                            <!-- Custom Additional Smaller Unit Section -->
+                            <div class="border-top pt-3 mt-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-semibold small text-muted">وحدات تجزئة إضافية إن وجدت:</span>
+                                    <button type="button" class="btn btn-sm btn-outline-teal d-inline-flex align-items-center gap-1" id="addCustomUnitBtn">
+                                        <svg class="ph-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        <span>@Loc["AddCustomSmallerUnit"]</span>
+                                    </button>
+                                </div>
+                                <div id="customUnitsList" class="d-flex flex-column gap-2"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- SECTION 4: Description -->
+                <div class="card border-0 shadow-sm ph-card mb-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                            <span class="badge bg-teal-subtle text-teal rounded-circle p-1" style="width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;">4</span>
+                            <span>@Loc["Description"]</span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <label asp-for="Description" class="form-label fw-semibold">@Loc["Description"] (@Loc["Optional"])</label>
+                        <textarea asp-for="Description" class="form-control" rows="2" placeholder="@Loc["DescriptionPlaceholder"]"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="d-flex justify-content-end align-items-center gap-2 mb-5">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">@Loc["Cancel"]</a>
+                    <button type="submit" class="btn btn-teal px-5 py-2 fw-bold shadow-sm d-inline-flex align-items-center gap-2" id="submitProductBtn">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>@Loc["Save"]</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- QUICK ADD CATEGORY MODAL -->
+<div class="modal fade" id="quickCategoryModal" tabindex="-1" aria-labelledby="quickCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-bottom py-3">
+                <h5 class="modal-title fw-bold text-dark fs-6" id="quickCategoryModalLabel">+ @Loc["QuickAddCategory"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label required fw-semibold small">@Loc["CategoryName"]</label>
+                    <input type="text" id="quickCategoryNameInput" class="form-control" placeholder="مثال: مسكنات، مضادات حيوية..." required />
+                    <div class="text-danger small mt-1 d-none" id="quickCategoryError"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small">@Loc["Description"] (@Loc["Optional"])</label>
+                    <textarea id="quickCategoryDescInput" class="form-control" rows="2" placeholder="وصف الفئة..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-top py-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">@Loc["Cancel"]</button>
+                <button type="button" class="btn btn-sm btn-teal fw-semibold px-3" id="saveQuickCategoryBtn">
+                    @Loc["Save"]
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // DOM Elements
+        const form = document.getElementById('editProductForm');
+        const mainSellingPriceInput = document.getElementById('productSellingPrice');
+        const mainBarcodeInput = document.getElementById('productBarcodeInput');
+        const dosageFormHiddenInput = document.getElementById('dosageFormHiddenInput');
+
+        const canSplitProductSwitch = document.getElementById('canSplitProductSwitch');
+        const sellFullPackageOnlyHidden = document.getElementById('sellFullPackageOnlyHidden');
+        const baseUnitNameHidden = document.getElementById('baseUnitNameHidden');
+        const unitsJsonHidden = document.getElementById('unitsJsonHidden');
+
+        const nonSplittableContainer = document.getElementById('nonSplittableContainer');
+        const splittableContainer = document.getElementById('splittableContainer');
+        const nonSplittableUnitBadge = document.getElementById('nonSplittableUnitBadge');
+        const nonSplittablePriceBadge = document.getElementById('nonSplittablePriceBadge');
+
+        const mainPackageNameInput = document.getElementById('mainPackageNameInput');
+        const mainPackagePriceDisplay = document.getElementById('mainPackagePriceDisplay');
+        const packagingPresetBadge = document.getElementById('packagingPresetBadge');
+        const packagingFlowVisual = document.getElementById('packagingFlowVisual');
+        const packagingEquationText = document.getElementById('packagingEquationText');
+        const guidedPackagingCards = document.getElementById('guidedPackagingCards');
+        const customUnitsList = document.getElementById('customUnitsList');
+        const addCustomUnitBtn = document.getElementById('addCustomUnitBtn');
+
+        let currentPreset = 'tablets';
+        let customUnits = [];
+
+        const FORM_PRESETS = {
+            tablets: {
+                badge: 'أقراص / Tablets',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: true,
+                intermediateName: 'شريط / Strip',
+                defaultIntermediateQty: 3,
+                intermediateQtyLabel: 'عدد الشرائط داخل العلبة',
+                hasSmallest: true,
+                smallestName: 'قرص / Tablet',
+                defaultSmallestQty: 10,
+                smallestQtyLabel: 'عدد الأقراص داخل الشريط',
+                smallestToggleLabel: 'هل يمكن بيع القرص منفرداً في الكاشير؟'
+            },
+            capsules: {
+                badge: 'كبسولات / Capsules',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: true,
+                intermediateName: 'شريط / Strip',
+                defaultIntermediateQty: 3,
+                intermediateQtyLabel: 'عدد الشرائط داخل العلبة',
+                hasSmallest: true,
+                smallestName: 'كبسولة / Capsule',
+                defaultSmallestQty: 10,
+                smallestQtyLabel: 'عدد الكبسولات داخل الشريط',
+                smallestToggleLabel: 'هل يمكن بيع الكبسولة منفردة في الكاشير؟'
+            },
+            syrup: {
+                badge: 'شراب / Syrup',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'زجاجة / Bottle',
+                defaultSmallestQty: 1,
+                smallestQtyLabel: 'عدد الزجاجات داخل العبوة',
+                smallestToggleLabel: 'تجزئة العبوة لزجاجات منفردة'
+            },
+            injection: {
+                badge: 'حقن / Injection',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'أمبول / Ampoule',
+                defaultSmallestQty: 5,
+                smallestQtyLabel: 'عدد الأمبولات / الحقن داخل العلبة',
+                smallestToggleLabel: 'إتاحة بيع الأمبول منفرداً في الكاشير'
+            },
+            ampoule: {
+                badge: 'أمبول / Ampoule',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'أمبول / Ampoule',
+                defaultSmallestQty: 5,
+                smallestQtyLabel: 'عدد الأمبولات داخل العلبة',
+                smallestToggleLabel: 'إتاحة بيع الأمبول منفرداً في الكاشير'
+            },
+            vial: {
+                badge: 'فيال / Vial',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'فيال / Vial',
+                defaultSmallestQty: 1,
+                smallestQtyLabel: 'عدد الفيال داخل العلبة',
+                smallestToggleLabel: 'إتاحة بيع الفيال منفرداً في الكاشير'
+            },
+            cream: {
+                badge: 'كريم / Cream',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'أنبوبة / Tube',
+                defaultSmallestQty: 1,
+                smallestQtyLabel: 'عدد الأنابيب داخل العلبة',
+                smallestToggleLabel: 'إتاحة بيع الأنبوبة منفردة'
+            },
+            ointment: {
+                badge: 'مرهم / Ointment',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'أنبوبة / Tube',
+                defaultSmallestQty: 1,
+                smallestQtyLabel: 'عدد الأنابيب داخل العلبة',
+                smallestToggleLabel: 'إتاحة بيع الأنبوبة منفردة'
+            },
+            drops: {
+                badge: 'قطرات / Drops',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'قطارة / Dropper Bottle',
+                defaultSmallestQty: 1,
+                smallestQtyLabel: 'عدد العبوات داخل العلبة',
+                smallestToggleLabel: 'إتاحة بيع القطارة منفردة'
+            },
+            sachets: {
+                badge: 'أكياس وفوار / Sachets',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'كيس / Sachet',
+                defaultSmallestQty: 10,
+                smallestQtyLabel: 'عدد الأكياس داخل العلبة',
+                smallestToggleLabel: 'إتاحة بيع الكيس منفرداً في الكاشير'
+            },
+            spray: {
+                badge: 'بخاخ / Spray',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'عبوة بخاخ / Spray Bottle',
+                defaultSmallestQty: 1,
+                smallestQtyLabel: 'عدد البخاخات داخل العبوة',
+                smallestToggleLabel: 'إتاحة بيع البخاخ منفرداً'
+            },
+            supplies: {
+                badge: 'مستلزمات طبية / Medical Supplies',
+                mainPackage: 'باكت / Pack',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'قطعة / Piece',
+                defaultSmallestQty: 50,
+                smallestQtyLabel: 'عدد القطع داخل العبوة',
+                smallestToggleLabel: 'إتاحة بيع القطعة منفردة في الكاشير'
+            },
+            custom: {
+                badge: 'مخصص / Custom',
+                mainPackage: 'علبة / Box',
+                hasIntermediate: false,
+                hasSmallest: true,
+                smallestName: 'وحدة / Unit',
+                defaultSmallestQty: 1,
+                smallestQtyLabel: 'عدد الوحدات الأصغر داخل العبوة',
+                smallestToggleLabel: 'إتاحة بيع الوحدة منفردة في الكاشير'
+            }
+        };
+
+        function renderGuidedCards(presetKey, initialData = null) {
+            currentPreset = presetKey;
+            const config = FORM_PRESETS[presetKey] || FORM_PRESETS.tablets;
+            packagingPresetBadge.textContent = config.badge;
+
+            const mainPrice = parseFloat(mainSellingPriceInput.value) || 0;
+            mainPackagePriceDisplay.value = mainPrice.toFixed(2);
+            nonSplittablePriceBadge.textContent = `${mainPrice.toFixed(2)} ج.م`;
+
+            if (initialData && initialData.mainPackageName) {
+                mainPackageNameInput.value = initialData.mainPackageName;
+            } else if (!mainPackageNameInput.dataset.userEdited) {
+                mainPackageNameInput.value = config.mainPackage;
+            }
+            nonSplittableUnitBadge.textContent = mainPackageNameInput.value;
+
+            let html = '';
+
+            // Intermediate (Strip)
+            if (config.hasIntermediate) {
+                const interQty = initialData?.interQty || config.defaultIntermediateQty || 3;
+                const interPrice = initialData?.interPrice !== undefined ? initialData.interPrice : (interQty > 0 ? (mainPrice / interQty).toFixed(2) : '0.00');
+                const interAllow = initialData?.interAllowSale !== undefined ? initialData.interAllowSale : true;
+                const interBarcode = initialData?.interBarcode || '';
+                const suggestedInterPrice = interQty > 0 ? (mainPrice / interQty).toFixed(2) : '0.00';
+
+                html += `
+                    <div class="card border rounded-3 p-3 bg-white shadow-xs" id="intermediateUnitCard">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                <span class="badge bg-primary-subtle text-primary border">الوحدة المتوسطة</span>
+                                <span>${config.intermediateName}</span>
+                            </h6>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" id="interAllowSale" ${interAllow ? 'checked' : ''} />
+                                <label class="form-check-label small fw-semibold" for="interAllowSale">إتاحة البيع بالكاشير</label>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small fw-semibold mb-1">${config.intermediateQtyLabel}</label>
+                                <input type="number" class="form-control text-center fw-bold text-teal" id="interQtyInput" value="${interQty}" min="1" step="1" required />
+                                <div class="form-text small text-muted">عدد الشرائط بالعلبة الكاملة</div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small fw-semibold mb-1 d-flex justify-content-between align-items-center">
+                                    <span>سعر البيع (للشريط)</span>
+                                    <span class="badge bg-light text-muted border small fw-normal" id="interSuggestedBadge">مقترح: ${suggestedInterPrice}</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-center fw-bold" id="interPriceInput" value="${interPrice}" step="0.01" min="0" placeholder="0.00" />
+                                    <span class="input-group-text small">ج.م</span>
+                                </div>
+                                <div class="form-text small text-muted">قابل للتعديل بحرية</div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small fw-semibold mb-1">باركود الشريط (اختياري)</label>
+                                <input type="text" class="form-control" id="interBarcodeInput" value="${interBarcode}" placeholder="باركود مطبوع على الشريط..." />
+                                <div class="form-text small text-muted">يسرع البيع بمسدس الباركود</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Smallest (Tablet/Ampoule/etc)
+            if (config.hasSmallest) {
+                const isTabletsOrCapsules = config.hasIntermediate;
+                const defaultCount = config.defaultSmallestQty || 1;
+                const baseQty = initialData?.smallestQty || defaultCount;
+                const sAllow = initialData?.smallestAllowSale !== undefined ? initialData.smallestAllowSale : (isTabletsOrCapsules ? false : true);
+                const sPrice = initialData?.smallestPrice !== undefined ? initialData.smallestPrice : (baseQty > 0 ? (mainPrice / (isTabletsOrCapsules ? (3 * baseQty) : baseQty)).toFixed(2) : '0.00');
+                const sBarcode = initialData?.smallestBarcode || '';
+                const suggestedSmallPrice = baseQty > 0 ? (mainPrice / (isTabletsOrCapsules ? (3 * baseQty) : baseQty)).toFixed(2) : '0.00';
+
+                html += `
+                    <div class="card border rounded-3 p-3 bg-white shadow-xs" id="smallestUnitCard">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                <span class="badge bg-teal-subtle text-teal border">الوحدة الصغرى (الأساسية)</span>
+                                <span>${config.smallestName}</span>
+                            </h6>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" id="smallestAllowSale" ${sAllow ? 'checked' : ''} />
+                                <label class="form-check-label small fw-semibold" for="smallestAllowSale">${config.smallestToggleLabel}</label>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center" id="smallestFieldsContainer">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small fw-semibold mb-1">${config.smallestQtyLabel}</label>
+                                <input type="number" class="form-control text-center fw-bold text-teal" id="smallestQtyInput" value="${baseQty}" min="1" step="1" required />
+                                <div class="form-text small text-muted">${isTabletsOrCapsules ? 'عدد الأقراص في الشريط الواحد' : 'العدد داخل العلبة'}</div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small fw-semibold mb-1 d-flex justify-content-between align-items-center">
+                                    <span>سعر البيع (للوحدة)</span>
+                                    <span class="badge bg-light text-muted border small fw-normal" id="smallestSuggestedBadge">مقترح: ${suggestedSmallPrice}</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-center fw-bold" id="smallestPriceInput" value="${sPrice}" step="0.01" min="0" placeholder="0.00" />
+                                    <span class="input-group-text small">ج.م</span>
+                                </div>
+                                <div class="form-text small text-muted">سعر بيع القرص / الوحدة المفردة</div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small fw-semibold mb-1">باركود الوحدة (اختياري)</label>
+                                <input type="text" class="form-control" id="smallestBarcodeInput" value="${sBarcode}" placeholder="باركود الوحدة الصغرى..." />
+                                <div class="form-text small text-muted">اختياري</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            guidedPackagingCards.innerHTML = html;
+            attachCardEvents();
+            updateLivePreview();
+        }
+
+        function attachCardEvents() {
+            const interQtyInput = document.getElementById('interQtyInput');
+            const interPriceInput = document.getElementById('interPriceInput');
+            const interAllowSale = document.getElementById('interAllowSale');
+
+            const smallestQtyInput = document.getElementById('smallestQtyInput');
+            const smallestPriceInput = document.getElementById('smallestPriceInput');
+            const smallestAllowSale = document.getElementById('smallestAllowSale');
+
+            if (interPriceInput) {
+                interPriceInput.addEventListener('input', function() {
+                    this.dataset.manualEdited = "true";
+                    updateSuggestedPrices(false);
+                    updateLivePreview();
+                });
+            }
+
+            if (smallestPriceInput) {
+                smallestPriceInput.addEventListener('input', function() {
+                    this.dataset.manualEdited = "true";
+                    updateLivePreview();
+                });
+            }
+
+            if (interQtyInput) {
+                interQtyInput.addEventListener('input', () => {
+                    updateSuggestedPrices(true);
+                    updateLivePreview();
+                });
+            }
+
+            if (smallestQtyInput) {
+                smallestQtyInput.addEventListener('input', () => {
+                    updateSuggestedPrices(true);
+                    updateLivePreview();
+                });
+            }
+
+            if (smallestAllowSale) {
+                smallestAllowSale.addEventListener('change', () => {
+                    updateLivePreview();
+                });
+            }
+
+            if (interAllowSale) {
+                interAllowSale.addEventListener('change', () => {
+                    updateLivePreview();
+                });
+            }
+        }
+
+        function updateSuggestedPrices(autoOverride = false) {
+            const mainPrice = parseFloat(mainSellingPriceInput.value) || 0;
+            const config = FORM_PRESETS[currentPreset] || FORM_PRESETS.tablets;
+
+            const interQtyInput = document.getElementById('interQtyInput');
+            const interPriceInput = document.getElementById('interPriceInput');
+            const interSuggestedBadge = document.getElementById('interSuggestedBadge');
+
+            const smallestQtyInput = document.getElementById('smallestQtyInput');
+            const smallestPriceInput = document.getElementById('smallestPriceInput');
+            const smallestSuggestedBadge = document.getElementById('smallestSuggestedBadge');
+
+            let currentInterPrice = 0;
+
+            if (interQtyInput && interPriceInput) {
+                const iQty = parseInt(interQtyInput.value) || 1;
+                const suggestedInter = iQty > 0 ? (mainPrice / iQty) : 0;
+                if (interSuggestedBadge) {
+                    interSuggestedBadge.textContent = `مقترح: ${suggestedInter.toFixed(2)}`;
+                }
+                if (!interPriceInput.dataset.manualEdited || autoOverride) {
+                    interPriceInput.value = suggestedInter > 0 ? suggestedInter.toFixed(2) : '0.00';
+                }
+                currentInterPrice = parseFloat(interPriceInput.value) || suggestedInter;
+            }
+
+            if (smallestQtyInput && smallestPriceInput) {
+                const sQty = parseInt(smallestQtyInput.value) || 1;
+                let suggestedSmall = 0;
+                if (config.hasIntermediate) {
+                    suggestedSmall = sQty > 0 ? (currentInterPrice / sQty) : 0;
+                } else {
+                    suggestedSmall = sQty > 0 ? (mainPrice / sQty) : 0;
+                }
+
+                if (smallestSuggestedBadge) {
+                    smallestSuggestedBadge.textContent = `مقترح: ${suggestedSmall.toFixed(2)}`;
+                }
+                if (!smallestPriceInput.dataset.manualEdited || autoOverride) {
+                    smallestPriceInput.value = suggestedSmall > 0 ? suggestedSmall.toFixed(2) : '0.00';
+                }
+            }
+        }
+
+        function updateLivePreview() {
+            const canSplit = canSplitProductSwitch.checked;
+            const mainName = (mainPackageNameInput ? mainPackageNameInput.value.trim() : '') || 'علبة / Box';
+            const mainPrice = parseFloat(mainSellingPriceInput.value) || 0;
+
+            nonSplittableUnitBadge.textContent = mainName;
+            nonSplittablePriceBadge.textContent = `${mainPrice.toFixed(2)} ج.م`;
+
+            if (!canSplit) {
+                packagingFlowVisual.innerHTML = `
+                    <div class="badge bg-teal text-white shadow-xs py-2 px-3 text-start">
+                        <div class="fw-bold">${mainName}</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;">${mainPrice.toFixed(2)} ج.م (العبوة الكاملة فقط)</div>
+                    </div>
+                `;
+                packagingEquationText.innerHTML = `معادلة البيع: <strong class="text-teal">يباع هذا الصنف بالعبوة الكاملة فقط (${mainName})</strong>`;
+                return;
+            }
+
+            const config = FORM_PRESETS[currentPreset] || FORM_PRESETS.tablets;
+            const interQtyInput = document.getElementById('interQtyInput');
+            const interPriceInput = document.getElementById('interPriceInput');
+            const interAllowSale = document.getElementById('interAllowSale');
+
+            const smallestQtyInput = document.getElementById('smallestQtyInput');
+            const smallestPriceInput = document.getElementById('smallestPriceInput');
+            const smallestAllowSale = document.getElementById('smallestAllowSale');
+
+            let visualHtml = '';
+            let eqParts = [`1 ${mainName}`];
+
+            visualHtml += `
+                <div class="badge bg-white text-dark border shadow-xs py-2 px-3 text-start">
+                    <div class="fw-bold">${mainName}</div>
+                    <div class="text-teal fw-semibold">${mainPrice.toFixed(2)} ج.م</div>
+                    <div class="text-muted" style="font-size: 0.72rem;">العبوة الكبرى</div>
+                </div>
+            `;
+
+            let interQty = 1;
+            let interPrice = 0;
+            if (config.hasIntermediate && interQtyInput) {
+                interQty = parseInt(interQtyInput.value) || 1;
+                interPrice = parseFloat(interPriceInput?.value || 0) || 0;
+                const saleAllowed = interAllowSale ? interAllowSale.checked : true;
+
+                eqParts.push(`${interQty} ${config.intermediateName}`);
+
+                visualHtml += `
+                    <div class="text-muted d-flex align-items-center">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </div>
+                    <div class="badge bg-white text-dark border shadow-xs py-2 px-3 text-start">
+                        <div class="fw-bold">${config.intermediateName}</div>
+                        <div class="text-teal fw-semibold">${interPrice.toFixed(2)} ج.م</div>
+                        <div class="${saleAllowed ? 'text-success' : 'text-danger'}" style="font-size: 0.72rem;">
+                            ${saleAllowed ? 'متاح للبيع بالكاشير' : 'شراء فقط'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (config.hasSmallest && smallestQtyInput) {
+                const sQty = parseInt(smallestQtyInput.value) || 1;
+                const sPrice = parseFloat(smallestPriceInput?.value || 0) || 0;
+                const sAllowSale = smallestAllowSale ? smallestAllowSale.checked : true;
+                const totalSmallestInBox = config.hasIntermediate ? (interQty * sQty) : sQty;
+
+                eqParts.push(`${totalSmallestInBox} ${config.smallestName}`);
+
+                visualHtml += `
+                    <div class="text-muted d-flex align-items-center">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </div>
+                    <div class="badge bg-teal text-white shadow-xs py-2 px-3 text-start">
+                        <div class="fw-bold">${config.smallestName}</div>
+                        <div class="text-white fw-semibold">${sPrice.toFixed(2)} ج.م</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;">
+                            الوحدة الأساسية للمخزون ${sAllowSale ? '(متاحة للبيع)' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            customUnits.forEach(u => {
+                visualHtml += `
+                    <div class="text-muted d-flex align-items-center">
+                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </div>
+                    <div class="badge bg-white text-dark border shadow-xs py-2 px-3 text-start">
+                        <div class="fw-bold">${u.name}</div>
+                        <div class="text-teal fw-semibold">${(parseFloat(u.price) || 0).toFixed(2)} ج.م</div>
+                        <div class="text-muted" style="font-size: 0.72rem;">مخصصة (${u.count} بالعبوة)</div>
+                    </div>
+                `;
+            });
+
+            packagingFlowVisual.innerHTML = visualHtml;
+            packagingEquationText.innerHTML = `معادلة التجزئة والتعبئة المعتمدة: <strong class="text-teal">${eqParts.join(' = ')}</strong>`;
+        }
+
+        // Custom Units Handlers
+        addCustomUnitBtn.addEventListener('click', () => {
+            const id = 'custom_' + Date.now();
+            const mainPrice = parseFloat(mainSellingPriceInput.value) || 0;
+            const newUnit = {
+                id: id,
+                name: 'وحدة تجزئة مخصصة',
+                count: 2,
+                price: (mainPrice / 2).toFixed(2),
+                allowSale: true,
+                barcode: ''
+            };
+            customUnits.push(newUnit);
+            renderCustomUnitsList();
+            updateLivePreview();
+        });
+
+        function renderCustomUnitsList() {
+            if (customUnits.length === 0) {
+                customUnitsList.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            customUnits.forEach(u => {
+                html += `
+                    <div class="card border rounded-3 p-3 bg-light shadow-xs" data-unit-id="${u.id}">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-12 col-md-3">
+                                <label class="form-label small fw-semibold mb-1">اسم الوحدة</label>
+                                <input type="text" class="form-control form-control-sm cu-name" value="${u.name}" required />
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <label class="form-label small fw-semibold mb-1">العدد بالعلبة</label>
+                                <input type="number" class="form-control form-control-sm text-center cu-count" value="${u.count}" min="1" step="1" required />
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label class="form-label small fw-semibold mb-1">السعر (ج.م)</label>
+                                <input type="number" class="form-control form-control-sm text-center cu-price" value="${u.price}" step="0.01" min="0" />
+                            </div>
+                            <div class="col-8 col-md-3">
+                                <label class="form-label small fw-semibold mb-1">الباركود (اختياري)</label>
+                                <input type="text" class="form-control form-control-sm cu-barcode" value="${u.barcode || ''}" />
+                            </div>
+                            <div class="col-4 col-md-1 text-center">
+                                <label class="form-label small fw-semibold mb-1 d-block">حذف</label>
+                                <button type="button" class="btn btn-sm btn-link text-danger p-0 cu-remove-btn" title="حذف">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            customUnitsList.innerHTML = html;
+
+            customUnitsList.querySelectorAll('.cu-name').forEach((inp, idx) => {
+                inp.addEventListener('input', function() {
+                    customUnits[idx].name = this.value.trim() || 'وحدة';
+                    updateLivePreview();
+                });
+            });
+
+            customUnitsList.querySelectorAll('.cu-count').forEach((inp, idx) => {
+                inp.addEventListener('input', function() {
+                    customUnits[idx].count = parseInt(this.value) || 1;
+                    updateLivePreview();
+                });
+            });
+
+            customUnitsList.querySelectorAll('.cu-price').forEach((inp, idx) => {
+                inp.addEventListener('input', function() {
+                    customUnits[idx].price = parseFloat(this.value) || 0;
+                    updateLivePreview();
+                });
+            });
+
+            customUnitsList.querySelectorAll('.cu-barcode').forEach((inp, idx) => {
+                inp.addEventListener('input', function() {
+                    customUnits[idx].barcode = this.value.trim();
+                });
+            });
+
+            customUnitsList.querySelectorAll('.cu-remove-btn').forEach((btn, idx) => {
+                btn.addEventListener('click', function() {
+                    customUnits.splice(idx, 1);
+                    renderCustomUnitsList();
+                    updateLivePreview();
+                });
+            });
+        }
+
+        canSplitProductSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                nonSplittableContainer.classList.add('d-none');
+                splittableContainer.classList.remove('d-none');
+                sellFullPackageOnlyHidden.value = "false";
+            } else {
+                nonSplittableContainer.classList.remove('d-none');
+                splittableContainer.classList.add('d-none');
+                sellFullPackageOnlyHidden.value = "true";
+            }
+            updateLivePreview();
+        });
+
+        mainSellingPriceInput.addEventListener('input', function() {
+            const price = parseFloat(this.value) || 0;
+            mainPackagePriceDisplay.value = price.toFixed(2);
+            nonSplittablePriceBadge.textContent = `${price.toFixed(2)} ج.م`;
+            updateSuggestedPrices(false);
+            updateLivePreview();
+        });
+
+        mainPackageNameInput.addEventListener('input', function() {
+            this.dataset.userEdited = "true";
+            nonSplittableUnitBadge.textContent = this.value.trim() || 'علبة / Box';
+            updateLivePreview();
+        });
+
+        document.querySelectorAll('.dosage-form-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.dosage-form-btn').forEach(b => {
+                    b.classList.remove('btn-teal', 'active');
+                    b.classList.add('btn-outline-secondary');
+                });
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-teal', 'active');
+
+                const formName = this.getAttribute('data-form');
+                const presetKey = this.getAttribute('data-preset');
+                dosageFormHiddenInput.value = formName;
+
+                const customDiv = document.getElementById('customDosageFormDiv');
+                if (presetKey === 'custom') {
+                    customDiv.classList.remove('d-none');
+                    document.getElementById('customDosageFormInput').focus();
+                } else {
+                    customDiv.classList.add('d-none');
+                    renderGuidedCards(presetKey);
+                }
+            });
+        });
+
+        document.getElementById('applyCustomDosageFormBtn').addEventListener('click', () => {
+            const customVal = document.getElementById('customDosageFormInput').value.trim();
+            if (customVal) {
+                dosageFormHiddenInput.value = customVal;
+                packagingPresetBadge.textContent = customVal;
+                renderGuidedCards('custom');
+            }
+        });
+
+        // Quick Category Add
+        document.getElementById('saveQuickCategoryBtn').addEventListener('click', async function () {
+            const nameInput = document.getElementById('quickCategoryNameInput');
+            const descInput = document.getElementById('quickCategoryDescInput');
+            const errDiv = document.getElementById('quickCategoryError');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                errDiv.textContent = 'يرجى إدخال اسم الفئة';
+                errDiv.classList.remove('d-none');
+                return;
+            }
+
+            errDiv.classList.add('d-none');
+            this.disabled = true;
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+            try {
+                const res = await fetch('@Url.Action("QuickCreate", "Categories")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ name: name, description: descInput.value.trim() })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    const select = document.getElementById('productCategorySelect');
+                    let exists = false;
+                    for (let opt of select.options) {
+                        if (opt.value == data.id) {
+                            opt.selected = true;
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        const newOpt = new Option(data.name, data.id, true, true);
+                        select.add(newOpt);
+                    }
+
+                    nameInput.value = '';
+                    descInput.value = '';
+                    bootstrap.Modal.getInstance(document.getElementById('quickCategoryModal')).hide();
+                } else {
+                    errDiv.textContent = data.message || 'حدث خطأ أثناء حفظ الفئة';
+                    errDiv.classList.remove('d-none');
+                }
+            } catch (err) {
+                errDiv.textContent = 'تعذر الاتصال بالخادم';
+                errDiv.classList.remove('d-none');
+            } finally {
+                this.disabled = false;
+            }
+        });
+
+        // Form Submit
+        form.addEventListener('submit', () => {
+            const canSplit = canSplitProductSwitch.checked;
+            const mainName = (mainPackageNameInput ? mainPackageNameInput.value.trim() : '') || 'علبة / Box';
+            const mainPrice = parseFloat(mainSellingPriceInput.value) || 0;
+            const mainBarcode = (mainBarcodeInput ? mainBarcodeInput.value.trim() : '') || null;
+
+            if (!canSplit) {
+                sellFullPackageOnlyHidden.value = "true";
+                baseUnitNameHidden.value = mainName;
+                unitsJsonHidden.value = "[]";
+                return;
+            }
+
+            sellFullPackageOnlyHidden.value = "false";
+            const config = FORM_PRESETS[currentPreset] || FORM_PRESETS.tablets;
+            const interQtyInput = document.getElementById('interQtyInput');
+            const interPriceInput = document.getElementById('interPriceInput');
+            const interBarcodeInput = document.getElementById('interBarcodeInput');
+            const interAllowSale = document.getElementById('interAllowSale');
+
+            const smallestQtyInput = document.getElementById('smallestQtyInput');
+            const smallestPriceInput = document.getElementById('smallestPriceInput');
+            const smallestBarcodeInput = document.getElementById('smallestBarcodeInput');
+            const smallestAllowSale = document.getElementById('smallestAllowSale');
+
+            const unitsList = [];
+
+            if (config.hasIntermediate) {
+                const interQty = parseInt(interQtyInput?.value || 3) || 1;
+                const interPrice = parseFloat(interPriceInput?.value || 0) || (mainPrice / interQty);
+                const interBarcode = (interBarcodeInput ? interBarcodeInput.value.trim() : '') || null;
+                const allowSaleInter = interAllowSale ? interAllowSale.checked : true;
+
+                const sQty = parseInt(smallestQtyInput?.value || 10) || 1;
+                const sPrice = parseFloat(smallestPriceInput?.value || 0) || (interPrice / sQty);
+                const sBarcode = (smallestBarcodeInput ? smallestBarcodeInput.value.trim() : '') || null;
+                const allowSaleSmall = smallestAllowSale ? smallestAllowSale.checked : true;
+
+                baseUnitNameHidden.value = config.smallestName;
+
+                unitsList.push({
+                    unitName: config.smallestName,
+                    conversionFactor: 1,
+                    sellingPrice: sPrice,
+                    barcode: sBarcode,
+                    isBaseUnit: true,
+                    allowSale: allowSaleSmall,
+                    allowPurchase: true
+                });
+
+                unitsList.push({
+                    unitName: config.intermediateName,
+                    conversionFactor: sQty,
+                    containsQuantity: sQty,
+                    containsUnitName: config.smallestName,
+                    sellingPrice: interPrice,
+                    barcode: interBarcode,
+                    isBaseUnit: false,
+                    allowSale: allowSaleInter,
+                    allowPurchase: true
+                });
+
+                const totalInBox = interQty * sQty;
+                unitsList.push({
+                    unitName: mainName,
+                    conversionFactor: totalInBox,
+                    containsQuantity: interQty,
+                    containsUnitName: config.intermediateName,
+                    sellingPrice: mainPrice,
+                    barcode: mainBarcode,
+                    isBaseUnit: false,
+                    allowSale: true,
+                    allowPurchase: true
+                });
+            } else if (config.hasSmallest) {
+                const sQty = parseInt(smallestQtyInput?.value || 1) || 1;
+                const sPrice = parseFloat(smallestPriceInput?.value || 0) || (sQty > 0 ? (mainPrice / sQty) : mainPrice);
+                const sBarcode = (smallestBarcodeInput ? smallestBarcodeInput.value.trim() : '') || null;
+                const allowSaleSmall = smallestAllowSale ? smallestAllowSale.checked : true;
+
+                baseUnitNameHidden.value = config.smallestName;
+
+                unitsList.push({
+                    unitName: config.smallestName,
+                    conversionFactor: 1,
+                    sellingPrice: sPrice,
+                    barcode: sBarcode,
+                    isBaseUnit: true,
+                    allowSale: allowSaleSmall,
+                    allowPurchase: true
+                });
+
+                unitsList.push({
+                    unitName: mainName,
+                    conversionFactor: sQty,
+                    containsQuantity: sQty,
+                    containsUnitName: config.smallestName,
+                    sellingPrice: mainPrice,
+                    barcode: mainBarcode,
+                    isBaseUnit: false,
+                    allowSale: true,
+                    allowPurchase: true
+                });
+            } else {
+                baseUnitNameHidden.value = mainName;
+                unitsList.push({
+                    unitName: mainName,
+                    conversionFactor: 1,
+                    sellingPrice: mainPrice,
+                    barcode: mainBarcode,
+                    isBaseUnit: true,
+                    allowSale: true,
+                    allowPurchase: true
+                });
+            }
+
+            customUnits.forEach(u => {
+                const uCount = parseInt(u.count) || 1;
+                const uPrice = parseFloat(u.price) || 0;
+                unitsList.push({
+                    unitName: u.name,
+                    conversionFactor: uCount,
+                    sellingPrice: uPrice,
+                    barcode: u.barcode || null,
+                    isBaseUnit: false,
+                    allowSale: true,
+                    allowPurchase: true
+                });
+            });
+
+            unitsJsonHidden.value = JSON.stringify(unitsList);
+        });
+
+        // Initialize from existing product data in Edit mode
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentDosage = dosageFormHiddenInput.value;
+            let detectedPreset = 'tablets';
+
+            if (currentDosage) {
+                document.querySelectorAll('.dosage-form-btn').forEach(btn => {
+                    const btnForm = btn.getAttribute('data-form');
+                    if (btnForm === currentDosage || currentDosage.includes(btnForm.split('/')[0].trim())) {
+                        btn.classList.remove('btn-outline-secondary');
+                        btn.classList.add('btn-teal', 'active');
+                        detectedPreset = btn.getAttribute('data-preset') || 'tablets';
+                    }
+                });
+            }
+
+            // Extract initial units data if available
+            const initialUnitsJson = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.UnitsJson));
+            let initialData = null;
+
+            if (initialUnitsJson) {
+                try {
+                    const parsed = JSON.parse(initialUnitsJson);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        // Find top package, intermediate, smallest
+                        const sorted = parsed.slice().sort((a, b) => (b.ConversionFactor || b.conversionFactor || 1) - (a.ConversionFactor || a.conversionFactor || 1));
+                        const topUnit = sorted[0];
+                        const smallestUnit = sorted[sorted.length - 1];
+
+                        initialData = {
+                            mainPackageName: topUnit?.UnitName || topUnit?.unitName || 'علبة / Box'
+                        };
+
+                        if (sorted.length >= 3) {
+                            const interUnit = sorted[1];
+                            initialData.interQty = topUnit.ContainsQuantity || topUnit.containsQuantity || (topUnit.ConversionFactor / interUnit.ConversionFactor) || 3;
+                            initialData.interPrice = interUnit.SellingPrice || interUnit.sellingPrice;
+                            initialData.interAllowSale = interUnit.AllowSale !== undefined ? interUnit.AllowSale : (interUnit.allowSale !== undefined ? interUnit.allowSale : true);
+                            initialData.interBarcode = interUnit.Barcode || interUnit.barcode || '';
+
+                            initialData.smallestQty = interUnit.ContainsQuantity || interUnit.containsQuantity || interUnit.ConversionFactor || 10;
+                            initialData.smallestPrice = smallestUnit.SellingPrice || smallestUnit.sellingPrice;
+                            initialData.smallestAllowSale = smallestUnit.AllowSale !== undefined ? smallestUnit.AllowSale : (smallestUnit.allowSale !== undefined ? smallestUnit.allowSale : true);
+                            initialData.smallestBarcode = smallestUnit.Barcode || smallestUnit.barcode || '';
+                        } else if (sorted.length === 2) {
+                            initialData.smallestQty = topUnit.ContainsQuantity || topUnit.containsQuantity || topUnit.ConversionFactor || 1;
+                            initialData.smallestPrice = smallestUnit.SellingPrice || smallestUnit.sellingPrice;
+                            initialData.smallestAllowSale = smallestUnit.AllowSale !== undefined ? smallestUnit.AllowSale : (smallestUnit.allowSale !== undefined ? smallestUnit.allowSale : true);
+                            initialData.smallestBarcode = smallestUnit.Barcode || smallestUnit.barcode || '';
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error parsing initial units json', e);
+                }
+            }
+
+            renderGuidedCards(detectedPreset, initialData);
+
+            // Handle SellFullPackageOnly switch initial state
+            const isFullPackageOnly = @(Model.SellFullPackageOnly ? "true" : "false");
+            if (isFullPackageOnly) {
+                canSplitProductSwitch.checked = false;
+                nonSplittableContainer.classList.remove('d-none');
+                splittableContainer.classList.add('d-none');
+                sellFullPackageOnlyHidden.value = "true";
+            } else {
+                canSplitProductSwitch.checked = true;
+                nonSplittableContainer.classList.add('d-none');
+                splittableContainer.classList.remove('d-none');
+                sellFullPackageOnlyHidden.value = "false";
+            }
+
+            updateLivePreview();
+        });
+    </script>
+}

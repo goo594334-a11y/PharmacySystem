@@ -1,0 +1,300 @@
+@model PharmacySystem.Models.ViewModels.Sales.CustomerReceiptViewModel
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = $"{Loc["CustomerReceipt"]} #{Model.InvoiceNumber}";
+}
+
+<!-- Action Buttons Bar (Hidden When Printing) -->
+<div class="container-fluid px-0 mb-4 d-print-none">
+    <div class="card border-0 shadow-sm ph-card p-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="ph-brand-icon bg-teal text-white rounded p-2 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                </span>
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark">@Loc["CustomerReceipt"]</h5>
+                    <div class="text-muted small">#@Model.InvoiceNumber &bull; @Model.SaleDate.ToString("yyyy-MM-dd HH:mm")</div>
+                </div>
+            </div>
+
+            <!-- Receipt Format Toggle & Actions -->
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn @(!Model.IsThermal ? "btn-teal active" : "btn-outline-secondary")" id="btnStandardFormat">
+                        📄 @Loc["StandardReceipt"]
+                    </button>
+                    <button type="button" class="btn @(Model.IsThermal ? "btn-teal active" : "btn-outline-secondary")" id="btnThermalFormat">
+                        🧾 @Loc["ThermalReceipt"]
+                    </button>
+                </div>
+
+                <button type="button" class="btn btn-teal px-3 d-inline-flex align-items-center gap-2 shadow-sm" onclick="window.print();">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <span>@Loc["PrintCustomerReceipt"]</span>
+                </button>
+
+                <a asp-action="Details" asp-route-id="@Model.SaleId" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1" title="عرض السجلات المخزنية والتشغيلات الداخلية">
+                    <span>@Loc["Details"] (@Loc["Internal"])</span>
+                </a>
+
+                <a asp-action="Pos" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1">
+                    <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>@Loc["NewSale"]</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- FORMAT A: STANDARD CLEAN RECEIPT (A4 / A5)                    -->
+<!-- ============================================================= -->
+<div id="standardReceiptContainer" class="@(Model.IsThermal ? "d-none" : "")">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card border-0 shadow-sm ph-card p-4 p-md-5 receipt-sheet bg-white">
+                <!-- Receipt Header -->
+                <div class="row align-items-center border-bottom pb-4 mb-4">
+                    <div class="col-sm-7">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <div class="ph-brand-icon bg-teal text-white rounded p-2 d-inline-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                <svg class="ph-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold mb-0 text-dark">@Model.PharmacyName</h4>
+                                <div class="text-teal small fw-semibold">@Loc["SalesReceipt"]</div>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.PharmacyAddress) || !string.IsNullOrEmpty(Model.PharmacyPhone))
+                        {
+                            <div class="text-muted small mt-1">
+                                @if (!string.IsNullOrEmpty(Model.PharmacyAddress))
+                                {
+                                    <span>@Model.PharmacyAddress</span>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.PharmacyPhone))
+                                {
+                                    <span class="ms-2">&bull; @Loc["Phone"]: @Model.PharmacyPhone</span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-sm-5 text-sm-end mt-3 mt-sm-0">
+                        <div class="fw-bold fs-5 text-teal mb-1">#@Model.InvoiceNumber</div>
+                        <div class="text-muted small">@Model.SaleDate.ToString("yyyy-MM-dd HH:mm")</div>
+                        <div class="small mt-1">
+                            <span class="text-muted">@Loc["PaymentMethod"]:</span>
+                            <span class="badge bg-light text-dark border">@Model.PaymentMethod</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer and Cashier Meta -->
+                <div class="row mb-4 bg-light p-3 rounded border">
+                    <div class="col-6">
+                        <div class="text-muted small">@Loc["Customer"]:</div>
+                        <div class="fw-bold text-dark fs-6">@Model.CustomerName</div>
+                    </div>
+                    <div class="col-6 text-end">
+                        <div class="text-muted small">@Loc["Cashier"]:</div>
+                        <div class="fw-bold text-dark fs-6">@Model.CashierName</div>
+                    </div>
+                </div>
+
+                <!-- Customer Items Table (Strictly NO Internal Batch or Cost Data) -->
+                <div class="table-responsive mb-4">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3" style="width: 45%;">@Loc["Product"]</th>
+                                <th class="text-center" style="width: 15%;">@Loc["SellingUnit"]</th>
+                                <th class="text-center" style="width: 15%;">@Loc["Quantity"]</th>
+                                <th class="text-end" style="width: 12%;">@Loc["UnitPrice"]</th>
+                                <th class="text-end pe-3" style="width: 13%;">@Loc["LineTotal"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td class="ps-3">
+                                        <div class="fw-semibold text-dark">@item.ProductName</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-secondary border px-2 py-1">@item.SellingUnit</span>
+                                    </td>
+                                    <td class="text-center fw-bold">@item.Quantity</td>
+                                    <td class="text-end text-muted">@item.UnitPrice.ToString("N2")</td>
+                                    <td class="text-end pe-3 fw-bold text-dark">@item.LineTotal.ToString("N2") @Loc["CurrencySymbol"]</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light border-top">
+                            <tr>
+                                <th colspan="4" class="text-end fw-bold fs-6">@Loc["TotalAmount"]:</th>
+                                <th class="text-end pe-3 fw-bold fs-5 text-teal">@Model.TotalAmount.ToString("N2") @Loc["CurrencySymbol"]</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Receipt Friendly Footer -->
+                <div class="text-center text-muted small mt-4 pt-3 border-top">
+                    <p class="fw-semibold mb-1 text-dark">@Loc["ThankYouVisiting"]</p>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">@Model.PharmacyName &bull; @Model.SaleDate.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- FORMAT B: COMPACT THERMAL RECEIPT (80mm / POS ROLL)          -->
+<!-- ============================================================= -->
+<div id="thermalReceiptContainer" class="@(!Model.IsThermal ? "d-none" : "")">
+    <div class="d-flex justify-content-center">
+        <div class="thermal-receipt bg-white p-3 shadow-sm border text-dark" style="width: 80mm; max-width: 320px; font-family: monospace, system-ui; font-size: 12px; line-height: 1.4;">
+            <!-- Header -->
+            <div class="text-center mb-3">
+                <h6 class="fw-bold mb-1 fs-6">@Model.PharmacyName</h6>
+                <div class="small fw-semibold">*** @Loc["SalesReceipt"] ***</div>
+                @if (!string.IsNullOrEmpty(Model.PharmacyPhone))
+                {
+                    <div style="font-size: 11px;">@Loc["Phone"]: @Model.PharmacyPhone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.PharmacyAddress))
+                {
+                    <div style="font-size: 10px;">@Model.PharmacyAddress</div>
+                }
+            </div>
+
+            <div class="border-top border-bottom border-secondary py-1 mb-2" style="font-size: 11px;">
+                <div class="d-flex justify-content-between">
+                    <span>@Loc["InvoiceNumber"]:</span>
+                    <strong class="text-end">#@Model.InvoiceNumber</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>@Loc["Date"]:</span>
+                    <span>@Model.SaleDate.ToString("yyyy-MM-dd HH:mm")</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>@Loc["Customer"]:</span>
+                    <span>@Model.CustomerName</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>@Loc["Cashier"]:</span>
+                    <span>@Model.CashierName</span>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <table class="w-100 mb-2" style="font-size: 11px;">
+                <thead>
+                    <tr class="border-bottom">
+                        <th class="text-start py-1">@Loc["Product"]</th>
+                        <th class="text-center py-1">@Loc["Quantity"]</th>
+                        <th class="text-end py-1">@Loc["Total"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="py-1" colspan="3">
+                                <strong>@item.ProductName</strong>
+                            </td>
+                        </tr>
+                        <tr class="border-bottom" style="color: #444;">
+                            <td class="pb-1 ps-2" style="font-size: 10px;">
+                                @item.Quantity &times; @item.UnitPrice.ToString("N2") (@item.SellingUnit)
+                            </td>
+                            <td class="text-center pb-1">@item.Quantity</td>
+                            <td class="text-end pb-1 fw-bold">@item.LineTotal.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Total -->
+            <div class="border-top border-secondary pt-2 mb-3">
+                <div class="d-flex justify-content-between fw-bold fs-6 mb-1">
+                    <span>@Loc["TotalAmount"]:</span>
+                    <span>@Model.TotalAmount.ToString("N2") @Loc["CurrencySymbol"]</span>
+                </div>
+                <div class="d-flex justify-content-between small text-muted">
+                    <span>@Loc["PaymentMethod"]:</span>
+                    <span>@Model.PaymentMethod</span>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center border-top border-dashed pt-2" style="font-size: 11px;">
+                <div class="fw-semibold">@Loc["ThankYouVisiting"]</div>
+                <div class="text-muted mt-1" style="font-size: 9px;">@Model.SaleDate.ToString("yyyy-MM-dd HH:mm:ss")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media print {
+        body {
+            background-color: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .d-print-none, .ph-sidebar, .ph-topbar, .navbar, footer {
+            display: none !important;
+        }
+
+        .receipt-sheet {
+            box-shadow: none !important;
+            border: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .thermal-receipt {
+            box-shadow: none !important;
+            border: 0 !important;
+            margin: 0 auto !important;
+            width: 78mm !important;
+            max-width: 78mm !important;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        const btnStandard = document.getElementById('btnStandardFormat');
+        const btnThermal = document.getElementById('btnThermalFormat');
+        const standardContainer = document.getElementById('standardReceiptContainer');
+        const thermalContainer = document.getElementById('thermalReceiptContainer');
+
+        btnStandard.addEventListener('click', () => {
+            btnStandard.classList.add('btn-teal', 'active');
+            btnStandard.classList.remove('btn-outline-secondary');
+            btnThermal.classList.remove('btn-teal', 'active');
+            btnThermal.classList.add('btn-outline-secondary');
+
+            standardContainer.classList.remove('d-none');
+            thermalContainer.classList.add('d-none');
+        });
+
+        btnThermal.addEventListener('click', () => {
+            btnThermal.classList.add('btn-teal', 'active');
+            btnThermal.classList.remove('btn-outline-secondary');
+            btnStandard.classList.remove('btn-teal', 'active');
+            btnStandard.classList.add('btn-outline-secondary');
+
+            thermalContainer.classList.remove('d-none');
+            standardContainer.classList.add('d-none');
+        });
+    </script>
+}

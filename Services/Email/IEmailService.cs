@@ -5,7 +5,12 @@ public class EmailSettings
     public string Host { get; set; } = string.Empty;
     public int Port { get; set; } = 587;
     public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
+    private string _password = string.Empty;
+    public string Password
+    {
+        get => _password;
+        set => _password = value?.Trim() ?? string.Empty;
+    }
     public string FromEmail { get; set; } = string.Empty;
     public string FromName { get; set; } = "Pharmacy Management System";
     public bool EnableSsl { get; set; } = true;
@@ -33,6 +38,18 @@ public class EmailSettings
     {
         get => FromName;
         set { if (string.IsNullOrWhiteSpace(FromName)) FromName = value; }
+    }
+
+    public string AppPassword
+    {
+        get => Password;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(_password) && !string.IsNullOrWhiteSpace(value))
+            {
+                _password = value.Trim();
+            }
+        }
     }
 
     /// <summary>

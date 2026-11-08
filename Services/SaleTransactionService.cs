@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using PharmacySystem.Data;
+using PharmacySystem.Enums;
 using PharmacySystem.Exceptions;
 using PharmacySystem.Models.Entities;
+using PharmacySystem.Services.Packaging;
 
 namespace PharmacySystem.Services;
 
@@ -9,11 +11,16 @@ public class SaleTransactionService : ISaleTransactionService
 {
     private readonly PharmacyDbContext _dbContext;
     private readonly IFefoAllocationService _fefoAllocationService;
+    private readonly IProductPackagingService _packagingService;
 
-    public SaleTransactionService(PharmacyDbContext dbContext, IFefoAllocationService fefoAllocationService)
+    public SaleTransactionService(
+        PharmacyDbContext dbContext,
+        IFefoAllocationService fefoAllocationService,
+        IProductPackagingService packagingService)
     {
         _dbContext = dbContext;
         _fefoAllocationService = fefoAllocationService;
+        _packagingService = packagingService;
     }
 
     public async Task<Sale> ProcessSaleAsync(CreateSaleRequest request, CancellationToken cancellationToken = default)
@@ -49,11 +56,13 @@ public class SaleTransactionService : ISaleTransactionService
                 SaleDate = DateTime.UtcNow,
                 InvoiceNumber = request.InvoiceNumber,
                 PaymentMethod = request.PaymentMethod,
-                TotalAmount = 0m
+                TotalAmount = 0m,
+                PharmacyId = user.PharmacyId ?? 1
             };
 
             decimal calculatedTotal = 0m;
             var today = DateOnly.FromDateTime(DateTime.Today);
+            var itemAuditSummaries = new List<string>();
 
             foreach (var itemReq in request.Items)
             {
@@ -76,19 +85,32 @@ public class SaleTransactionService : ISaleTransactionService
                     throw new InvalidBusinessOperationException($"Product '{product.Name}' is inactive and cannot be sold.");
                 }
 
-                // FEFO allocation across valid, non-expired batches
+                // 1. Calculate base unit equivalent and line total via packaging service
+                var (equivalentBaseQty, unitPrice, lineTotal) = _packagingService.CalculateAllocation(
+                    product,
+                    itemReq.UnitName,
+                    itemReq.Quantity);
+
+                // Override unit price if custom price snapshot provided
+                if (itemReq.UnitPrice.HasValue && itemReq.UnitPrice.Value > 0)
+                {
+                    unitPrice = itemReq.UnitPrice.Value;
+                    lineTotal = itemReq.Quantity * unitPrice;
+                }
+
+                // 2. FEFO allocation of the equivalent base quantity across valid, non-expired batches
                 var allocations = _fefoAllocationService.CalculateAllocations(
                     product,
                     product.Batches,
-                    itemReq.Quantity,
+                    equivalentBaseQty,
                     today);
 
                 var saleItem = new SaleItem
                 {
                     Product = product,
                     ProductId = product.Id,
-                    Quantity = itemReq.Quantity,
-                    UnitPrice = product.SellingPrice // Preserves price at moment of sale
+                    Quantity = itemReq.Quantity, // Quantity in the selected unit
+                    UnitPrice = unitPrice        // Unit price snapshot at time of sale
                 };
 
                 foreach (var alloc in allocations)
@@ -106,11 +128,44 @@ public class SaleTransactionService : ISaleTransactionService
                 }
 
                 sale.SaleItems.Add(saleItem);
-                calculatedTotal += saleItem.Quantity * saleItem.UnitPrice;
+                calculatedTotal += lineTotal;
+
+                var unitLabel = string.IsNullOrWhiteSpace(itemReq.UnitName) ? "Unit" : itemReq.UnitName;
+                itemAuditSummaries.Add($"{product.Name}: {itemReq.Quantity} {unitLabel} (EqBase: {equivalentBaseQty}) @ {unitPrice:N2}");
+            }
+
+            // 3. Split payment validation
+            if (request.PaymentMethod == PaymentMethod.Split)
+            {
+                var cash = request.CashAmount ?? 0m;
+                var card = request.CardAmount ?? 0m;
+                var vfCash = request.VodafoneCashAmount ?? 0m;
+                var totalSplitPaid = cash + card + vfCash;
+
+                if (Math.Abs(totalSplitPaid - calculatedTotal) > 0.01m)
+                {
+                    throw new InvalidBusinessOperationException(
+                        $"Split payment total ({totalSplitPaid:N2} EGP) does not match invoice total ({calculatedTotal:N2} EGP). [Cash: {cash:N2}, Card: {card:N2}, Vodafone Cash: {vfCash:N2}]");
+                }
             }
 
             sale.TotalAmount = calculatedTotal;
             _dbContext.Sales.Add(sale);
+
+            // 4. Audit Log recording
+            var paymentDetails = request.PaymentMethod == PaymentMethod.Split
+                ? $"Split(Cash:{request.CashAmount ?? 0:N2}, Card:{request.CardAmount ?? 0:N2}, VF:{request.VodafoneCashAmount ?? 0:N2})"
+                : request.PaymentMethod.ToString();
+
+            _dbContext.AuditLogs.Add(new AuditLog
+            {
+                UserId = request.UserId,
+                PharmacyId = sale.PharmacyId,
+                Action = "SaleCompleted",
+                EntityName = nameof(Sale),
+                EntityId = sale.InvoiceNumber,
+                Timestamp = DateTime.UtcNow
+            });
 
             // Persist all changes and commit transaction atomically
             await _dbContext.SaveChangesAsync(cancellationToken);

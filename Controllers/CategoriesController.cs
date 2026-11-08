@@ -82,6 +82,43 @@ public class CategoriesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> QuickCreate([FromBody] QuickCreateCategoryRequest request, CancellationToken cancellationToken)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest(new { success = false, message = _loc["RequiredField"].Value });
+        }
+
+        var trimmedName = request.Name.Trim();
+        var existing = await _dbContext.Categories
+            .FirstOrDefaultAsync(c => c.Name.ToLower() == trimmedName.ToLower(), cancellationToken);
+
+        if (existing != null)
+        {
+            return Ok(new { success = true, id = existing.Id, name = existing.Name, alreadyExisted = true });
+        }
+
+        var category = new Category
+        {
+            Name = trimmedName,
+            Description = request.Description?.Trim(),
+            IsActive = true
+        };
+
+        _dbContext.Categories.Add(category);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return Ok(new { success = true, id = category.Id, name = category.Name, alreadyExisted = false });
+    }
+
+    public class QuickCreateCategoryRequest
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+    }
+
     [HttpGet]
     public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
     {

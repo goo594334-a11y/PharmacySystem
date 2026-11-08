@@ -45,7 +45,8 @@
                             <th>@Loc["BatchNumber"]</th>
                             <th>@Loc["SoldQuantity"]</th>
                             <th>@Loc["UnitPrice"]</th>
-                            <th style="width: 20%;" class="pe-4">@Loc["QuantityToReturn"]</th>
+                            <th style="width: 15%;">@Loc["QuantityToReturn"]</th>
+                            <th style="width: 20%;" class="pe-4 text-center">@Loc["ReturnDisposition"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,8 +65,16 @@
                                 <td><code>@Model.Items[i].BatchNumber</code></td>
                                 <td class="fw-bold">@Model.Items[i].SoldQuantity</td>
                                 <td>@Model.Items[i].UnitPrice.ToString("C2")</td>
-                                <td class="pe-4">
+                                <td>
                                     <input asp-for="Items[i].QuantityToReturn" type="number" class="form-control" min="0" max="@Model.Items[i].SoldQuantity" />
+                                </td>
+                                <td class="pe-4 text-center">
+                                    <div class="form-check form-switch d-inline-block">
+                                        <input class="form-check-input" type="checkbox" asp-for="Items[i].ReturnToStock" id="returnStockSwitch-@i" />
+                                        <label class="form-check-label small" for="returnStockSwitch-@i">
+                                            @Loc["RestockIfValid"]
+                                        </label>
+                                    </div>
                                 </td>
                             </tr>
                         }

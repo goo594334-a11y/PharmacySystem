@@ -30,8 +30,8 @@
                 </svg>
             </div>
             <div class="ph-brand-text">
-                <span class="fs-6 fw-bold text-teal-light d-block lh-1">@Loc["AppTitle"]</span>
-                <span class="text-secondary small" style="font-size: 0.72rem;">Rx Pharmacy Suite</span>
+                <span class="fs-6 fw-bold text-teal-light d-block lh-1">@(CurrentUser.PharmacyName ?? Loc["AppTitle"].Value)</span>
+                <span class="text-secondary small" style="font-size: 0.72rem;">@Loc["AppTitle"]</span>
             </div>
         </a>
         <button class="btn btn-sm btn-link text-secondary d-lg-none" id="phSidebarClose" type="button" aria-label="@Loc["Close"]">
@@ -77,9 +77,16 @@
             </li>
 
             <li class="nav-item">
-                <a asp-controller="Inventory" asp-action="Index" class="nav-link @(IsActive("Inventory") ? "active" : "") d-flex align-items-center gap-3">
+                <a asp-controller="Inventory" asp-action="Index" class="nav-link @(IsActive("Inventory", "Index") ? "active" : "") d-flex align-items-center gap-3">
                     <svg class="ph-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                     <span>@Loc["Nav_Inventory"]</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-controller="Inventory" asp-action="Expired" class="nav-link @(IsActive("Inventory", "Expired") ? "active" : "") d-flex align-items-center gap-3">
+                    <svg class="ph-icon text-danger" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <span>@Loc["ExpiredMedicines"]</span>
                 </a>
             </li>
 
@@ -141,6 +148,21 @@
                     <span>@Loc["Reports"]</span>
                 </a>
             </li>
+
+            @* Section: Platform Administration (Developer only) *@
+            @if (CurrentUser.IsDeveloper)
+            {
+                <li class="ph-nav-heading text-uppercase text-secondary fw-bold px-3 pt-3 pb-1" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+                    @Loc["Developer"]
+                </li>
+
+                <li class="nav-item">
+                    <a asp-controller="Developer" asp-action="Index" class="nav-link @(IsActive("Developer") ? "active" : "") d-flex align-items-center gap-3">
+                        <svg class="ph-icon text-warning" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <span>@Loc["PharmacyManagementAndApprovals"]</span>
+                    </a>
+                </li>
+            }
 
             @* Section: Administration (Role-gated: Admin only) *@
             @if (CurrentUser.IsAdmin)

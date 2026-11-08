@@ -6,9 +6,11 @@ namespace PharmacySystem.Models.Entities;
 /// Represents a sales transaction at the pharmacy counter.
 /// Customer is optional (for walk-in patients/customers).
 /// </summary>
-public class Sale
+public class Sale : ITenantEntity
 {
     public int Id { get; set; }
+    public int PharmacyId { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
     public int? CustomerId { get; set; }
     public int UserId { get; set; }
     public DateTime SaleDate { get; set; }

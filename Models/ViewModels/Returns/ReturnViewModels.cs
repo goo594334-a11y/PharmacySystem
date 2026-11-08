@@ -22,6 +22,7 @@ public class SalesReturnItemInputViewModel
     public int SoldQuantity { get; set; }
     public decimal UnitPrice { get; set; }
     public int QuantityToReturn { get; set; }
+    public bool ReturnToStock { get; set; } = false;
 }
 
 public class CreateSalesReturnViewModel

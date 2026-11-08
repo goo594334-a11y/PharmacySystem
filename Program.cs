@@ -9,6 +9,7 @@ using PharmacySystem.Services.Auth;
 using PharmacySystem.Services.Dashboard;
 using PharmacySystem.Services.Email;
 using PharmacySystem.Services.Notifications;
+using PharmacySystem.Services.Packaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddDbContext<PharmacyDbContext>(options =>
 builder.Services.AddHttpContextAccessor();
 
 // 4. Domain & Business Services
+builder.Services.AddScoped<IProductPackagingService, ProductPackagingService>();
 builder.Services.AddScoped<IFefoAllocationService, FefoAllocationService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<ISaleTransactionService, SaleTransactionService>();
@@ -93,11 +95,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy(AppPolicies.RequireDeveloper, policy =>
+        policy.RequireRole(AppRoles.Developer));
+
     options.AddPolicy(AppPolicies.RequireAdmin, policy =>
-        policy.RequireRole(AppRoles.Admin));
+        policy.RequireRole(AppRoles.Admin, AppRoles.Developer));
 
     options.AddPolicy(AppPolicies.RequirePharmacistOrAdmin, policy =>
-        policy.RequireRole(AppRoles.Admin, AppRoles.Pharmacist));
+        policy.RequireRole(AppRoles.Admin, AppRoles.Pharmacist, AppRoles.Developer));
 });
 
 // 7b. Antiforgery Header Configuration for AJAX / POS JSON requests

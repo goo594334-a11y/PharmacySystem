@@ -24,8 +24,13 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
             .IsRequired()
             .HasDefaultValue(true);
 
-        builder.HasIndex(l => l.Code)
+        builder.HasIndex(l => new { l.PharmacyId, l.Code })
             .IsUnique();
+
+        builder.HasOne(l => l.Pharmacy)
+            .WithMany(ph => ph.Locations)
+            .HasForeignKey(l => l.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Relationships
         builder.HasMany(l => l.Batches)

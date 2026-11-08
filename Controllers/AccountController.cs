@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,16 +50,24 @@ public class AccountController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> Login(string? returnUrl = null)
     {
-        // First-run experience: If no Admin exists, redirect to first-time setup
-        var hasAdmin = await _dbContext.Users.AnyAsync(u => u.Role == PharmacySystem.Enums.UserRole.Admin);
-        if (!hasAdmin)
-        {
-            return RedirectToAction(nameof(RegisterAdmin));
-        }
-
         if (User.Identity?.IsAuthenticated == true)
         {
             return RedirectToAction("Index", "Home");
+        }
+
+        // IMPORTANT: IgnoreQueryFilters() is mandatory here.
+        // The global tenant query filter on User is evaluated BEFORE authentication is established.
+        // An anonymous (unauthenticated) request has HasUserContext=true but IsAuthenticated=false,
+        // which causes the filter to return zero rows for every user — making the system think
+        // no admin exists and incorrectly redirecting all anonymous users to RegisterAdmin.
+        // This check is a system-bootstrap guard, not tenant-scoped data access, so bypassing the
+        // tenant filter is correct and intentional here.
+        var hasActiveAdmin = await _dbContext.Users
+            .IgnoreQueryFilters()
+            .AnyAsync(u => u.Role == PharmacySystem.Enums.UserRole.Admin && u.IsActive);
+        if (!hasActiveAdmin)
+        {
+            return RedirectToAction(nameof(RegisterAdmin));
         }
 
         Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
@@ -82,14 +92,9 @@ public class AccountController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> RegisterAdmin()
     {
-        var hasAdmin = await _dbContext.Users.AnyAsync(u => u.Role == PharmacySystem.Enums.UserRole.Admin);
-        if (hasAdmin)
+        if (User.Identity?.IsAuthenticated == true)
         {
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return RedirectToAction(nameof(Login));
+            return RedirectToAction("Index", "Home");
         }
 
         return View(new RegisterAdminViewModel());
@@ -100,14 +105,9 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RegisterAdmin(RegisterAdminViewModel model)
     {
-        var hasAdmin = await _dbContext.Users.AnyAsync(u => u.Role == PharmacySystem.Enums.UserRole.Admin);
-        if (hasAdmin)
+        if (User.Identity?.IsAuthenticated == true)
         {
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return RedirectToAction(nameof(Login));
+            return RedirectToAction("Index", "Home");
         }
 
         if (!ModelState.IsValid)
@@ -116,19 +116,33 @@ public class AccountController : Controller
         }
 
         var normalizedEmail = model.Email.Trim().ToLowerInvariant();
-        var exists = await _dbContext.Users.AnyAsync(u => u.Email.ToLower() == normalizedEmail);
+        // IgnoreQueryFilters: email uniqueness check is a registration guard, not tenant-scoped
+        var exists = await _dbContext.Users.IgnoreQueryFilters().AnyAsync(u => u.Email.ToLower() == normalizedEmail);
         if (exists)
         {
             ModelState.AddModelError(nameof(model.Email), _loc["EmailAlreadyExists"]);
             return View(model);
         }
 
+        var pharmacy = new Pharmacy
+        {
+            Name = model.PharmacyName.Trim(),
+            Code = "STATUS:PENDING_APPROVAL",
+            Phone = model.Phone?.Trim(),
+            Address = model.Address?.Trim(),
+            CreatedAt = DateTime.UtcNow,
+            IsActive = false
+        };
+        _dbContext.Pharmacies.Add(pharmacy);
+        await _dbContext.SaveChangesAsync();
+
         var adminUser = new User
         {
             FullName = model.FullName.Trim(),
             Email = normalizedEmail,
             Role = PharmacySystem.Enums.UserRole.Admin,
-            IsActive = true,
+            PharmacyId = pharmacy.Id,
+            IsActive = false,
             MustChangePassword = false,
             CreatedAt = DateTime.UtcNow
         };
@@ -138,19 +152,34 @@ public class AccountController : Controller
         _dbContext.Users.Add(adminUser);
         _dbContext.AuditLogs.Add(new AuditLog
         {
-            Action = "FirstAdminSetup",
-            EntityName = nameof(User),
-            EntityId = normalizedEmail,
+            PharmacyId = pharmacy.Id,
+            Action = "PharmacyRegistrationRequested",
+            EntityName = nameof(Pharmacy),
+            EntityId = pharmacy.Id.ToString(),
             Timestamp = DateTime.UtcNow
         });
 
         await _dbContext.SaveChangesAsync();
 
-        // Sign in immediately
-        await _authService.SignInAsync(HttpContext, adminUser, isPersistent: true);
-        TempData.SetSuccess(_loc["OperationSuccess"], _loc["Welcome"]);
+        try
+        {
+            // IgnoreQueryFilters: finding the developer is a system-level operation, not tenant-scoped
+            var dev = await _dbContext.Users.IgnoreQueryFilters().AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Role == PharmacySystem.Enums.UserRole.Developer);
+            if (dev != null && !string.IsNullOrWhiteSpace(dev.Email))
+            {
+                await _emailService.SendEmailAsync(
+                    dev.Email,
+                    "New Pharmacy Registration Request",
+                    $"A new pharmacy registration request has been submitted by {adminUser.FullName} ({adminUser.Email}) for '{pharmacy.Name}'. Please log into the developer dashboard to review and approve/reject.");
+            }
+        }
+        catch
+        {
+            // Logging without throwing
+        }
 
-        return RedirectToAction("Index", "Home");
+        return View("RegistrationPending");
     }
 
     [HttpPost]
@@ -198,20 +227,42 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
-        await _authService.SignOutAsync(HttpContext);
-        Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
-        Response.Headers.Pragma = "no-cache";
-        Response.Headers.Expires = "0";
+        try
+        {
+            await _authService.SignOutAsync(HttpContext);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error in AccountController.Logout. Forcing cookie invalidation.");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+        finally
+        {
+            Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+            Response.Headers.Pragma = "no-cache";
+            Response.Headers.Expires = "0";
+        }
         return RedirectToAction("Login", "Account");
     }
 
     [HttpGet]
     public async Task<IActionResult> LogoutGet()
     {
-        await _authService.SignOutAsync(HttpContext);
-        Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
-        Response.Headers.Pragma = "no-cache";
-        Response.Headers.Expires = "0";
+        try
+        {
+            await _authService.SignOutAsync(HttpContext);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error in AccountController.LogoutGet. Forcing cookie invalidation.");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+        finally
+        {
+            Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+            Response.Headers.Pragma = "no-cache";
+            Response.Headers.Expires = "0";
+        }
         return RedirectToAction("Login", "Account");
     }
 
@@ -224,7 +275,7 @@ public class AccountController : Controller
     }
 
     // ==========================================
-    // FORGOT PASSWORD WORKFLOW
+    // FORGOT PASSWORD & OTP WORKFLOW
     // ==========================================
 
     [HttpGet]
@@ -245,43 +296,50 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var token = await _passwordResetService.CreateResetTokenAsync(model.Email);
-        if (!string.IsNullOrEmpty(token))
+        var normalizedEmail = model.Email.Trim().ToLowerInvariant();
+        var rawOtp = await _passwordResetService.CreateResetOtpAsync(normalizedEmail);
+
+        if (!string.IsNullOrEmpty(rawOtp))
         {
-            var resetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
-            
-            // Professional, localized HTML email template with 15-minute expiration notice
+            // Professional, localized HTML email template for 6-digit OTP
             var emailBody = $@"
 <!DOCTYPE html>
-<html>
+<html dir='rtl' lang='ar'>
 <head>
 <meta charset='utf-8'>
 <style>
-  body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 20px; }}
-  .card {{ max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }}
-  .header {{ text-align: center; margin-bottom: 24px; }}
-  .title {{ color: #0d7377; font-size: 20px; font-weight: bold; margin: 0; }}
-  .subtitle {{ color: #64748b; font-size: 13px; margin-top: 4px; }}
-  .btn {{ display: inline-block; background-color: #0d7377; color: #ffffff !important; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px; margin: 20px 0; }}
-  .footer {{ font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px; text-align: center; }}
-  .notice {{ background-color: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; font-size: 12px; margin-top: 16px; }}
+  body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }}
+  .card {{ max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 14px; padding: 36px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; text-align: center; }}
+  .badge-icon {{ display: inline-flex; width: 64px; height: 64px; border-radius: 50%; background: #e6fffa; color: #0d7377; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }}
+  .title {{ color: #0d7377; font-size: 22px; font-weight: 700; margin: 0 0 6px 0; }}
+  .subtitle {{ color: #64748b; font-size: 14px; margin-bottom: 24px; }}
+  .otp-container {{ background: #f1f5f9; border: 2px dashed #0d7377; border-radius: 10px; padding: 18px 24px; margin: 24px 0; display: inline-block; }}
+  .otp-code {{ font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #0d7377; font-family: 'Consolas', 'Courier New', monospace; }}
+  .notice {{ background-color: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-top: 20px; text-align: right; }}
+  .footer {{ font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 28px; text-align: center; }}
 </style>
 </head>
 <body>
   <div class='card'>
-    <div class='header'>
-      <div class='title'>Pharmacy Management System</div>
-      <div class='subtitle'>Aegis Rx Suite</div>
-    </div>
-    <p>{_loc["PasswordResetEmailGreeting"]}</p>
-    <p>{_loc["PasswordResetInstructions"]}</p>
-    <div style='text-align: center;'>
-      <a href='{resetLink}' class='btn'>{_loc["ResetPassword"]}</a>
+    <div class='badge-icon'>&#128272;</div>
+    <div class='title'>نظام إدارة الصيدلية - رمز التحقق (OTP)</div>
+    <div class='subtitle'>Pharmacy Management System - Aegis Rx Suite</div>
+    <p style='color: #334155; font-size: 15px; line-height: 1.6; text-align: right;'>
+      مرحبًا،<br>
+      تلقينا طلبًا لإعادة تعيين كلمة المرور الخاصة بحسابك. استخدم رمز التحقق التالي لمرة واحدة لإتمام العملية:
+    </p>
+    <div class='otp-container'>
+      <span class='otp-code'>{rawOtp}</span>
     </div>
     <div class='notice'>
-      <strong>{_loc["WarningWindow"]}:</strong> {_loc["TokenExpiresIn15Minutes"]}
+      <strong>&#9888; تنبيه أمني:</strong><br>
+      • هذا الرمز صالح لمدة <strong>60 ثانية (دقيقة واحدة)</strong> فقط.<br>
+      • صالح للاستخدام <strong>مرة واحدة</strong> فقط.<br>
+      • لا تشارك هذا الرمز مع أي شخص إطلاقاً.
     </div>
-    <p style='font-size: 12px; color: #64748b; margin-top: 16px;'>{_loc["PasswordResetIgnorePrompt"]}</p>
+    <p style='font-size: 13px; color: #64748b; margin-top: 20px; text-align: right;'>
+      إذا لم تقم بطلب إعادة تعيين كلمة المرور، يمكنك تجاهل هذه الرسالة بأمان وستظل بياناتك محمية.
+    </p>
     <div class='footer'>
       &copy; {DateTime.UtcNow.Year} Pharmacy Management System. All rights reserved.
     </div>
@@ -289,29 +347,122 @@ public class AccountController : Controller
 </body>
 </html>";
 
-            await _emailService.SendEmailAsync(
-                model.Email,
-                _loc["ResetPassword"].Value,
+            var emailSent = await _emailService.SendEmailAsync(
+                normalizedEmail,
+                "رمز التحقق لإعادة تعيين كلمة المرور - OTP",
                 emailBody);
 
-            _logger.LogInformation("Password reset requested for [{Email}].", model.Email);
-
-            // DIRECT RESET LINK RULE: Never in production. Only when in Development AND email sending is not configured.
-            if (_environment.IsDevelopment() && !_emailService.IsConfigured())
+            if (!emailSent)
             {
-                TempData["ResetLinkPreview"] = resetLink;
+                _logger.LogWarning("Email delivery failed for [{Email}]. SMTP may be unconfigured, credentials invalid, or server unreachable.", normalizedEmail);
+            }
+            else
+            {
+                _logger.LogInformation("Password reset OTP email sent successfully to [{Email}].", normalizedEmail);
             }
         }
 
-        // Generic neutral response to prevent user enumeration
-        return RedirectToAction(nameof(ForgotPasswordConfirmation));
+        // Generic neutral flow: redirect to VerifyOtp with the entered email to protect against account enumeration
+        return RedirectToAction(nameof(VerifyOtp), new { email = normalizedEmail });
     }
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult ForgotPasswordConfirmation()
+    public async Task<IActionResult> VerifyOtp(string? email)
     {
-        return View();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return RedirectToAction(nameof(ForgotPassword));
+        }
+
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+        var remainingSeconds = await _passwordResetService.GetRemainingValiditySecondsAsync(normalizedEmail);
+
+        return View(new VerifyOtpViewModel
+        {
+            Email = normalizedEmail,
+            RemainingSeconds = remainingSeconds > 0 ? remainingSeconds : 60
+        });
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("PasswordRecoveryLimiter")]
+    public async Task<IActionResult> VerifyOtp(VerifyOtpViewModel model)
+    {
+        var normalizedEmail = model.Email.Trim().ToLowerInvariant();
+        model.RemainingSeconds = await _passwordResetService.GetRemainingValiditySecondsAsync(normalizedEmail);
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var (result, resetToken, remaining) = await _passwordResetService.VerifyOtpAsync(normalizedEmail, model.OtpCode);
+
+        switch (result)
+        {
+            case OtpVerificationResult.Success when !string.IsNullOrEmpty(resetToken):
+                TempData.SetSuccess("نجحت العملية", "تم التحقق من الرمز بنجاح. يمكنك الآن كتابة كلمة المرور الجديدة.");
+                return RedirectToAction(nameof(ResetPassword), new { email = normalizedEmail, token = resetToken });
+
+            case OtpVerificationResult.MaxAttemptsExceeded:
+                ModelState.AddModelError(string.Empty, "تم تجاوز الحد الأقصى للمحاولات الخاطئة (5 محاولات). تم إبطال الرمز لحماية حسابك، يرجى طلب رمز جديد.");
+                return View(model);
+
+            case OtpVerificationResult.CooldownActive:
+                ModelState.AddModelError(string.Empty, "يرجى الانتظار 60 ثانية قبل طلب رمز جديد.");
+                return View(model);
+
+            default:
+                var errorMsg = remaining > 0
+                    ? $"رمز التحقق غير صحيح أو انتهت صلاحيته. متبقي لديك {remaining} محاولات."
+                    : "رمز التحقق غير صحيح أو انتهت صلاحيته (صلاحية الرمز 60 ثانية).";
+                ModelState.AddModelError(string.Empty, errorMsg);
+                return View(model);
+        }
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("PasswordRecoveryLimiter")]
+    public async Task<IActionResult> ResendOtp(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return RedirectToAction(nameof(ForgotPassword));
+        }
+
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+        var rawOtp = await _passwordResetService.CreateResetOtpAsync(normalizedEmail);
+
+        if (!string.IsNullOrEmpty(rawOtp))
+        {
+            var emailBody = $@"<!DOCTYPE html>
+<html dir='rtl' lang='ar'>
+<head><meta charset='utf-8'></head>
+<body style='font-family: Segoe UI, sans-serif; background-color: #f8fafc; padding: 24px;'>
+  <div style='max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 14px; padding: 36px; border: 1px solid #e2e8f0; text-align: center;'>
+    <h2 style='color: #0d7377;'>نظام إدارة الصيدلية - رمز التحقق (OTP)</h2>
+    <p style='text-align: right;'>رمز التحقق الجديد الخاص بك هو:</p>
+    <div style='background: #f1f5f9; border: 2px dashed #0d7377; border-radius: 10px; padding: 18px 24px; margin: 20px 0;'>
+      <span style='font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #0d7377; font-family: monospace;'>{rawOtp}</span>
+    </div>
+    <p style='color: #92400e; font-size: 13px; text-align: right;'>• هذا الرمز صالح لمدة 60 ثانية (دقيقة واحدة) فقط.<br>• لا تشارك الرمز مع أي شخص.</p>
+  </div>
+</body></html>";
+
+            await _emailService.SendEmailAsync(normalizedEmail, "رمز التحقق لإعادة تعيين كلمة المرور - OTP", emailBody);
+            TempData.SetSuccess("نجحت العملية", "تم إرسال رمز تحقق جديد إلى بريدك الإلكتروني.");
+        }
+        else
+        {
+            TempData.SetWarning("تنبيه", "يرجى الانتظار حتى انتهاء فترة التهدئة (60 ثانية) قبل إعادة الإرسال.");
+        }
+
+        return RedirectToAction(nameof(VerifyOtp), new { email = normalizedEmail });
     }
 
     [HttpGet]
@@ -369,6 +520,67 @@ public class AccountController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Explicit, authorized email test endpoint available in Development or to authenticated Administrators.
+    /// Safely tests sending one test message from the configured sender to the specified test recipient.
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> TestEmail(string? recipient = null)
+    {
+        if (!_environment.IsDevelopment() && !User.IsInRole(PharmacySystem.Enums.UserRole.Admin.ToString()))
+        {
+            return Forbid();
+        }
+
+        var targetRecipient = string.IsNullOrWhiteSpace(recipient) ? "goo594334@gmail.com" : recipient.Trim();
+
+        if (!_emailService.IsConfigured())
+        {
+            return Json(new
+            {
+                Success = false,
+                Message = "SMTP settings are unconfigured or incomplete. Please set your Gmail App Password in User Secrets or environment variables.",
+                Recipient = targetRecipient,
+                Sender = "testgemail527@gmail.com"
+            });
+        }
+
+        try
+        {
+            var testBody = $@"
+<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #14b8a6; border-radius: 8px;'>
+  <h2 style='color: #0d7377;'>Pharmacy Management System - Test Message</h2>
+  <p>This is a verification email triggered from the Pharmacy System environment.</p>
+  <p><strong>Sender:</strong> testgemail527@gmail.com<br>
+  <strong>Recipient:</strong> {targetRecipient}<br>
+  <strong>Timestamp:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
+  <p style='color: #10b981; font-weight: bold;'>SMTP connection and credentials verified successfully!</p>
+</div>";
+
+            var sent = await _emailService.SendEmailAsync(
+                targetRecipient,
+                "اختبار اتصال البريد الإلكتروني - Pharmacy System SMTP Test",
+                testBody);
+
+            return Json(new
+            {
+                Success = sent,
+                Message = sent ? "SMTP server accepted the message for delivery." : "Failed to send email. Check application logs.",
+                Recipient = targetRecipient,
+                Sender = "testgemail527@gmail.com"
+            });
+        }
+        catch (Exception ex)
+        {
+            return Json(new
+            {
+                Success = false,
+                Message = "SMTP Error: " + ex.Message,
+                Recipient = targetRecipient
+            });
+        }
+    }
+
     // ==========================================
     // CHANGE PASSWORD (AUTHENTICATED)
     // ==========================================
@@ -419,6 +631,7 @@ public class AccountController : Controller
         _dbContext.AuditLogs.Add(new AuditLog
         {
             UserId = user.Id,
+            PharmacyId = user.PharmacyId ?? 1,
             Action = "ChangePassword",
             EntityName = nameof(User),
             EntityId = user.Id.ToString(),

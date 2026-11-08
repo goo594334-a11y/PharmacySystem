@@ -20,6 +20,14 @@
                     </span>
                 }
                 <span class="badge bg-light text-teal border">@Model.CategoryName</span>
+                @if (!string.IsNullOrEmpty(Model.DosageForm))
+                {
+                    <span class="badge bg-light text-primary border">@Model.DosageForm</span>
+                }
+                @if (Model.SellFullPackageOnly)
+                {
+                    <span class="badge bg-warning-subtle text-warning border">@Loc["SellFullPackageOnly"]</span>
+                }
                 <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
                     @(Model.IsActive ? Loc["Active"] : Loc["Inactive"])
                 </span>
@@ -63,6 +71,46 @@
             </div>
         </div>
     </div>
+
+    @* Packaging & Permitted Units Card *@
+    @if (Model.PermittedUnits != null && Model.PermittedUnits.Any())
+    {
+        <div class="card border-0 shadow-sm ph-card overflow-hidden mb-4">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <h6 class="card-title mb-0 fw-bold">@Loc["PackagingUnits"]</h6>
+                <span class="badge bg-teal-subtle text-teal">@Loc["BaseUnitStock"]: @Model.BaseUnitName</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["UnitName"]</th>
+                            <th>@Loc["ConversionFactorToDefault"]</th>
+                            <th>@Loc["SellingPrice"]</th>
+                            <th>@Loc["UnitBarcodeOptional"]</th>
+                            <th class="text-end pe-4">@Loc["UnitType"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var unit in Model.PermittedUnits)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">@unit.UnitName</td>
+                                <td>@unit.ConversionFactor &times; @Model.BaseUnitName</td>
+                                <td class="fw-bold text-teal">@unit.SellingPrice.ToString("C2")</td>
+                                <td>@(string.IsNullOrEmpty(unit.Barcode) ? "-" : unit.Barcode)</td>
+                                <td class="text-end pe-4">
+                                    <span class="badge @(unit.IsBaseUnit ? "bg-teal" : "bg-light text-secondary border")">
+                                        @(unit.IsBaseUnit ? Loc["BaseUnitStockType"] : Loc["RetailPackagingType"])
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 
     @* Batches & Physical Storage Location Table *@
     <div class="card border-0 shadow-sm ph-card overflow-hidden">

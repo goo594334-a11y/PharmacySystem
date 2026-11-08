@@ -34,8 +34,13 @@ public class SupplierConfiguration : IEntityTypeConfiguration<Supplier>
 
         // Index on Name for supplier lookups
         builder.HasIndex(s => s.Name);
+        builder.HasIndex(s => s.PharmacyId);
 
         // Relationships
+        builder.HasOne(s => s.Pharmacy)
+            .WithMany(ph => ph.Suppliers)
+            .HasForeignKey(s => s.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(s => s.Purchases)
             .WithOne(p => p.Supplier)
             .HasForeignKey(p => p.SupplierId)

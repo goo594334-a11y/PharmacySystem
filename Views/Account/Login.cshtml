@@ -95,9 +95,16 @@
                     </div>
 
                     @* Submit Button *@
-                    <button type="submit" class="btn btn-teal w-100 py-2 fw-semibold shadow-sm" data-processing-text="@Loc["Processing"]">
+                    <button type="submit" class="btn btn-teal w-100 py-2 fw-semibold shadow-sm mb-3" data-processing-text="@Loc["Processing"]">
                         @Loc["Login"]
                     </button>
+
+                    <div class="text-center pt-2 border-top">
+                        <span class="small text-muted">@Loc["DontHaveAnAccount"] </span>
+                        <a asp-action="RegisterAdmin" class="small text-teal fw-semibold text-decoration-none">
+                            @Loc["RegisterNewPharmacy"]
+                        </a>
+                    </div>
                 </form>
             </div>
         </div>

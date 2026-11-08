@@ -35,11 +35,18 @@ public class PurchaseConfiguration : IEntityTypeConfiguration<Purchase>
 
         // Required index: (SupplierId, PurchaseDate)
         builder.HasIndex(p => new { p.SupplierId, p.PurchaseDate });
+        builder.HasIndex(p => new { p.PharmacyId, p.InvoiceNumber })
+            .IsUnique();
 
         builder.HasIndex(p => p.PurchaseDate);
         builder.HasIndex(p => p.UserId);
+        builder.HasIndex(p => p.PharmacyId);
 
         // Relationships
+        builder.HasOne(p => p.Pharmacy)
+            .WithMany(ph => ph.Purchases)
+            .HasForeignKey(p => p.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Supplier)
             .WithMany(s => s.Purchases)
             .HasForeignKey(p => p.SupplierId)

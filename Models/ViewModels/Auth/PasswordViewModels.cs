@@ -10,6 +10,22 @@ public class ForgotPasswordViewModel
     public string Email { get; set; } = string.Empty;
 }
 
+public class VerifyOtpViewModel
+{
+    [Required(ErrorMessage = "RequiredField")]
+    [EmailAddress(ErrorMessage = "InvalidEmail")]
+    [Display(Name = "Email")]
+    public string Email { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "RequiredField")]
+    [StringLength(6, MinimumLength = 6, ErrorMessage = "InvalidOtpCode")]
+    [RegularExpression(@"^[0-9]{6}$", ErrorMessage = "InvalidOtpCode")]
+    [Display(Name = "OtpCode")]
+    public string OtpCode { get; set; } = string.Empty;
+
+    public int RemainingSeconds { get; set; } = 60;
+}
+
 public class ResetPasswordViewModel
 {
     [Required(ErrorMessage = "RequiredField")]

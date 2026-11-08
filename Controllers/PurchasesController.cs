@@ -13,6 +13,8 @@ using PharmacySystem.Resources;
 using PharmacySystem.Services;
 using PharmacySystem.Services.Auth;
 
+using PharmacySystem.Services.Packaging;
+
 namespace PharmacySystem.Controllers;
 
 [Authorize(Policy = AppPolicies.RequirePharmacistOrAdmin)]
@@ -21,17 +23,20 @@ public class PurchasesController : Controller
     private readonly PharmacyDbContext _dbContext;
     private readonly IPurchaseTransactionService _purchaseTransactionService;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IProductPackagingService _packagingService;
     private readonly IStringLocalizer<SharedResource> _loc;
 
     public PurchasesController(
         PharmacyDbContext dbContext,
         IPurchaseTransactionService purchaseTransactionService,
         ICurrentUserService currentUserService,
+        IProductPackagingService packagingService,
         IStringLocalizer<SharedResource> loc)
     {
         _dbContext = dbContext;
         _purchaseTransactionService = purchaseTransactionService;
         _currentUserService = currentUserService;
+        _packagingService = packagingService;
         _loc = loc;
     }
 
@@ -127,7 +132,9 @@ public class PurchasesController : Controller
                     i.UnitPurchasePrice,
                     i.BatchNumber,
                     i.ExpiryDate,
-                    i.LocationId
+                    i.LocationId,
+                    i.UnitName,
+                    i.ConversionFactor > 0 ? i.ConversionFactor : 1
                 )).ToList()
             );
 
@@ -169,17 +176,52 @@ public class PurchasesController : Controller
             TotalAmount = purchase.TotalAmount,
             Notes = purchase.Notes,
             ReceivedByName = purchase.User.FullName,
-            Items = purchase.PurchaseItems.Select(pi => new PurchaseDetailsItemViewModel
+            Items = purchase.PurchaseItems.Select(pi =>
             {
-                Id = pi.Id,
-                ProductId = pi.ProductId,
-                ProductName = pi.Product.Name,
-                BatchNumber = pi.BatchNumber,
-                ExpiryDate = pi.ExpiryDate,
-                LocationCode = pi.Location.Code,
-                LocationName = pi.Location.Name,
-                Quantity = pi.Quantity,
-                UnitPurchasePrice = pi.UnitPurchasePrice
+                // Try to derive original purchase unit from packaging config
+                var packagingConfig = _packagingService.GetPackagingConfig(pi.Product.Description, pi.Product.SellingPrice, pi.Product.Barcode);
+                int convFactor = 1;
+                string? origUnitName = null;
+                int? origQty = null;
+                decimal? origUnitPrice = null;
+
+                if (packagingConfig != null && packagingConfig.PermittedUnits.Count > 1)
+                {
+                    // Check if the stored base quantity is evenly divisible by any packaging unit
+                    var purchaseUnits = packagingConfig.PermittedUnits
+                        .Where(u => u.ConversionFactor > 1 && u.AllowPurchase)
+                        .OrderByDescending(u => u.ConversionFactor)
+                        .ToList();
+
+                    foreach (var unit in purchaseUnits)
+                    {
+                        if (pi.Quantity % unit.ConversionFactor == 0)
+                        {
+                            convFactor = unit.ConversionFactor;
+                            origUnitName = unit.UnitName;
+                            origQty = pi.Quantity / unit.ConversionFactor;
+                            origUnitPrice = Math.Round(pi.UnitPurchasePrice * unit.ConversionFactor, 2);
+                            break;
+                        }
+                    }
+                }
+
+                return new PurchaseDetailsItemViewModel
+                {
+                    Id = pi.Id,
+                    ProductId = pi.ProductId,
+                    ProductName = pi.Product.Name,
+                    BatchNumber = pi.BatchNumber,
+                    ExpiryDate = pi.ExpiryDate,
+                    LocationCode = pi.Location.Code,
+                    LocationName = pi.Location.Name,
+                    Quantity = pi.Quantity,
+                    UnitPurchasePrice = pi.UnitPurchasePrice,
+                    OriginalUnitName = origUnitName,
+                    OriginalQuantity = origQty,
+                    ConversionFactor = convFactor,
+                    OriginalUnitPrice = origUnitPrice
+                };
             }).ToList()
         };
 
@@ -206,7 +248,25 @@ public class PurchasesController : Controller
     private async Task PopulateDropdownsAsync(CancellationToken cancellationToken)
     {
         ViewBag.Suppliers = await _dbContext.Suppliers.AsNoTracking().Where(s => s.IsActive).OrderBy(s => s.Name).ToListAsync(cancellationToken);
-        ViewBag.Products = await _dbContext.Products.AsNoTracking().Where(p => p.IsActive).OrderBy(p => p.Name).ToListAsync(cancellationToken);
+        var activeProducts = await _dbContext.Products.AsNoTracking().Where(p => p.IsActive).OrderBy(p => p.Name).ToListAsync(cancellationToken);
+        ViewBag.Products = activeProducts;
+        ViewBag.ProductsWithPackaging = activeProducts.Select(p =>
+        {
+            var pkg = _packagingService.GetPackaging(p);
+            return new
+            {
+                p.Id,
+                p.Name,
+                p.SellingPrice,
+                BaseUnit = pkg.BaseUnitName,
+                Units = pkg.PermittedUnits.Where(u => u.AllowPurchase).Select(u => new
+                {
+                    u.UnitName,
+                    u.ConversionFactor,
+                    u.IsBaseUnit
+                }).ToList()
+            };
+        }).ToList();
         ViewBag.Locations = await _dbContext.Locations.AsNoTracking().Where(l => l.IsActive).OrderBy(l => l.Code).ToListAsync(cancellationToken);
     }
 }

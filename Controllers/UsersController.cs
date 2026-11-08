@@ -20,17 +20,20 @@ public class UsersController : Controller
 {
     private readonly PharmacyDbContext _dbContext;
     private readonly IPasswordHasherService _passwordHasher;
+    private readonly ICurrentUserService _currentUserService;
     private readonly IStringLocalizer<SharedResource> _loc;
     private readonly ILogger<UsersController> _logger;
 
     public UsersController(
         PharmacyDbContext dbContext,
         IPasswordHasherService passwordHasher,
+        ICurrentUserService currentUserService,
         IStringLocalizer<SharedResource> loc,
         ILogger<UsersController> logger)
     {
         _dbContext = dbContext;
         _passwordHasher = passwordHasher;
+        _currentUserService = currentUserService;
         _loc = loc;
         _logger = logger;
     }
@@ -44,7 +47,17 @@ public class UsersController : Controller
         int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
+        var currentPharmacyId = _currentUserService.PharmacyId;
         var query = _dbContext.Users.AsNoTracking().AsQueryable();
+
+        if (!_currentUserService.IsDeveloper)
+        {
+            if (!currentPharmacyId.HasValue)
+            {
+                return Forbid();
+            }
+            query = query.Where(u => u.PharmacyId == currentPharmacyId.Value);
+        }
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -113,6 +126,7 @@ public class UsersController : Controller
             FullName = model.FullName.Trim(),
             Email = normalizedEmail,
             Role = model.Role,
+            PharmacyId = _currentUserService.PharmacyId,
             IsActive = model.IsActive,
             MustChangePassword = false,
             CreatedAt = DateTime.UtcNow
@@ -123,6 +137,7 @@ public class UsersController : Controller
         _dbContext.Users.Add(user);
         _dbContext.AuditLogs.Add(new AuditLog
         {
+            PharmacyId = _currentUserService.PharmacyId ?? (user.PharmacyId ?? 1),
             Action = "CreateUser",
             EntityName = nameof(User),
             EntityId = normalizedEmail,
@@ -140,7 +155,7 @@ public class UsersController : Controller
     public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users.FindAsync(new object[] { id }, cancellationToken);
-        if (user == null)
+        if (user == null || (!_currentUserService.IsDeveloper && user.PharmacyId != _currentUserService.PharmacyId))
         {
             return NotFound();
         }
@@ -167,7 +182,7 @@ public class UsersController : Controller
         }
 
         var user = await _dbContext.Users.FindAsync(new object[] { model.Id }, cancellationToken);
-        if (user == null)
+        if (user == null || (!_currentUserService.IsDeveloper && user.PharmacyId != _currentUserService.PharmacyId))
         {
             return NotFound();
         }
@@ -215,7 +230,7 @@ public class UsersController : Controller
     public async Task<IActionResult> ToggleStatus(int id, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users.FindAsync(new object[] { id }, cancellationToken);
-        if (user == null)
+        if (user == null || (!_currentUserService.IsDeveloper && user.PharmacyId != _currentUserService.PharmacyId))
         {
             return NotFound();
         }
@@ -255,7 +270,7 @@ public class UsersController : Controller
     public async Task<IActionResult> ResetPassword(int id, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users.FindAsync(new object[] { id }, cancellationToken);
-        if (user == null)
+        if (user == null || (!_currentUserService.IsDeveloper && user.PharmacyId != _currentUserService.PharmacyId))
         {
             return NotFound();
         }
@@ -293,7 +308,7 @@ public class UsersController : Controller
             .Include(u => u.PurchaseReturns)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-        if (user == null)
+        if (user == null || (!_currentUserService.IsDeveloper && user.PharmacyId != _currentUserService.PharmacyId))
         {
             return NotFound();
         }
@@ -343,7 +358,7 @@ public class UsersController : Controller
             .Include(u => u.AuditLogs)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-        if (user == null)
+        if (user == null || (!_currentUserService.IsDeveloper && user.PharmacyId != _currentUserService.PharmacyId))
         {
             return NotFound();
         }

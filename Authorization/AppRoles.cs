@@ -8,6 +8,7 @@ namespace PharmacySystem.Authorization;
 /// </summary>
 public static class AppRoles
 {
+    public const string Developer = nameof(UserRole.Developer);
     public const string Admin = nameof(UserRole.Admin);
     public const string Pharmacist = nameof(UserRole.Pharmacist);
 }

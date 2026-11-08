@@ -37,6 +37,10 @@ public class CreatePurchaseItemViewModel
 
     [Required(ErrorMessage = "RequiredField")]
     public int LocationId { get; set; }
+
+    public string? UnitName { get; set; }
+
+    public int ConversionFactor { get; set; } = 1;
 }
 
 public class CreatePurchaseViewModel
@@ -69,6 +73,13 @@ public class PurchaseDetailsItemViewModel
     public int Quantity { get; set; }
     public decimal UnitPurchasePrice { get; set; }
     public decimal LineTotal => Quantity * UnitPurchasePrice;
+
+    // Original purchase unit info (before conversion to base)
+    public string? OriginalUnitName { get; set; }
+    public int? OriginalQuantity { get; set; }
+    public int ConversionFactor { get; set; } = 1;
+    public decimal? OriginalUnitPrice { get; set; }
+    public bool HasPackagingConversion => ConversionFactor > 1 && !string.IsNullOrEmpty(OriginalUnitName);
 }
 
 public class PurchaseDetailsViewModel

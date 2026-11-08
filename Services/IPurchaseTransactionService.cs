@@ -8,7 +8,9 @@ public record PurchaseItemInput(
     decimal UnitPurchasePrice,
     string BatchNumber,
     DateOnly ExpiryDate,
-    int LocationId);
+    int LocationId,
+    string? UnitName = null,
+    int ConversionFactor = 1);
 
 public record CreatePurchaseRequest(
     int SupplierId,

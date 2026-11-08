@@ -1655,4 +1655,322 @@
   <data name="SearchPlaceholderReturns" xml:space="preserve">
     <value>Search returns...</value>
   </data>
+  <data name="StoreOpen" xml:space="preserve">
+    <value>Store Open</value>
+  </data>
+  <data name="HeresHowPharmacyIsDoingToday" xml:space="preserve">
+    <value>Here's how your pharmacy is doing today</value>
+  </data>
+  <data name="SalesCompletedToday" xml:space="preserve">
+    <value>Sales completed today</value>
+  </data>
+  <data name="IncludesPrescriptionsAndOtcs" xml:space="preserve">
+    <value>Includes Rx prescriptions and OTC sales</value>
+  </data>
+  <data name="ActiveProductsTracked" xml:space="preserve">
+    <value>Active products tracked</value>
+  </data>
+  <data name="SalesPerformance" xml:space="preserve">
+    <value>Sales Performance</value>
+  </data>
+  <data name="SalesByCategory" xml:space="preserve">
+    <value>Sales by Category</value>
+  </data>
+  <data name="InventoryWatchlist" xml:space="preserve">
+    <value>Inventory Watchlist</value>
+  </data>
+  <data name="KeepEssentialMedicinesOnYourShelves" xml:space="preserve">
+    <value>Keep essential medicines on your shelves</value>
+  </data>
+  <data name="MinLevel" xml:space="preserve">
+    <value>Min Level</value>
+  </data>
+  <data name="AllStockLevelsHealthy" xml:space="preserve">
+    <value>All stock levels are currently healthy</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="CreatePurchaseOrder" xml:space="preserve">
+    <value>Create Purchase Order</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Needs Attention</value>
+  </data>
+  <data name="ProductsExpiringSoon" xml:space="preserve">
+    <value>products expiring soon</value>
+  </data>
+  <data name="ReviewExpiryList" xml:space="preserve">
+    <value>Review Expiry List</value>
+  </data>
+  <data name="ProductsNeedRestocking" xml:space="preserve">
+    <value>products need restocking</value>
+  </data>
+  <data name="PrepareReorder" xml:space="preserve">
+    <value>Prepare Reorder</value>
+  </data>
+  <data name="ExpiredBatchesBlocked" xml:space="preserve">
+    <value>expired batches blocked</value>
+  </data>
+  <data name="ViewExpiredMedicines" xml:space="preserve">
+    <value>View Expired Medicines</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Paid" xml:space="preserve">
+    <value>Paid</value>
+  </data>
+  <data name="ViewLog" xml:space="preserve">
+    <value>View Log</value>
+  </data>
+  <data name="DontHaveAnAccount" xml:space="preserve">
+    <value>Don't have a pharmacy account?</value>
+  </data>
+  <data name="RegisterNewPharmacy" xml:space="preserve">
+    <value>Register New Pharmacy</value>
+  </data>
+  <data name="AlreadyHaveAccount" xml:space="preserve">
+    <value>Already have an account? Sign in</value>
+  </data>
+  <data name="ExpiredMedicines" xml:space="preserve">
+    <value>Expired Medicines</value>
+  </data>
+  <data name="ExpiredMedicinesSubtitle" xml:space="preserve">
+    <value>Manage and safely dispose expired stock blocked from sales</value>
+  </data>
+  <data name="DisposedStock" xml:space="preserve">
+    <value>Disposed Stock</value>
+  </data>
+  <data name="DisposeStock" xml:space="preserve">
+    <value>Dispose Stock</value>
+  </data>
+  <data name="DisposeExpiredStockTitle" xml:space="preserve">
+    <value>Dispose Expired Batch Stock</value>
+  </data>
+  <data name="QuantityToDispose" xml:space="preserve">
+    <value>Quantity to Dispose</value>
+  </data>
+  <data name="DisposalReason" xml:space="preserve">
+    <value>Disposal Reason</value>
+  </data>
+  <data name="ExpiredMedicineDisposal" xml:space="preserve">
+    <value>Expired Medicine Disposal</value>
+  </data>
+  <data name="DamagedAndExpiredDisposal" xml:space="preserve">
+    <value>Damaged and Expired Disposal</value>
+  </data>
+  <data name="SupplierRefusedReturnDisposal" xml:space="preserve">
+    <value>Supplier Refused Return - Official Disposal</value>
+  </data>
+  <data name="DisposalWarningNotice" xml:space="preserve">
+    <value>Warning: The quantity will be deducted from inventory immediately and logged in the audit trail.</value>
+  </data>
+  <data name="ConfirmDisposal" xml:space="preserve">
+    <value>Confirm Official Disposal</value>
+  </data>
+  <data name="ReturnDisposition" xml:space="preserve">
+    <value>Stock Return Disposition</value>
+  </data>
+  <data name="RestockIfValid" xml:space="preserve">
+    <value>Restock if valid</value>
+  </data>
+  <data name="ReturnToStockExplanation" xml:space="preserve">
+    <value>Only items verified undamaged and unexpired are returned to saleable stock.</value>
+  </data>
+  <data name="PharmacyName" xml:space="preserve">
+    <value>Pharmacy Name</value>
+  </data>
+  <data name="ProductsInStock" xml:space="preserve">
+    <value>Products In Stock</value>
+  </data>
+  <data name="ExpiringSoon" xml:space="preserve">
+    <value>Expiring Soon</value>
+  </data>
+  <data name="AllBatchesAreValid" xml:space="preserve">
+    <value>All batches are valid and unexpired</value>
+  </data>
+  <data name="ExpiredStockExcluded" xml:space="preserve">
+    <value>Expired stock has been excluded from available dispensing</value>
+  </data>
+  <data name="ExpiredWithStock" xml:space="preserve">
+    <value>Expired Batches With Stock</value>
+  </data>
+  <data name="ExpirySubtitle" xml:space="preserve">
+    <value>Track medicine expiration dates and early alerts</value>
+  </data>
+  <data name="InventorySubtitle" xml:space="preserve">
+    <value>Overview of stock levels, lot tracking, and balances</value>
+  </data>
+  <data name="LowStockSubtitle" xml:space="preserve">
+    <value>List of medicines reaching or below minimum safety levels</value>
+  </data>
+  <data name="RecentActivity" xml:space="preserve">
+    <value>Recent Activity</value>
+  </data>
+  <data name="ViewAll" xml:space="preserve">
+    <value>View All</value>
+  </data>
+  <data name="ViewInventory" xml:space="preserve">
+    <value>View Inventory</value>
+  </data>
+  <data name="NoSalesRecordedYet" xml:space="preserve">
+    <value>Waiting for first sales transactions</value>
+  </data>
+  <data name="Last7Days" xml:space="preserve">
+    <value>Last 7 days</value>
+  </data>
+  <data name="RevenueShareLast7Days" xml:space="preserve">
+    <value>Revenue share • Last 7 days</value>
+  </data>
+  <data name="PaymentMethod_VodafoneCash" xml:space="preserve"><value>Vodafone Cash</value></data>
+  <data name="PaymentMethod_Split" xml:space="preserve"><value>Split Payment</value></data>
+  <data name="SplitPaymentBreakdown" xml:space="preserve"><value>Split Payment Breakdown</value></data>
+  <data name="RemainingToCover" xml:space="preserve"><value>Remaining to Cover:</value></data>
+  <data name="FullyCovered" xml:space="preserve"><value>Fully Covered (0.00)</value></data>
+  <data name="SplitSumMismatchError" xml:space="preserve"><value>Total split payment amounts must exactly equal invoice total</value></data>
+  <data name="NoSalesYet" xml:space="preserve"><value>No sales recorded yet</value></data>
+  <data name="NetSalesToday" xml:space="preserve"><value>Today Net Sales</value></data>
+  <data name="NetRevenue" xml:space="preserve"><value>Net Revenue</value></data>
+  <data name="GrossSales" xml:space="preserve"><value>Gross Sales</value></data>
+  <data name="MonthlyNetSales" xml:space="preserve"><value>Monthly Net Sales</value></data>
+  <data name="MonthlyGross" xml:space="preserve"><value>Monthly Gross</value></data>
+  <data name="PaymentBreakdownToday" xml:space="preserve"><value>Today's Payment Methods</value></data>
+  <data name="Methods" xml:space="preserve"><value>Methods</value></data>
+  <data name="SendOtpCode" xml:space="preserve"><value>Send Verification Code (OTP)</value></data>
+  <data name="VerifyOtpTitle" xml:space="preserve"><value>Security Code Verification (OTP)</value></data>
+  <data name="OtpSentNotice" xml:space="preserve"><value>A 6-digit verification code has been sent to your email</value></data>
+  <data name="TargetEmail" xml:space="preserve"><value>Target Email:</value></data>
+  <data name="EnterSixDigitOtp" xml:space="preserve"><value>Enter 6-Digit Code</value></data>
+  <data name="CodeValidity" xml:space="preserve"><value>Code Validity:</value></data>
+  <data name="MaxAttemptsNotice" xml:space="preserve"><value>Maximum: 5 Attempts</value></data>
+  <data name="ConfirmOtpAndProceed" xml:space="preserve"><value>Verify Code &amp; Proceed</value></data>
+  <data name="ResendNewOtp" xml:space="preserve"><value>Resend New Code</value></data>
+  <data name="CodeExpired" xml:space="preserve"><value>Expired</value></data>
+  <data name="AvailableNow" xml:space="preserve"><value>Available Now</value></data>
+  <data name="CodeExpiredRequestNew" xml:space="preserve"><value>Code has expired - please request a new code</value></data>
+  <data name="PackagingUnits" xml:space="preserve"><value>Packaging Units</value></data>
+  <data name="BaseUnitStock" xml:space="preserve"><value>Base Unit (Stock)</value></data>
+  <data name="BaseUnitDescription" xml:space="preserve"><value>The unit by which the actual physical pharmacy inventory is measured.</value></data>
+  <data name="ConversionFactorToDefault" xml:space="preserve"><value>Conversion Factor to Base</value></data>
+  <data name="UnitBarcodeOptional" xml:space="preserve"><value>Unit Barcode (Optional)</value></data>
+  <data name="AddPackagingUnit" xml:space="preserve"><value>+ Add Selling Unit (Strip / Box / Carton)</value></data>
+  <data name="BaseUnitStockType" xml:space="preserve"><value>Base (Stock)</value></data>
+  <data name="RetailPackagingType" xml:space="preserve"><value>Retail / Packaging</value></data>
+  <data name="UnitType" xml:space="preserve"><value>Unit Type</value></data>
+  <data name="ExampleBoxStrip" xml:space="preserve"><value>e.g. Box or Strip</value></data>
+  <data name="UnitCustomBarcode" xml:space="preserve"><value>Custom unit barcode</value></data>
+  <data name="ContainsPackagingHierarchy" xml:space="preserve"><value>Contains (Hierarchy)</value></data>
+  <data name="PurchaseAllowed" xml:space="preserve"><value>Purchase</value></data>
+  <data name="SaleAllowed" xml:space="preserve"><value>Sale</value></data>
+  <data name="PackagingHierarchyHint" xml:space="preserve"><value>Conversion factor to base unit is auto-calculated based on child units</value></data>
+  <data name="Strip" xml:space="preserve"><value>Strip</value></data>
+  <data name="Box" xml:space="preserve"><value>Box</value></data>
+  <data name="POS_AvailableLabel" xml:space="preserve"><value>Available:</value></data>
+  <data name="POS_BaseUnitsInStock" xml:space="preserve"><value>base units in stock</value></data>
+  <data name="OriginalPurchaseUnit" xml:space="preserve"><value>Purchase Unit</value></data>
+  <data name="OriginalPurchaseQty" xml:space="preserve"><value>Purchased Qty</value></data>
+  <data name="BaseQtyReceived" xml:space="preserve"><value>Base Qty Received</value></data>
+  <data name="BaseCostPerUnit" xml:space="preserve"><value>Base Unit Cost</value></data>
+  <data name="RegistrationPendingTitle" xml:space="preserve"><value>Registration Pending Approval</value></data>
+  <data name="RegistrationSubmittedTitle" xml:space="preserve"><value>Registration Submitted Successfully</value></data>
+  <data name="RegistrationPendingApprovalSubtitle" xml:space="preserve"><value>Your pharmacy registration is pending platform admin approval</value></data>
+  <data name="ReviewInProgress" xml:space="preserve"><value>Review In Progress</value></data>
+  <data name="RegistrationPendingExplanation" xml:space="preserve"><value>Your pharmacy information and initial administrator account have been registered. To maintain security, activation requires developer review and approval.</value></data>
+  <data name="RegistrationPendingNextSteps" xml:space="preserve"><value>You will be able to log in once your account has been reviewed and activated. Thank you for your patience.</value></data>
+  <data name="DeveloperAdminDashboard" xml:space="preserve"><value>Developer Admin &amp; Pharmacy Approvals</value></data>
+  <data name="DeveloperAdminSubtitle" xml:space="preserve"><value>Manage pharmacy registration requests and control activation</value></data>
+  <data name="Developer" xml:space="preserve"><value>Developer</value></data>
+  <data name="PharmacyManagementAndApprovals" xml:space="preserve"><value>Pharmacy Approvals</value></data>
+  <data name="PendingApprovals" xml:space="preserve"><value>Pending Approvals</value></data>
+  <data name="ActivePharmacies" xml:space="preserve"><value>Active Pharmacies</value></data>
+  <data name="SuspendedPharmacies" xml:space="preserve"><value>Suspended Pharmacies</value></data>
+  <data name="RejectedPharmacies" xml:space="preserve"><value>Rejected Requests</value></data>
+  <data name="PendingApproval" xml:space="preserve"><value>Pending Approval</value></data>
+  <data name="SearchPharmaciesPlaceholder" xml:space="preserve"><value>Search by pharmacy name, phone or admin...</value></data>
+  <data name="ResponsiblePerson" xml:space="preserve"><value>Responsible Person</value></data>
+  <data name="ContactDetails" xml:space="preserve"><value>Contact Details</value></data>
+  <data name="RegistrationDate" xml:space="preserve"><value>Registration Date</value></data>
+  <data name="NoPharmaciesFound" xml:space="preserve"><value>No pharmacies found matching criteria</value></data>
+  <data name="PharmacyApprovedSuccessfully" xml:space="preserve"><value>Pharmacy approved and administrator account activated successfully</value></data>
+  <data name="PharmacyRejectedSuccessfully" xml:space="preserve"><value>Pharmacy registration request rejected</value></data>
+  <data name="PharmacySuspendedSuccessfully" xml:space="preserve"><value>Pharmacy suspended successfully</value></data>
+  <data name="PharmacyActivatedSuccessfully" xml:space="preserve"><value>Pharmacy reactivated successfully</value></data>
+  <data name="StockQuantityCannotBeNegative" xml:space="preserve"><value>Stock quantity cannot be negative</value></data>
+  <data name="StockAdjustmentReasonRequired" xml:space="preserve"><value>Stock adjustment reason is required</value></data>
+  <data name="StockQuantityUnchanged" xml:space="preserve"><value>Stock quantity remains unchanged</value></data>
+  <data name="StockAdjustedSuccessfully" xml:space="preserve"><value>Stock adjusted successfully</value></data>
+  <data name="ErrorOccurredDuringStockAdjustment" xml:space="preserve"><value>An error occurred during stock adjustment</value></data>
+  <data name="PharmacyPendingApproval" xml:space="preserve"><value>Your pharmacy account is pending developer approval. Login is currently unavailable.</value></data>
+  <data name="PharmacyRegistrationRejected" xml:space="preserve"><value>Pharmacy registration request was rejected. Please contact support.</value></data>
+  <data name="PharmacySuspended" xml:space="preserve"><value>This pharmacy account has been suspended. Please contact administrator.</value></data>
+  <data name="NoPharmacyAssigned" xml:space="preserve"><value>No pharmacy associated with this account</value></data>
+  <data name="SubmitRegistrationRequest" xml:space="preserve"><value>Submit Registration Request</value></data>
+  <data name="PharmacyAddressPlaceholder" xml:space="preserve"><value>e.g. 15 El-Gomhoureya St, Cairo</value></data>
+  <data name="ProductClassification" xml:space="preserve"><value>Classification &amp; Pharmaceutical Form</value></data>
+  <data name="DosageForm" xml:space="preserve"><value>Dosage Form</value></data>
+  <data name="DosageForm_Tablets" xml:space="preserve"><value>Tablets</value></data>
+  <data name="DosageForm_Capsules" xml:space="preserve"><value>Capsules</value></data>
+  <data name="DosageForm_Syrup" xml:space="preserve"><value>Syrup</value></data>
+  <data name="DosageForm_Injection" xml:space="preserve"><value>Injection</value></data>
+  <data name="DosageForm_Ampoule" xml:space="preserve"><value>Ampoule</value></data>
+  <data name="DosageForm_Vial" xml:space="preserve"><value>Vial</value></data>
+  <data name="DosageForm_Cream" xml:space="preserve"><value>Cream</value></data>
+  <data name="DosageForm_Ointment" xml:space="preserve"><value>Ointment</value></data>
+  <data name="DosageForm_Drops" xml:space="preserve"><value>Drops</value></data>
+  <data name="DosageForm_Suppository" xml:space="preserve"><value>Suppository</value></data>
+  <data name="DosageForm_Sachet" xml:space="preserve"><value>Sachets</value></data>
+  <data name="DosageForm_Spray" xml:space="preserve"><value>Spray</value></data>
+  <data name="DosageForm_MedicalSupplies" xml:space="preserve"><value>Medical Supplies</value></data>
+  <data name="DosageForm_Custom" xml:space="preserve"><value>Custom Form</value></data>
+  <data name="QuickAddCategory" xml:space="preserve"><value>+ New Category</value></data>
+  <data name="CategoryQuickSuggestions" xml:space="preserve"><value>Predefined Category Suggestions</value></data>
+  <data name="Category_Analgesics" xml:space="preserve"><value>Analgesics (Painkillers)</value></data>
+  <data name="Category_Antibiotics" xml:space="preserve"><value>Antibiotics</value></data>
+  <data name="Category_Vitamins" xml:space="preserve"><value>Vitamins &amp; Supplements</value></data>
+  <data name="Category_Digestive" xml:space="preserve"><value>Digestive System</value></data>
+  <data name="Category_Cardiovascular" xml:space="preserve"><value>Cardiovascular</value></data>
+  <data name="Category_Allergy" xml:space="preserve"><value>Allergy</value></data>
+  <data name="Category_Respiratory" xml:space="preserve"><value>Respiratory</value></data>
+  <data name="Category_MedicalSupplies" xml:space="preserve"><value>Medical Supplies</value></data>
+  <data name="Category_Other" xml:space="preserve"><value>Other</value></data>
+  <data name="SellFullPackageOnly" xml:space="preserve"><value>Sell Full Package Only</value></data>
+  <data name="SellFullPackageOnlyHint" xml:space="preserve"><value>When enabled, partial units (e.g. strips or tablets) are hidden from POS</value></data>
+  <data name="PackagingHierarchyPreview" xml:space="preserve"><value>Live Packaging Preview</value></data>
+  <data name="PackagingPresets" xml:space="preserve"><value>Quick Packaging Presets</value></data>
+  <data name="BaseStockUnitNotice" xml:space="preserve"><value>The base unit is the smallest unit by which physical stock is tracked</value></data>
+  <data name="CustomerReceipt" xml:space="preserve"><value>Customer Receipt</value></data>
+  <data name="PrintCustomerReceipt" xml:space="preserve"><value>Print Customer Receipt</value></data>
+  <data name="SalesReceipt" xml:space="preserve"><value>Sales Receipt</value></data>
+  <data name="ThermalReceipt" xml:space="preserve"><value>Thermal Receipt (80mm)</value></data>
+  <data name="StandardReceipt" xml:space="preserve"><value>Standard Print (A4/A5)</value></data>
+  <data name="ThankYouVisiting" xml:space="preserve"><value>Thank you for visiting us. Wishing you a speedy recovery!</value></data>
+  <data name="SellingUnit" xml:space="preserve"><value>Selling Unit</value></data>
+  <data name="CanBeSoldInSmallerUnits" xml:space="preserve"><value>Can this product be sold in smaller units?</value></data>
+  <data name="CanBeSoldInSmallerUnitsHint" xml:space="preserve"><value>Select Yes if the medicine is sold by strip or tablet, or No if sold only as a full package</value></data>
+  <data name="SoldAsFullPackageOnlyTitle" xml:space="preserve"><value>This product is sold as a full package only</value></data>
+  <data name="SoldAsFullPackageOnlyDescription" xml:space="preserve"><value>This item is sold and purchased as a complete package. No smaller units will be available at POS.</value></data>
+  <data name="MainPackage" xml:space="preserve"><value>Main Package</value></data>
+  <data name="MainPackageName" xml:space="preserve"><value>Main Package Name</value></data>
+  <data name="MainPackagePrice" xml:space="preserve"><value>Main Package Price</value></data>
+  <data name="StripsPerBox" xml:space="preserve"><value>Strips per Box</value></data>
+  <data name="TabletsPerStrip" xml:space="preserve"><value>Tablets per Strip</value></data>
+  <data name="CapsulesPerStrip" xml:space="preserve"><value>Capsules per Strip</value></data>
+  <data name="AmpoulesPerBox" xml:space="preserve"><value>Ampoules per Box</value></data>
+  <data name="VialsPerBox" xml:space="preserve"><value>Vials per Box</value></data>
+  <data name="SachetsPerBox" xml:space="preserve"><value>Sachets per Box</value></data>
+  <data name="PiecesPerPack" xml:space="preserve"><value>Pieces per Pack</value></data>
+  <data name="AllowSellingStrip" xml:space="preserve"><value>Allow selling strips individually at POS</value></data>
+  <data name="AllowSellingTablet" xml:space="preserve"><value>Allow selling tablets individually at POS</value></data>
+  <data name="AllowSellingCapsule" xml:space="preserve"><value>Allow selling capsules individually at POS</value></data>
+  <data name="AllowSellingAmpoule" xml:space="preserve"><value>Allow selling ampoules individually at POS</value></data>
+  <data name="AllowSellingVial" xml:space="preserve"><value>Allow selling vials individually at POS</value></data>
+  <data name="AllowSellingSachet" xml:space="preserve"><value>Allow selling sachets individually at POS</value></data>
+  <data name="AllowSellingPiece" xml:space="preserve"><value>Allow selling pieces individually at POS</value></data>
+  <data name="SuggestedPrice" xml:space="preserve"><value>Suggested Price</value></data>
+  <data name="FormulaPreview" xml:space="preserve"><value>Packaging &amp; Splitting Formula</value></data>
+  <data name="AddCustomSmallerUnit" xml:space="preserve"><value>+ Add Custom Smaller Unit</value></data>
+  <data name="SmallerUnitName" xml:space="preserve"><value>Smaller Unit Name</value></data>
+  <data name="ContainsCount" xml:space="preserve"><value>Count in Package</value></data>
+  <data name="EGP" xml:space="preserve"><value>EGP</value></data>
 </root>

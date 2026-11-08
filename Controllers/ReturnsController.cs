@@ -134,11 +134,11 @@ public class ReturnsController : Controller
                 model.SaleId,
                 _currentUserService.UserId.Value,
                 model.Reason,
-                returnedItems.Select(i => new SalesReturnItemInput(i.SaleItemId, i.BatchId, i.QuantityToReturn)).ToList()
+                returnedItems.Select(i => new SalesReturnItemInput(i.SaleItemId, i.BatchId, i.QuantityToReturn, i.ReturnToStock)).ToList()
             );
 
             await _returnTransactionService.ProcessSalesReturnAsync(request, cancellationToken);
-            TempData.SetSuccess(_loc["OperationSuccess"], _loc["SalesReturnProcessedAndStockRestored"]);
+            TempData.SetSuccess(_loc["OperationSuccess"], _loc["SalesReturnProcessedSuccessfully"]);
 
             return RedirectToAction(nameof(Sales));
         }

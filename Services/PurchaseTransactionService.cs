@@ -76,18 +76,23 @@ public class PurchaseTransactionService : IPurchaseTransactionService
                 throw new InvalidBusinessOperationException($"Active location with ID {itemInput.LocationId} does not exist.");
             }
 
+            var factor = itemInput.ConversionFactor > 0 ? itemInput.ConversionFactor : 1;
+            var baseQuantity = itemInput.Quantity * factor;
+            var baseUnitPrice = factor > 1 ? Math.Round(itemInput.UnitPurchasePrice / factor, 4) : itemInput.UnitPurchasePrice;
+            var lineTotal = itemInput.Quantity * itemInput.UnitPurchasePrice;
+
             var purchaseItem = new PurchaseItem
             {
                 ProductId = itemInput.ProductId,
-                Quantity = itemInput.Quantity,
-                UnitPurchasePrice = itemInput.UnitPurchasePrice,
+                Quantity = baseQuantity,
+                UnitPurchasePrice = baseUnitPrice,
                 BatchNumber = itemInput.BatchNumber.Trim(),
                 ExpiryDate = itemInput.ExpiryDate,
                 LocationId = itemInput.LocationId
             };
 
             purchase.PurchaseItems.Add(purchaseItem);
-            total += purchaseItem.Quantity * purchaseItem.UnitPurchasePrice;
+            total += lineTotal;
         }
 
         purchase.TotalAmount = total;

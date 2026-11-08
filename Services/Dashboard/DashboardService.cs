@@ -45,6 +45,42 @@ public class DashboardService : IDashboardService
         model.TodaySalesCount = await todaySalesQuery.CountAsync(cancellationToken);
         model.TodaySalesAmount = await todaySalesQuery.SumAsync(s => (decimal?)s.TotalAmount, cancellationToken) ?? 0m;
 
+        // 1b. Returns today & Month totals
+        var todayReturnsQuery = _dbContext.SalesReturns
+            .AsNoTracking()
+            .Where(r => r.ReturnDate >= today && r.ReturnDate < tomorrow);
+
+        model.TodaySalesReturnsCount = await todayReturnsQuery.CountAsync(cancellationToken);
+        model.TodaySalesReturnsAmount = await todayReturnsQuery.SumAsync(r => (decimal?)r.TotalAmount, cancellationToken) ?? 0m;
+
+        var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+        model.MonthSalesAmount = await _dbContext.Sales
+            .AsNoTracking()
+            .Where(s => s.SaleDate >= firstDayOfMonth && s.SaleDate < tomorrow)
+            .SumAsync(s => (decimal?)s.TotalAmount, cancellationToken) ?? 0m;
+
+        model.MonthSalesReturnsAmount = await _dbContext.SalesReturns
+            .AsNoTracking()
+            .Where(r => r.ReturnDate >= firstDayOfMonth && r.ReturnDate < tomorrow)
+            .SumAsync(r => (decimal?)r.TotalAmount, cancellationToken) ?? 0m;
+
+        // 1c. Payment breakdown today
+        model.TodayCashTotal = await todaySalesQuery
+            .Where(s => s.PaymentMethod == PharmacySystem.Enums.PaymentMethod.Cash)
+            .SumAsync(s => (decimal?)s.TotalAmount, cancellationToken) ?? 0m;
+
+        model.TodayCardTotal = await todaySalesQuery
+            .Where(s => s.PaymentMethod == PharmacySystem.Enums.PaymentMethod.Card)
+            .SumAsync(s => (decimal?)s.TotalAmount, cancellationToken) ?? 0m;
+
+        model.TodayVodafoneCashTotal = await todaySalesQuery
+            .Where(s => s.PaymentMethod == PharmacySystem.Enums.PaymentMethod.VodafoneCash)
+            .SumAsync(s => (decimal?)s.TotalAmount, cancellationToken) ?? 0m;
+
+        model.TodaySplitTotal = await todaySalesQuery
+            .Where(s => s.PaymentMethod == PharmacySystem.Enums.PaymentMethod.Split)
+            .SumAsync(s => (decimal?)s.TotalAmount, cancellationToken) ?? 0m;
+
         // 2. Purchases & Expenses today (Admin only)
         if (model.IsAdmin)
         {
@@ -103,6 +139,34 @@ public class DashboardService : IDashboardService
                 model.SalesTrend.Add(sAmt);
                 model.PurchasesTrend.Add(pAmt);
                 model.ExpensesTrend.Add(eAmt);
+            }
+
+            model.WeeklySalesTotal = model.SalesTrend.Sum();
+
+            // Category sales breakdown over last 7 days
+            var weekStart = today.AddDays(-6);
+            var categoryBreakdown = await _dbContext.SaleItems
+                .AsNoTracking()
+                .Where(si => si.Sale.SaleDate >= weekStart)
+                .GroupBy(si => si.Product.Category.Name)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    TotalAmount = g.Sum(si => si.Quantity * si.UnitPrice)
+                })
+                .OrderByDescending(g => g.TotalAmount)
+                .Take(4)
+                .ToListAsync(cancellationToken);
+
+            var totalCatAmt = categoryBreakdown.Sum(c => c.TotalAmount);
+            if (totalCatAmt > 0)
+            {
+                model.CategorySales = categoryBreakdown.Select(c => new CategorySalesSummaryItem
+                {
+                    CategoryName = c.CategoryName,
+                    TotalAmount = c.TotalAmount,
+                    Percentage = (int)Math.Round((c.TotalAmount / totalCatAmt) * 100)
+                }).ToList();
             }
         }
 

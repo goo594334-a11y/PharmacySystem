@@ -1365,7 +1365,7 @@
     <value>عدد الطلبات</value>
   </data>
   <data name="Transactions" xml:space="preserve">
-    <value>الحركات المالية</value>
+    <value>المعاملات</value>
   </data>
   <data name="Days" xml:space="preserve">
     <value>يوم</value>
@@ -1646,4 +1646,325 @@
   <data name="SearchPlaceholderReturns" xml:space="preserve">
     <value>ابحث في المرتجعات...</value>
   </data>
+  <data name="StoreOpen" xml:space="preserve">
+    <value>المتجر مفتوح</value>
+  </data>
+  <data name="HeresHowPharmacyIsDoingToday" xml:space="preserve">
+    <value>إليك ملخص أداء ومبيعات الصيدلية اليوم</value>
+  </data>
+  <data name="SalesCompletedToday" xml:space="preserve">
+    <value>عمليات بيع مكتملة اليوم</value>
+  </data>
+  <data name="IncludesPrescriptionsAndOtcs" xml:space="preserve">
+    <value>يشمل الوصفات الطبية والأدوية العامة</value>
+  </data>
+  <data name="ActiveProductsTracked" xml:space="preserve">
+    <value>منتج نشط قيد التتبع</value>
+  </data>
+  <data name="SalesPerformance" xml:space="preserve">
+    <value>أداء المبيعات</value>
+  </data>
+  <data name="SalesByCategory" xml:space="preserve">
+    <value>المبيعات حسب الفئة</value>
+  </data>
+  <data name="InventoryWatchlist" xml:space="preserve">
+    <value>قائمة مراقبة المخزون</value>
+  </data>
+  <data name="KeepEssentialMedicinesOnYourShelves" xml:space="preserve">
+    <value>متابعة وتأمين الأدوية الأساسية على الرفوف</value>
+  </data>
+  <data name="MinLevel" xml:space="preserve">
+    <value>الحد الأدنى</value>
+  </data>
+  <data name="AllStockLevelsHealthy" xml:space="preserve">
+    <value>جميع مستويات المخزون بحالة ممتازة</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>حرج</value>
+  </data>
+  <data name="CreatePurchaseOrder" xml:space="preserve">
+    <value>إنشاء أمر شراء</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>يحتاج انتباهك</value>
+  </data>
+  <data name="ProductsExpiringSoon" xml:space="preserve">
+    <value>منتجات تقترب صلاحيتها من الانتهاء</value>
+  </data>
+  <data name="ReviewExpiryList" xml:space="preserve">
+    <value>مراجعة قائمة الصلاحية</value>
+  </data>
+  <data name="ProductsNeedRestocking" xml:space="preserve">
+    <value>منتجات بحاجة لإعادة الطلب</value>
+  </data>
+  <data name="PrepareReorder" xml:space="preserve">
+    <value>تجهيز طلب توريد</value>
+  </data>
+  <data name="ExpiredBatchesBlocked" xml:space="preserve">
+    <value>تشغيلات منتهية الصلاحية ومحظورة</value>
+  </data>
+  <data name="ViewExpiredMedicines" xml:space="preserve">
+    <value>عرض الأدوية منتهية الصلاحية</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>الوقت</value>
+  </data>
+  <data name="Paid" xml:space="preserve">
+    <value>مدفوع</value>
+  </data>
+  <data name="ViewLog" xml:space="preserve">
+    <value>عرض السجل</value>
+  </data>
+  <data name="DontHaveAnAccount" xml:space="preserve">
+    <value>ليس لديك حساب صيدلية؟</value>
+  </data>
+  <data name="RegisterNewPharmacy" xml:space="preserve">
+    <value>تسجيل صيدلية جديدة</value>
+  </data>
+  <data name="AlreadyHaveAccount" xml:space="preserve">
+    <value>لديك حساب بالفعل؟ تسجيل الدخول</value>
+  </data>
+  <data name="ExpiredMedicines" xml:space="preserve">
+    <value>الأدوية منتهية الصلاحية</value>
+  </data>
+  <data name="ExpiredMedicinesSubtitle" xml:space="preserve">
+    <value>إدارة وإتلاف التشغيلات منتهية الصلاحية والمحظورة من البيع</value>
+  </data>
+  <data name="DisposedStock" xml:space="preserve">
+    <value>الكمية المُتلفة</value>
+  </data>
+  <data name="DisposeStock" xml:space="preserve">
+    <value>إتلاف المخزون</value>
+  </data>
+  <data name="DisposeExpiredStockTitle" xml:space="preserve">
+    <value>إتلاف مخزون تشغيلة منتهية الصلاحية</value>
+  </data>
+  <data name="QuantityToDispose" xml:space="preserve">
+    <value>الكمية المراد إتلافها</value>
+  </data>
+  <data name="DisposalReason" xml:space="preserve">
+    <value>سبب الإتلاف</value>
+  </data>
+  <data name="ExpiredMedicineDisposal" xml:space="preserve">
+    <value>إتلاف دواء منتهي الصلاحية</value>
+  </data>
+  <data name="DamagedAndExpiredDisposal" xml:space="preserve">
+    <value>تالف ومنتهي الصلاحية</value>
+  </data>
+  <data name="SupplierRefusedReturnDisposal" xml:space="preserve">
+    <value>رفض المورد الاسترجاع - إتلاف رسمي</value>
+  </data>
+  <data name="DisposalWarningNotice" xml:space="preserve">
+    <value>تنبيه: سيتم خصم الكمية من المخزون فوراً وتسجيل العملية كإتلاف رسمي موثق في سجل التدقيق.</value>
+  </data>
+  <data name="ConfirmDisposal" xml:space="preserve">
+    <value>تأكيد الإتلاف الرسمي</value>
+  </data>
+  <data name="ReturnDisposition" xml:space="preserve">
+    <value>حالة إعادة المخزون</value>
+  </data>
+  <data name="RestockIfValid" xml:space="preserve">
+    <value>إعادة للمخزن إذا كان صالحاً</value>
+  </data>
+  <data name="ReturnToStockExplanation" xml:space="preserve">
+    <value>يتم إعادة المنتج للمخزون الصالح للبيع فقط في حال التأكد من سلامته وعدم انتهاء صلاحيته.</value>
+  </data>
+  <data name="PharmacyName" xml:space="preserve">
+    <value>اسم الصيدلية</value>
+  </data>
+  <data name="ProductsInStock" xml:space="preserve">
+    <value>المنتجات في المخزن</value>
+  </data>
+  <data name="ExpiringSoon" xml:space="preserve">
+    <value>تنتهي قريباً</value>
+  </data>
+  <data name="AllBatchesAreValid" xml:space="preserve">
+    <value>جميع التشغيلات صالحة ولا توجد أدوية منتهية الصلاحية</value>
+  </data>
+  <data name="ExpiredStockExcluded" xml:space="preserve">
+    <value>تم استبعاد المخزون المنتهي من الصرف المتاح</value>
+  </data>
+  <data name="ExpiredWithStock" xml:space="preserve">
+    <value>أدوية منتهية وبها رصيد</value>
+  </data>
+  <data name="ExpirySubtitle" xml:space="preserve">
+    <value>متابعة تواريخ انتهاء صلاحية الأدوية والتحذيرات المبكرة</value>
+  </data>
+  <data name="InventorySubtitle" xml:space="preserve">
+    <value>نظرة عامة على مستويات المخزون وحالة التشغيلات والأرصدة</value>
+  </data>
+  <data name="LowStockSubtitle" xml:space="preserve">
+    <value>قائمة الأدوية التي وصلت أو تجاوزت حد الأمان الأدنى</value>
+  </data>
+  <data name="RecentActivity" xml:space="preserve">
+    <value>النشاطات الأخيرة</value>
+  </data>
+  <data name="ViewAll" xml:space="preserve">
+    <value>عرض الكل</value>
+  </data>
+  <data name="ViewInventory" xml:space="preserve">
+    <value>عرض المخزون</value>
+  </data>
+  <data name="NoSalesRecordedYet" xml:space="preserve">
+    <value>في انتظار تسجيل أول مبيعات</value>
+  </data>
+  <data name="Last7Days" xml:space="preserve">
+    <value>آخر 7 أيام</value>
+  </data>
+  <data name="RevenueShareLast7Days" xml:space="preserve">
+    <value>توزيع الإيرادات • آخر 7 أيام</value>
+  </data>
+  <data name="Language_Arabic" xml:space="preserve"><value>العربية</value></data>
+  <data name="Language_English" xml:space="preserve"><value>الإنجليزية</value></data>
+  <data name="SaleMustContainAtLeastOneItem" xml:space="preserve"><value>يجب أن تحتوي الفاتورة على صنف واحد على الأقل</value></data>
+  <data name="PaymentMethod_VodafoneCash" xml:space="preserve"><value>فودافون كاش</value></data>
+  <data name="PaymentMethod_Split" xml:space="preserve"><value>دفع مجزأ</value></data>
+  <data name="SplitPaymentBreakdown" xml:space="preserve"><value>توزيع الدفع المجزأ</value></data>
+  <data name="RemainingToCover" xml:space="preserve"><value>المتبقي للتغطية:</value></data>
+  <data name="FullyCovered" xml:space="preserve"><value>مغطى بالكامل (0.00)</value></data>
+  <data name="SplitSumMismatchError" xml:space="preserve"><value>مجموع مبالغ الدفع المجزأ يجب أن يساوي إجمالي الفاتورة بالضبط</value></data>
+  <data name="NoSalesYet" xml:space="preserve"><value>لا توجد مبيعات بعد</value></data>
+  <data name="NetSalesToday" xml:space="preserve"><value>صافي المبيعات اليوم</value></data>
+  <data name="NetRevenue" xml:space="preserve"><value>صافي الإيراد</value></data>
+  <data name="GrossSales" xml:space="preserve"><value>إجمالي المبيعات</value></data>
+  <data name="MonthlyNetSales" xml:space="preserve"><value>صافي مبيعات الشهر</value></data>
+  <data name="MonthlyGross" xml:space="preserve"><value>إجمالي الشهر</value></data>
+  <data name="PaymentBreakdownToday" xml:space="preserve"><value>طرق الدفع اليوم</value></data>
+  <data name="Methods" xml:space="preserve"><value>الطرق</value></data>
+  <data name="SendOtpCode" xml:space="preserve"><value>إرسال رمز التحقق (OTP)</value></data>
+  <data name="VerifyOtpTitle" xml:space="preserve"><value>التحقق من رمز الأمان (OTP)</value></data>
+  <data name="OtpSentNotice" xml:space="preserve"><value>تم إرسال رمز تحقق مكوّن من 6 أرقام إلى بريدك الإلكتروني</value></data>
+  <data name="TargetEmail" xml:space="preserve"><value>البريد الإلكتروني المستهدف:</value></data>
+  <data name="EnterSixDigitOtp" xml:space="preserve"><value>أدخل رمز الـ 6 أرقام</value></data>
+  <data name="CodeValidity" xml:space="preserve"><value>صلاحية الرمز:</value></data>
+  <data name="MaxAttemptsNotice" xml:space="preserve"><value>الحد الأقصى: 5 محاولات</value></data>
+  <data name="ConfirmOtpAndProceed" xml:space="preserve"><value>تأكيد الرمز والمتابعة</value></data>
+  <data name="ResendNewOtp" xml:space="preserve"><value>إعادة إرسال رمز جديد</value></data>
+  <data name="CodeExpired" xml:space="preserve"><value>انتهت الصلاحية</value></data>
+  <data name="AvailableNow" xml:space="preserve"><value>متاح الآن</value></data>
+  <data name="CodeExpiredRequestNew" xml:space="preserve"><value>انتهت صلاحية الرمز - يرجى طلب رمز جديد</value></data>
+  <data name="PackagingUnits" xml:space="preserve"><value>وحدات التعبئة والتجزئة</value></data>
+  <data name="BaseUnitStock" xml:space="preserve"><value>الوحدة الأساسية (المخزون)</value></data>
+  <data name="BaseUnitDescription" xml:space="preserve"><value>الوحدة التي يُقاس بها الرصيد المخزني الفعلي بالصيدلية.</value></data>
+  <data name="ConversionFactorToDefault" xml:space="preserve"><value>معامل التحويل للأساس</value></data>
+  <data name="UnitBarcodeOptional" xml:space="preserve"><value>باركود الوحدة (اختياري)</value></data>
+  <data name="AddPackagingUnit" xml:space="preserve"><value>+ إضافة وحدة بيع (شريط / علبة / كرتونة)</value></data>
+  <data name="BaseUnitStockType" xml:space="preserve"><value>أساسية (مخزنية)</value></data>
+  <data name="RetailPackagingType" xml:space="preserve"><value>تجزئة / تعبئة</value></data>
+  <data name="UnitType" xml:space="preserve"><value>نوع الوحدة</value></data>
+  <data name="ExampleBoxStrip" xml:space="preserve"><value>مثال: Box أو Strip</value></data>
+  <data name="UnitCustomBarcode" xml:space="preserve"><value>باركود خاص بالوحدة</value></data>
+  <data name="ContainsPackagingHierarchy" xml:space="preserve"><value>التسلسل الهرمي (يحتوي على)</value></data>
+  <data name="PurchaseAllowed" xml:space="preserve"><value>شراء</value></data>
+  <data name="SaleAllowed" xml:space="preserve"><value>بيع</value></data>
+  <data name="PackagingHierarchyHint" xml:space="preserve"><value>يتم احتساب معامل التحويل للوحدة الأساسية تلقائياً بناءً على الوحدات الفرعية</value></data>
+  <data name="Strip" xml:space="preserve"><value>شريط / Strip</value></data>
+  <data name="Box" xml:space="preserve"><value>علبة / Box</value></data>
+  <data name="POS_AvailableLabel" xml:space="preserve"><value>المتاح:</value></data>
+  <data name="POS_BaseUnitsInStock" xml:space="preserve"><value>وحدة بالمخزون</value></data>
+  <data name="OriginalPurchaseUnit" xml:space="preserve"><value>وحدة الشراء</value></data>
+  <data name="OriginalPurchaseQty" xml:space="preserve"><value>الكمية المشتراة</value></data>
+  <data name="BaseQtyReceived" xml:space="preserve"><value>الكمية الأساسية المستلمة</value></data>
+  <data name="BaseCostPerUnit" xml:space="preserve"><value>تكلفة الوحدة الأساسية</value></data>
+  <data name="RegistrationPendingTitle" xml:space="preserve"><value>طلب التسجيل قيد المراجعة</value></data>
+  <data name="RegistrationSubmittedTitle" xml:space="preserve"><value>تم إرسال طلب التسجيل بنجاح</value></data>
+  <data name="RegistrationPendingApprovalSubtitle" xml:space="preserve"><value>صيدليتك قيد الاعتماد من إدارة المنصة</value></data>
+  <data name="ReviewInProgress" xml:space="preserve"><value>الطلب قيد التدقيق والمراجعة</value></data>
+  <data name="RegistrationPendingExplanation" xml:space="preserve"><value>تم تسجيل بيانات الصيدلية والحساب الإداري. لحماية أمان المنصة، يتطلب تشغيل الحساب مراجعة واعتماد المطور / إدارة النظام.</value></data>
+  <data name="RegistrationPendingNextSteps" xml:space="preserve"><value>ستتمكن من تسجيل الدخول فور اعتماد الحساب وتفعيله. شكراً لثقتكم بنظامنا.</value></data>
+  <data name="DeveloperAdminDashboard" xml:space="preserve"><value>لوحة إدارة المطور واعتماد الصيدليات</value></data>
+  <data name="DeveloperAdminSubtitle" xml:space="preserve"><value>إدارة طلبات تسجيل الصيدليات والتحكم في تفعيل وإيقاف المنشآت</value></data>
+  <data name="Developer" xml:space="preserve"><value>إدارة المطور</value></data>
+  <data name="PharmacyManagementAndApprovals" xml:space="preserve"><value>إدارة واعتماد الصيدليات</value></data>
+  <data name="PendingApprovals" xml:space="preserve"><value>طلبات قيد المراجعة</value></data>
+  <data name="ActivePharmacies" xml:space="preserve"><value>الصيدليات المفعلة</value></data>
+  <data name="SuspendedPharmacies" xml:space="preserve"><value>الصيدليات الموقوفة</value></data>
+  <data name="RejectedPharmacies" xml:space="preserve"><value>الطلبات المرفوضة</value></data>
+  <data name="PendingApproval" xml:space="preserve"><value>قيد الاعتماد</value></data>
+  <data name="SearchPharmaciesPlaceholder" xml:space="preserve"><value>بحث باسم الصيدلية أو الهاتف أو المسؤول...</value></data>
+  <data name="ResponsiblePerson" xml:space="preserve"><value>الشخص المسؤول</value></data>
+  <data name="ContactDetails" xml:space="preserve"><value>بيانات التواصل</value></data>
+  <data name="RegistrationDate" xml:space="preserve"><value>تاريخ التسجيل</value></data>
+  <data name="NoPharmaciesFound" xml:space="preserve"><value>لا توجد صيدليات مطابقة للبحث</value></data>
+  <data name="PharmacyApprovedSuccessfully" xml:space="preserve"><value>تم اعتماد الصيدلية وتفعيل حساب المسؤول بنجاح</value></data>
+  <data name="PharmacyRejectedSuccessfully" xml:space="preserve"><value>تم رفض طلب تسجيل الصيدلية</value></data>
+  <data name="PharmacySuspendedSuccessfully" xml:space="preserve"><value>تم إيقاف تفعيل الصيدلية بنجاح</value></data>
+  <data name="PharmacyActivatedSuccessfully" xml:space="preserve"><value>تمت إعادة تفعيل الصيدلية بنجاح</value></data>
+  <data name="StockQuantityCannotBeNegative" xml:space="preserve"><value>كمية المخزون لا يمكن أن تكون سالبة</value></data>
+  <data name="StockAdjustmentReasonRequired" xml:space="preserve"><value>سبب تسوية المخزون مطلوب</value></data>
+  <data name="StockQuantityUnchanged" xml:space="preserve"><value>الكمية المدخلة مطابقة للكمية الحالية دون تغيير</value></data>
+  <data name="StockAdjustedSuccessfully" xml:space="preserve"><value>تمت تسوية وتحديث كمية المخزون بنجاح</value></data>
+  <data name="ErrorOccurredDuringStockAdjustment" xml:space="preserve"><value>حدث خطأ أثناء تسوية المخزون</value></data>
+  <data name="PharmacyPendingApproval" xml:space="preserve"><value>حساب الصيدلية قيد المراجعة والاعتماد من مطور النظام. لا يمكن الدخول حالياً.</value></data>
+  <data name="PharmacyRegistrationRejected" xml:space="preserve"><value>تم رفض طلب تسجيل هذه الصيدلية. يرجى مراجعة إدارة المنصة.</value></data>
+  <data name="PharmacySuspended" xml:space="preserve"><value>تم إيقاف نشاط هذه الصيدلية مؤقتاً. يرجى التواصل مع إدارة النظام.</value></data>
+  <data name="NoPharmacyAssigned" xml:space="preserve"><value>لا توجد صيدلية مرتبطة بهذا الحساب</value></data>
+  <data name="SubmitRegistrationRequest" xml:space="preserve"><value>تقديم طلب تسجيل الصيدلية</value></data>
+  <data name="PharmacyAddressPlaceholder" xml:space="preserve"><value>مثال: شارع الجمهورية، القاهرة</value></data>
+  <data name="ProductClassification" xml:space="preserve"><value>التصنيف والشكل الصيدلاني</value></data>
+  <data name="DosageForm" xml:space="preserve"><value>الشكل الصيدلاني</value></data>
+  <data name="DosageForm_Tablets" xml:space="preserve"><value>أقراص</value></data>
+  <data name="DosageForm_Capsules" xml:space="preserve"><value>كبسولات</value></data>
+  <data name="DosageForm_Syrup" xml:space="preserve"><value>شراب</value></data>
+  <data name="DosageForm_Injection" xml:space="preserve"><value>حقن</value></data>
+  <data name="DosageForm_Ampoule" xml:space="preserve"><value>أمبول</value></data>
+  <data name="DosageForm_Vial" xml:space="preserve"><value>فيال</value></data>
+  <data name="DosageForm_Cream" xml:space="preserve"><value>كريم</value></data>
+  <data name="DosageForm_Ointment" xml:space="preserve"><value>مرهم</value></data>
+  <data name="DosageForm_Drops" xml:space="preserve"><value>قطرات</value></data>
+  <data name="DosageForm_Suppository" xml:space="preserve"><value>لبوس</value></data>
+  <data name="DosageForm_Sachet" xml:space="preserve"><value>أكياس وفوار</value></data>
+  <data name="DosageForm_Spray" xml:space="preserve"><value>بخاخ</value></data>
+  <data name="DosageForm_MedicalSupplies" xml:space="preserve"><value>مستلزمات طبية</value></data>
+  <data name="DosageForm_Custom" xml:space="preserve"><value>شكل مخصص</value></data>
+  <data name="QuickAddCategory" xml:space="preserve"><value>+ فئة جديدة</value></data>
+  <data name="CategoryQuickSuggestions" xml:space="preserve"><value>فئات شائعة ومقترحة</value></data>
+  <data name="Category_Analgesics" xml:space="preserve"><value>مسكنات الآلام</value></data>
+  <data name="Category_Antibiotics" xml:space="preserve"><value>مضادات حيوية</value></data>
+  <data name="Category_Vitamins" xml:space="preserve"><value>فيتامينات ومكملات غذائية</value></data>
+  <data name="Category_Digestive" xml:space="preserve"><value>أدوية الجهاز الهضمي</value></data>
+  <data name="Category_Cardiovascular" xml:space="preserve"><value>أدوية القلب والأوعية الدموية</value></data>
+  <data name="Category_Allergy" xml:space="preserve"><value>أدوية الحساسية</value></data>
+  <data name="Category_Respiratory" xml:space="preserve"><value>أدوية الجهاز التنفسي</value></data>
+  <data name="Category_MedicalSupplies" xml:space="preserve"><value>مستلزمات طبية</value></data>
+  <data name="Category_Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="SellFullPackageOnly" xml:space="preserve"><value>البيع كعبوة كاملة فقط</value></data>
+  <data name="SellFullPackageOnlyHint" xml:space="preserve"><value>عند التفعيل، يتم إخفاء الوحدات الجزئية (كالشريط أو القرص) من نقطة البيع</value></data>
+  <data name="PackagingHierarchyPreview" xml:space="preserve"><value>المعاينة المباشرة للتسلسل الهرمي</value></data>
+  <data name="PackagingPresets" xml:space="preserve"><value>قوالب تعبئة جاهزة</value></data>
+  <data name="BaseStockUnitNotice" xml:space="preserve"><value>الوحدة الأساسية هي أصغر وحدة يتم قياس رصيد المخزون الفعلي بها</value></data>
+  <data name="CustomerReceipt" xml:space="preserve"><value>إيصال العميل</value></data>
+  <data name="PrintCustomerReceipt" xml:space="preserve"><value>طباعة إيصال العميل</value></data>
+  <data name="SalesReceipt" xml:space="preserve"><value>إيصال استلام مبيعات</value></data>
+  <data name="ThermalReceipt" xml:space="preserve"><value>إيصال حراري (80 مم)</value></data>
+  <data name="StandardReceipt" xml:space="preserve"><value>طباعة عادية (A4/A5)</value></data>
+  <data name="ThankYouVisiting" xml:space="preserve"><value>شكراً لزيارتكم ونتمنى لكم دوام الصحة والعافية!</value></data>
+  <data name="SellingUnit" xml:space="preserve"><value>وحدة البيع</value></data>
+  <data name="CanBeSoldInSmallerUnits" xml:space="preserve"><value>هل يمكن بيع المنتج بوحدات أصغر؟</value></data>
+  <data name="CanBeSoldInSmallerUnitsHint" xml:space="preserve"><value>حدد نعم إذا كان الدواء يباع بالشريط أو القرص أو الوحدة، أو لا إذا كان يباع فقط بالعبوة الكاملة</value></data>
+  <data name="SoldAsFullPackageOnlyTitle" xml:space="preserve"><value>يباع هذا الصنف بالعبوة الكاملة فقط</value></data>
+  <data name="SoldAsFullPackageOnlyDescription" xml:space="preserve"><value>يتم بيع هذا الصنف وشراؤه كعبوة متكاملة، ولن تظهر وحدات تجزئة فرعية في شاشة الكاشير.</value></data>
+  <data name="MainPackage" xml:space="preserve"><value>العبوة الرئيسية (الكبرى)</value></data>
+  <data name="MainPackageName" xml:space="preserve"><value>اسم العبوة الرئيسية</value></data>
+  <data name="MainPackagePrice" xml:space="preserve"><value>سعر بيع العبوة</value></data>
+  <data name="StripsPerBox" xml:space="preserve"><value>عدد الشرائط داخل العلبة</value></data>
+  <data name="TabletsPerStrip" xml:space="preserve"><value>عدد الأقراص داخل الشريط</value></data>
+  <data name="CapsulesPerStrip" xml:space="preserve"><value>عدد الكبسولات داخل الشريط</value></data>
+  <data name="AmpoulesPerBox" xml:space="preserve"><value>عدد الأمبولات داخل العلبة</value></data>
+  <data name="VialsPerBox" xml:space="preserve"><value>عدد الفيال داخل العلبة</value></data>
+  <data name="SachetsPerBox" xml:space="preserve"><value>عدد الأكياس داخل العلبة</value></data>
+  <data name="PiecesPerPack" xml:space="preserve"><value>عدد القطع داخل العبوة</value></data>
+  <data name="AllowSellingStrip" xml:space="preserve"><value>إتاحة بيع الشريط منفرداً في الكاشير</value></data>
+  <data name="AllowSellingTablet" xml:space="preserve"><value>إتاحة بيع القرص منفرداً في الكاشير</value></data>
+  <data name="AllowSellingCapsule" xml:space="preserve"><value>إتاحة بيع الكبسولة منفرداً في الكاشير</value></data>
+  <data name="AllowSellingAmpoule" xml:space="preserve"><value>إتاحة بيع الأمبول منفرداً في الكاشير</value></data>
+  <data name="AllowSellingVial" xml:space="preserve"><value>إتاحة بيع الفيال منفرداً في الكاشير</value></data>
+  <data name="AllowSellingSachet" xml:space="preserve"><value>إتاحة بيع الكيس منفرداً في الكاشير</value></data>
+  <data name="AllowSellingPiece" xml:space="preserve"><value>إتاحة بيع القطعة منفردة في الكاشير</value></data>
+  <data name="SuggestedPrice" xml:space="preserve"><value>سعر مقترح</value></data>
+  <data name="FormulaPreview" xml:space="preserve"><value>معادلة التجزئة والتعبئة المعتمدة</value></data>
+  <data name="AddCustomSmallerUnit" xml:space="preserve"><value>+ إضافة وحدة تجزئة مخصصة</value></data>
+  <data name="SmallerUnitName" xml:space="preserve"><value>اسم الوحدة الأصغر (للتجزئة)</value></data>
+  <data name="ContainsCount" xml:space="preserve"><value>العدد داخل العبوة</value></data>
+  <data name="EGP" xml:space="preserve"><value>ج.م</value></data>
 </root>

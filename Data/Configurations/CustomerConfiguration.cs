@@ -32,8 +32,13 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         // Index on Name and Phone for customer lookups
         builder.HasIndex(c => c.Name);
         builder.HasIndex(c => c.Phone);
+        builder.HasIndex(c => c.PharmacyId);
 
         // Relationships (Customer is optional for a Sale)
+        builder.HasOne(c => c.Pharmacy)
+            .WithMany(ph => ph.Customers)
+            .HasForeignKey(c => c.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(c => c.Sales)
             .WithOne(s => s.Customer)
             .HasForeignKey(s => s.CustomerId)

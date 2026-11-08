@@ -8,8 +8,10 @@ using PharmacySystem.Data;
 using PharmacySystem.Extensions;
 using PharmacySystem.Models.Common;
 using PharmacySystem.Models.Entities;
+using PharmacySystem.Models.Packaging;
 using PharmacySystem.Models.ViewModels.Products;
 using PharmacySystem.Resources;
+using PharmacySystem.Services.Packaging;
 
 namespace PharmacySystem.Controllers;
 
@@ -17,15 +19,18 @@ namespace PharmacySystem.Controllers;
 public class ProductsController : Controller
 {
     private readonly PharmacyDbContext _dbContext;
+    private readonly IProductPackagingService _packagingService;
     private readonly IStringLocalizer<SharedResource> _loc;
     private readonly ILogger<ProductsController> _logger;
 
     public ProductsController(
         PharmacyDbContext dbContext,
+        IProductPackagingService packagingService,
         IStringLocalizer<SharedResource> loc,
         ILogger<ProductsController> logger)
     {
         _dbContext = dbContext;
+        _packagingService = packagingService;
         _loc = loc;
         _logger = logger;
     }
@@ -124,6 +129,20 @@ public class ProductsController : Controller
             IsActive = model.IsActive
         };
 
+        var baseUnitName = string.IsNullOrWhiteSpace(model.BaseUnitName) ? "Piece" : model.BaseUnitName.Trim();
+        List<ProductUnitDto> units = new();
+        if (!string.IsNullOrWhiteSpace(model.UnitsJson))
+        {
+            try
+            {
+                var parsed = System.Text.Json.JsonSerializer.Deserialize<List<ProductUnitDto>>(model.UnitsJson);
+                if (parsed != null) units.AddRange(parsed);
+            }
+            catch { }
+        }
+        var packagingConfig = _packagingService.BuildPackagingConfig(baseUnitName, model.SellingPrice, model.Barcode, units, model.DosageForm, model.SellFullPackageOnly);
+        product.Description = _packagingService.EmbedPackaging(model.Description, packagingConfig);
+
         _dbContext.Products.Add(product);
         _dbContext.AuditLogs.Add(new AuditLog
         {
@@ -148,6 +167,9 @@ public class ProductsController : Controller
             return NotFound();
         }
 
+        var packagingConfig = _packagingService.GetPackagingConfig(product.Description, product.SellingPrice, product.Barcode);
+        var cleanDescription = _packagingService.ExtractCleanDescription(product.Description);
+
         var model = new EditProductViewModel
         {
             Id = product.Id,
@@ -156,8 +178,12 @@ public class ProductsController : Controller
             CategoryId = product.CategoryId,
             SellingPrice = product.SellingPrice,
             MinimumStockLevel = product.MinimumStockLevel,
-            Description = product.Description,
-            IsActive = product.IsActive
+            Description = cleanDescription,
+            IsActive = product.IsActive,
+            BaseUnitName = packagingConfig.BaseUnitName,
+            DosageForm = packagingConfig.DosageForm,
+            SellFullPackageOnly = packagingConfig.SellFullPackageOnly,
+            UnitsJson = System.Text.Json.JsonSerializer.Serialize(packagingConfig.PermittedUnits)
         };
 
         await PopulateCategoriesDropDownListAsync(product.CategoryId, cancellationToken);
@@ -195,8 +221,21 @@ public class ProductsController : Controller
         product.CategoryId = model.CategoryId;
         product.SellingPrice = model.SellingPrice;
         product.MinimumStockLevel = model.MinimumStockLevel;
-        product.Description = model.Description?.Trim();
         product.IsActive = model.IsActive;
+
+        var baseUnitName = string.IsNullOrWhiteSpace(model.BaseUnitName) ? "Piece" : model.BaseUnitName.Trim();
+        List<ProductUnitDto> units = new();
+        if (!string.IsNullOrWhiteSpace(model.UnitsJson))
+        {
+            try
+            {
+                var parsed = System.Text.Json.JsonSerializer.Deserialize<List<ProductUnitDto>>(model.UnitsJson);
+                if (parsed != null) units.AddRange(parsed);
+            }
+            catch { }
+        }
+        var packagingConfig = _packagingService.BuildPackagingConfig(baseUnitName, model.SellingPrice, model.Barcode, units, model.DosageForm, model.SellFullPackageOnly);
+        product.Description = _packagingService.EmbedPackaging(model.Description?.Trim(), packagingConfig);
 
         _dbContext.AuditLogs.Add(new AuditLog
         {
@@ -228,6 +267,9 @@ public class ProductsController : Controller
             return NotFound();
         }
 
+        var packagingConfig = _packagingService.GetPackagingConfig(product.Description, product.SellingPrice, product.Barcode);
+        var cleanDescription = _packagingService.ExtractCleanDescription(product.Description);
+
         var nonExpiredStock = product.Batches.Where(b => b.ExpiryDate >= today).Sum(b => b.QuantityOnHand);
         var totalStock = product.Batches.Sum(b => b.QuantityOnHand);
 
@@ -242,8 +284,12 @@ public class ProductsController : Controller
             TotalStock = totalStock,
             NonExpiredStock = nonExpiredStock,
             IsLowStock = product.IsLowStock(nonExpiredStock),
-            Description = product.Description,
+            Description = cleanDescription,
             IsActive = product.IsActive,
+            BaseUnitName = packagingConfig.BaseUnitName,
+            DosageForm = packagingConfig.DosageForm,
+            SellFullPackageOnly = packagingConfig.SellFullPackageOnly,
+            PermittedUnits = packagingConfig.PermittedUnits,
             Batches = product.Batches
                 .OrderBy(b => b.ExpiryDate)
                 .Select(b => new ProductBatchItemViewModel
@@ -301,6 +347,32 @@ public class ProductsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleActive(int id, CancellationToken cancellationToken)
+    {
+        var product = await _dbContext.Products.FindAsync(new object[] { id }, cancellationToken);
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        product.IsActive = !product.IsActive;
+
+        _dbContext.AuditLogs.Add(new AuditLog
+        {
+            Action = product.IsActive ? "ActivateProduct" : "DeactivateProduct",
+            EntityName = nameof(Product),
+            EntityId = id.ToString(),
+            Timestamp = DateTime.UtcNow
+        });
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        TempData.SetSuccess(_loc["OperationSuccess"], product.IsActive ? _loc["ProductActivatedSuccessfully"] : _loc["ProductDeactivatedSuccessfully"]);
+
+        return RedirectToAction(nameof(Index));
+    }
+
     // ==========================================
     // BARCODE SCANNER / POS LOOKUP ENDPOINT
     // ==========================================
@@ -326,8 +398,22 @@ public class ProductsController : Controller
 
         if (product == null)
         {
+            // Check if trimmed matches any unit barcode embedded in Description
+            product = await _dbContext.Products
+                .AsNoTracking()
+                .Include(p => p.Batches)
+                    .ThenInclude(b => b.Location)
+                .Where(p => p.IsActive && p.Description != null && p.Description.Contains(trimmed))
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        if (product == null)
+        {
             return Json(new { found = false });
         }
+
+        var packagingConfig = _packagingService.GetPackagingConfig(product.Description, product.SellingPrice, product.Barcode);
+        var matchedUnit = packagingConfig.PermittedUnits.FirstOrDefault(u => string.Equals(u.Barcode, trimmed, StringComparison.OrdinalIgnoreCase));
 
         // Valid non-expired batches ordered by FEFO
         var validBatches = product.Batches
@@ -343,10 +429,16 @@ public class ProductsController : Controller
             Id = product.Id,
             Name = product.Name,
             Barcode = product.Barcode,
-            SellingPrice = product.SellingPrice,
+            SellingPrice = matchedUnit?.SellingPrice ?? product.SellingPrice,
             AvailableStock = availableQty,
             PhysicalLocation = primaryBatch?.Location.Code != null ? $"{primaryBatch.Location.Code} ({primaryBatch.Location.Name})" : null,
-            NearestExpiry = primaryBatch?.ExpiryDate
+            NearestExpiry = primaryBatch?.ExpiryDate,
+            BaseUnitName = packagingConfig.BaseUnitName,
+            DosageForm = packagingConfig.DosageForm,
+            SellFullPackageOnly = packagingConfig.SellFullPackageOnly,
+            SelectedUnitName = matchedUnit?.UnitName ?? packagingConfig.BaseUnitName,
+            Units = _packagingService.GetPermittedUnits(product),
+            StockFormatted = _packagingService.FormatStockBreakdown(availableQty, packagingConfig)
         };
 
         return Json(new { found = true, data = result });

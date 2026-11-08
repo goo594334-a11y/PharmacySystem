@@ -10,6 +10,20 @@ public class DashboardViewModel
     public decimal TodaySalesAmount { get; set; }
     public int TodaySalesCount { get; set; }
 
+    public decimal TodaySalesReturnsAmount { get; set; }
+    public int TodaySalesReturnsCount { get; set; }
+    public decimal TodayNetSales => Math.Max(0m, TodaySalesAmount - TodaySalesReturnsAmount);
+
+    public decimal MonthSalesAmount { get; set; }
+    public decimal MonthSalesReturnsAmount { get; set; }
+    public decimal MonthNetSales => Math.Max(0m, MonthSalesAmount - MonthSalesReturnsAmount);
+
+    // Payment method breakdown today
+    public decimal TodayCashTotal { get; set; }
+    public decimal TodayCardTotal { get; set; }
+    public decimal TodayVodafoneCashTotal { get; set; }
+    public decimal TodaySplitTotal { get; set; }
+
     public decimal TodayPurchasesAmount { get; set; }
     public int TodayPurchasesCount { get; set; }
 
@@ -32,6 +46,8 @@ public class DashboardViewModel
     public List<decimal> SalesTrend { get; set; } = new();
     public List<decimal> PurchasesTrend { get; set; } = new();
     public List<decimal> ExpensesTrend { get; set; } = new();
+    public decimal WeeklySalesTotal { get; set; }
+    public List<CategorySalesSummaryItem> CategorySales { get; set; } = new();
 
     // Operational streams
     public List<Sale> RecentSales { get; set; } = new();
@@ -40,6 +56,13 @@ public class DashboardViewModel
     public List<BatchExpiryAlertItem> NearExpiryBatches { get; set; } = new();
     public List<BatchExpiryAlertItem> ExpiredBatches { get; set; } = new();
     public List<AuditLog> RecentActivity { get; set; } = new();
+}
+
+public class CategorySalesSummaryItem
+{
+    public string CategoryName { get; set; } = string.Empty;
+    public decimal TotalAmount { get; set; }
+    public int Percentage { get; set; }
 }
 
 public class ProductStockAlertItem

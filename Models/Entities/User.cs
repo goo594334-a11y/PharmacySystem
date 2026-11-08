@@ -19,6 +19,8 @@ public class User
     public DateTime? LockoutEnd { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
+    public int? PharmacyId { get; set; }
+    public Pharmacy? Pharmacy { get; set; }
 
     // Navigation properties
     public ICollection<Sale> Sales { get; set; } = new List<Sale>();

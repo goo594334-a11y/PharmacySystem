@@ -7,10 +7,13 @@ namespace PharmacySystem.Services.Auth;
 public interface ICurrentUserService
 {
     int? UserId { get; }
+    int? PharmacyId { get; }
+    string? PharmacyName { get; }
     string? Email { get; }
     string? DisplayName { get; }
     UserRole? Role { get; }
     bool IsAuthenticated { get; }
+    bool IsDeveloper { get; }
     bool IsAdmin { get; }
     bool IsPharmacist { get; }
     bool MustChangePassword { get; }
@@ -42,6 +45,21 @@ public class CurrentUserService : ICurrentUserService
         }
     }
 
+    public int? PharmacyId
+    {
+        get
+        {
+            var idClaim = User?.FindFirst("PharmacyId")?.Value;
+            if (int.TryParse(idClaim, out var id))
+            {
+                return id;
+            }
+            return null;
+        }
+    }
+
+    public string? PharmacyName => User?.FindFirst("PharmacyName")?.Value;
+
     public string? Email => User?.FindFirst(ClaimTypes.Email)?.Value;
 
     public string? DisplayName => User?.FindFirst("DisplayName")?.Value ?? Email;
@@ -59,8 +77,9 @@ public class CurrentUserService : ICurrentUserService
         }
     }
 
-    public bool IsAdmin => User?.IsInRole(AppRoles.Admin) ?? false;
-    public bool IsPharmacist => User?.IsInRole(AppRoles.Pharmacist) ?? false;
+    public bool IsDeveloper => (User?.IsInRole(AppRoles.Developer) ?? false) || (Role == UserRole.Developer);
+    public bool IsAdmin => (User?.IsInRole(AppRoles.Admin) ?? false) || IsDeveloper;
+    public bool IsPharmacist => (User?.IsInRole(AppRoles.Pharmacist) ?? false) || IsDeveloper;
     public bool MustChangePassword
     {
         get

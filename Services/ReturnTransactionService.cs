@@ -26,6 +26,7 @@ public class ReturnTransactionService : IReturnTransactionService
         {
             var sale = await _dbContext.Sales
                 .Include(s => s.SaleItems)
+                    .ThenInclude(si => si.BatchAllocations)
                 .FirstOrDefaultAsync(s => s.Id == request.SaleId, cancellationToken);
 
             if (sale == null)
@@ -80,8 +81,25 @@ public class ReturnTransactionService : IReturnTransactionService
                     throw new InvalidBusinessOperationException($"Batch with ID {itemInput.BatchId} does not exist.");
                 }
 
-                // Restore stock back into batch
-                batch.QuantityOnHand += itemInput.Quantity;
+                // Calculate base quantity conversion factor from original sale allocations
+                var totalAllocatedBase = saleItem.BatchAllocations.Sum(a => a.Quantity);
+                var conversionFactor = saleItem.Quantity > 0 && totalAllocatedBase > 0
+                    ? Math.Max(1, totalAllocatedBase / saleItem.Quantity)
+                    : 1;
+                var equivalentBaseQtyToRestore = itemInput.Quantity * conversionFactor;
+
+                // Rule: If item is returned to saleable stock, ensure it is non-expired and explicitly approved
+                var today = DateOnly.FromDateTime(DateTime.Today);
+                if (itemInput.ReturnToStock)
+                {
+                    if (batch.ExpiryDate < today)
+                    {
+                        throw new InvalidBusinessOperationException($"Cannot return expired batch '{batch.BatchNumber}' to saleable inventory.");
+                    }
+
+                    // Restore exact base stock back into batch
+                    batch.QuantityOnHand += equivalentBaseQtyToRestore;
+                }
 
                 var returnItem = new SalesReturnItem
                 {
@@ -96,6 +114,15 @@ public class ReturnTransactionService : IReturnTransactionService
 
             salesReturn.TotalAmount = totalRefund;
             _dbContext.SalesReturns.Add(salesReturn);
+
+            _dbContext.AuditLogs.Add(new AuditLog
+            {
+                UserId = request.UserId,
+                Action = "ProcessSalesReturn",
+                EntityName = nameof(SalesReturn),
+                EntityId = request.SaleId.ToString(),
+                Timestamp = DateTime.UtcNow
+            });
 
             await _dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -196,6 +223,15 @@ public class ReturnTransactionService : IReturnTransactionService
 
             purchaseReturn.TotalAmount = totalReturnAmount;
             _dbContext.PurchaseReturns.Add(purchaseReturn);
+
+            _dbContext.AuditLogs.Add(new AuditLog
+            {
+                UserId = request.UserId,
+                Action = "ProcessPurchaseReturn",
+                EntityName = nameof(PurchaseReturn),
+                EntityId = request.PurchaseId.ToString(),
+                Timestamp = DateTime.UtcNow
+            });
 
             await _dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);

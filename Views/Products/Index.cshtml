@@ -126,6 +126,12 @@
                                         <a asp-controller="Purchases" asp-action="Create" asp-route-productId="@product.Id" class="btn btn-sm btn-outline-success" title="@Loc["AddStock"]">
                                             <svg class="ph-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         </a>
+                                        <form asp-controller="Products" asp-action="ToggleActive" asp-route-id="@product.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm @(product.IsActive ? "btn-outline-warning" : "btn-outline-success")" title="@(product.IsActive ? Loc["Deactivate"] : Loc["Activate"])">
+                                                <svg class="ph-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                            </button>
+                                        </form>
                                         <form asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline" onsubmit="return confirm('@Loc["ConfirmDelete"]');">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="@Loc["Delete"]">

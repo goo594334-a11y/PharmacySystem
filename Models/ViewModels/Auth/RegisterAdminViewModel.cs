@@ -5,6 +5,19 @@ namespace PharmacySystem.Models.ViewModels.Auth;
 public class RegisterAdminViewModel
 {
     [Required(ErrorMessage = "RequiredField")]
+    [StringLength(150, ErrorMessage = "StringLengthMax")]
+    [Display(Name = "PharmacyName")]
+    public string PharmacyName { get; set; } = string.Empty;
+
+    [StringLength(30, ErrorMessage = "StringLengthMax")]
+    [Display(Name = "Phone")]
+    public string? Phone { get; set; }
+
+    [StringLength(250, ErrorMessage = "StringLengthMax")]
+    [Display(Name = "Address")]
+    public string? Address { get; set; }
+
+    [Required(ErrorMessage = "RequiredField")]
     [StringLength(100, ErrorMessage = "StringLengthMax")]
     [Display(Name = "FullName")]
     public string FullName { get; set; } = string.Empty;

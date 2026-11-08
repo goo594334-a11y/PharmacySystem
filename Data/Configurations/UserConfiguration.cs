@@ -50,5 +50,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasIndex(u => u.Email)
             .IsUnique();
+
+        builder.HasOne(u => u.Pharmacy)
+            .WithMany(p => p.Users)
+            .HasForeignKey(u => u.PharmacyId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

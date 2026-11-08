@@ -31,8 +31,13 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         builder.HasIndex(a => a.Timestamp);
         builder.HasIndex(a => new { a.EntityName, a.EntityId });
         builder.HasIndex(a => a.UserId);
+        builder.HasIndex(a => a.PharmacyId);
 
         // Relationships
+        builder.HasOne(a => a.Pharmacy)
+            .WithMany(ph => ph.AuditLogs)
+            .HasForeignKey(a => a.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(a => a.User)
             .WithMany(u => u.AuditLogs)
             .HasForeignKey(a => a.UserId)

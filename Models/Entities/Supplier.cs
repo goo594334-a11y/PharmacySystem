@@ -3,9 +3,11 @@ namespace PharmacySystem.Models.Entities;
 /// <summary>
 /// Represents a medicine/pharmaceutical goods supplier.
 /// </summary>
-public class Supplier
+public class Supplier : ITenantEntity
 {
     public int Id { get; set; }
+    public int PharmacyId { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
     public string Name { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string? Address { get; set; }

@@ -1,0 +1,198 @@
+@model PharmacySystem.Models.Common.PaginatedList<PharmacySystem.Models.ViewModels.Inventory.BatchListItemViewModel>
+@using Microsoft.Extensions.Localization
+@using PharmacySystem.Resources
+@inject IStringLocalizer<SharedResource> Loc
+
+@{
+    ViewData["Title"] = Loc["ExpiredMedicines"];
+    var today = DateOnly.FromDateTime(DateTime.Today);
+}
+
+<div class="container-fluid px-0">
+    @* Page Header *@
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 text-danger d-flex align-items-center gap-2">
+                <svg class="ph-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <span>@Loc["ExpiredMedicines"]</span>
+            </h4>
+            <p class="text-muted small mb-0">@Loc["ExpiredMedicinesSubtitle"]</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Expiry" class="btn btn-outline-secondary">
+                @Loc["ExpiryTracking"]
+            </a>
+            <a asp-action="Batches" class="btn btn-outline-secondary">
+                @Loc["BatchTracking"]
+            </a>
+        </div>
+    </div>
+
+    @* Filters *@
+    <div class="card border-0 shadow-sm ph-card mb-4">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-center">
+                <div class="col-12 col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <svg class="ph-icon text-muted" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="@Loc["SearchPlaceholderBatches"]" />
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <select name="locationId" class="form-select" asp-items="@ViewBag.Locations">
+                        <option value="">-- @Loc["AllLocations"] --</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-teal w-100">@Loc["Filter"]</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.Search) || ViewBag.LocationId != null)
+                    {
+                        <a asp-action="Expired" class="btn btn-outline-secondary">@Loc["Clear"]</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* Expired Batches Table Card *@
+    <div class="card border-0 shadow-sm ph-card overflow-hidden">
+        @if (!Model.Items.Any())
+        {
+            <div class="p-5 text-center text-success">
+                <svg class="ph-icon mb-3" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                <h5 class="fw-bold mb-1">@Loc["NoExpiredStockInPharmacy"]</h5>
+                <p class="text-muted small mb-0">@Loc["AllBatchesAreValid"]</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 ph-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">@Loc["Product"]</th>
+                            <th>@Loc["BatchNumber"]</th>
+                            <th>@Loc["StorageLocation"]</th>
+                            <th>@Loc["ExpiredStockUnits"]</th>
+                            <th>@Loc["PurchasePrice"]</th>
+                            <th>@Loc["ExpiryDate"]</th>
+                            <th>@Loc["Status"]</th>
+                            <th class="text-end pe-4">@Loc["Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var b in Model.Items)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-semibold text-dark">@b.ProductName</div>
+                                    <span class="badge bg-danger-subtle text-danger" style="font-size: 0.68rem;">@Loc["BlockedFromSale"]</span>
+                                </td>
+                                <td><code>@b.BatchNumber</code></td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        @b.LocationCode — @b.LocationName
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-danger fs-6">
+                                    @b.QuantityOnHand @Loc["Units"]
+                                </td>
+                                <td class="fw-semibold text-secondary">
+                                    @b.PurchasePrice.ToString("C2")
+                                </td>
+                                <td class="text-danger fw-semibold">
+                                    @b.ExpiryDate.ToString("yyyy-MM-dd")
+                                </td>
+                                <td>
+                                    @if (b.QuantityOnHand > 0)
+                                    {
+                                        <span class="badge bg-danger">@Loc["ExpiredWithStock"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@Loc["DisposedStock"]</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    @if (b.QuantityOnHand > 0)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1"
+                                                data-bs-toggle="modal" data-bs-target="#disposeModal-@b.Id">
+                                            <svg class="ph-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            <span>@Loc["DisposeStock"]</span>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer bg-white border-top p-3">
+                <partial name="_Pagination" model="Model.ToPaginationViewModel()" />
+            </div>
+        }
+    </div>
+
+    @* Top-level Modals: Placed OUTSIDE table-responsive to prevent clipping, z-index conflicts, and viewport cutoffs *@
+    @if (Model.Items.Any())
+    {
+        foreach (var b in Model.Items.Where(x => x.QuantityOnHand > 0))
+        {
+            <div class="modal fade" id="disposeModal-@b.Id" tabindex="-1" aria-labelledby="disposeModalLabel-@b.Id" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content shadow-lg border-0 rounded-3 overflow-hidden">
+                        <form asp-action="DisposeExpiredBatch" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="batchId" value="@b.Id" />
+                            <div class="modal-header bg-danger text-white py-3">
+                                <h6 class="modal-title fw-bold d-flex align-items-center gap-2" id="disposeModalLabel-@b.Id">
+                                    <svg class="ph-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                    <span>@Loc["DisposeExpiredStockTitle"]</span>
+                                </h6>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start p-4">
+                                <div class="card bg-light border-0 p-3 mb-3">
+                                    <div class="small text-muted mb-1">@Loc["Product"]:</div>
+                                    <div class="fw-bold text-dark fs-6">@b.ProductName</div>
+                                    <div class="small text-secondary mt-1">@Loc["Batch"]: <code>@b.BatchNumber</code> | @Loc["Available"]: <span class="badge bg-danger-subtle text-danger fw-bold">@b.QuantityOnHand @Loc["Units"]</span></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required fw-semibold">@Loc["QuantityToDispose"]</label>
+                                    <input type="number" name="quantityToDispose" class="form-control form-control-lg" min="1" max="@b.QuantityOnHand" value="@b.QuantityOnHand" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required fw-semibold">@Loc["DisposalReason"]</label>
+                                    <select name="disposalReason" class="form-select" required>
+                                        <option value="@Loc["ExpiredMedicineDisposal"]">@Loc["ExpiredMedicineDisposal"]</option>
+                                        <option value="@Loc["DamagedAndExpiredDisposal"]">@Loc["DamagedAndExpiredDisposal"]</option>
+                                        <option value="@Loc["SupplierRefusedReturnDisposal"]">@Loc["SupplierRefusedReturnDisposal"]</option>
+                                    </select>
+                                </div>
+                                <div class="alert alert-warning small mb-0 d-flex align-items-center gap-2">
+                                    <svg class="ph-icon flex-shrink-0" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                    <span>@Loc["DisposalWarningNotice"]</span>
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light border-top py-3 px-4 d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary px-3" data-bs-dismiss="modal">@Loc["Cancel"]</button>
+                                <button type="submit" class="btn btn-danger px-4 fw-semibold shadow-sm">
+                                    <svg class="ph-icon me-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    @Loc["ConfirmDisposal"]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

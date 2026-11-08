@@ -2,7 +2,7 @@ using PharmacySystem.Models.Entities;
 
 namespace PharmacySystem.Services;
 
-public record SalesReturnItemInput(int SaleItemId, int BatchId, int Quantity);
+public record SalesReturnItemInput(int SaleItemId, int BatchId, int Quantity, bool ReturnToStock = false);
 
 public record CreateSalesReturnRequest(
     int SaleId,

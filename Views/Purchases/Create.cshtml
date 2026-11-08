@@ -86,12 +86,13 @@
                     <table class="table table-hover align-middle mb-0 ph-table" id="itemsTable">
                         <thead class="table-light">
                             <tr>
-                                <th style="min-width: 200px;">@Loc["Product"] *</th>
-                                <th style="min-width: 140px;">@Loc["BatchNumber"] *</th>
-                                <th style="min-width: 150px;">@Loc["ExpiryDate"] *</th>
-                                <th style="min-width: 160px;">@Loc["Location"] *</th>
-                                <th style="min-width: 110px;">@Loc["Quantity"] *</th>
-                                <th style="min-width: 120px;">@Loc["UnitCost"] *</th>
+                                <th style="min-width: 220px;">@Loc["Product"] *</th>
+                                <th style="min-width: 140px;">@Loc["UnitName"] *</th>
+                                <th style="min-width: 130px;">@Loc["BatchNumber"] *</th>
+                                <th style="min-width: 140px;">@Loc["ExpiryDate"] *</th>
+                                <th style="min-width: 140px;">@Loc["Location"] *</th>
+                                <th style="min-width: 100px;">@Loc["Quantity"] *</th>
+                                <th style="min-width: 110px;">@Loc["UnitCost"] *</th>
                                 <th style="min-width: 120px;">@Loc["Total"]</th>
                                 <th style="width: 50px;"></th>
                             </tr>
@@ -101,7 +102,7 @@
                         </tbody>
                         <tfoot class="table-light border-top-2">
                             <tr>
-                                <td colspan="5" class="text-end fw-bold fs-6 py-3">
+                                <td colspan="6" class="text-end fw-bold fs-6 py-3">
                                     @Loc["TotalAmount"]:
                                 </td>
                                 <td colspan="3" class="py-3">
@@ -125,24 +126,64 @@
     </form>
 </div>
 
+@* Purchases Toast Notification Container *@
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div id="purchaseToast" class="toast align-items-center text-white border-0 shadow bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fs-6 fw-medium" id="purchaseToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        const productsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(products.Select(p => new { p.Id, p.Name })));
+        const purchaseMessages = {
+            atLeastOneItem: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["AtLeastOneItemRequired"].Value)),
+            fillRequiredFields: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["PleaseFillRequiredFields"].Value)),
+            fillItemRowFields: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["PleaseFillItemRowFields"].Value)),
+            operationFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["OperationFailed"].Value))
+        };
+
+        function showPurchaseToast(msg, type = 'danger') {
+            const toastEl = document.getElementById('purchaseToast');
+            const bodyEl = document.getElementById('purchaseToastBody');
+            if (toastEl && bodyEl && typeof bootstrap !== 'undefined') {
+                toastEl.className = `toast align-items-center text-white border-0 shadow bg-${type}`;
+                bodyEl.textContent = msg;
+                const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+                toast.show();
+            } else {
+                alert(msg);
+            }
+        }
+
+        const productsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.ProductsWithPackaging ?? products.Select(p => new { Id = p.Id, Name = p.Name, BaseUnit = "وحدة", Units = new List<object>() })));
         const locationsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(locations.Select(l => new { l.Id, Code = $"{l.Code} - {l.Name}" })));
         const currencyText = '@currency';
 
         const urlParams = new URLSearchParams(window.location.search);
         const preselectedProductId = parseInt(urlParams.get('productId')) || 0;
 
+        function getProduct(id) {
+            return productsData.find(p => p.Id === id || p.id === id);
+        }
+
         function createRowHtml(selectedProductId = 0) {
             let prodOptions = '<option value="">-- @Loc["SelectProduct"] --</option>';
             productsData.forEach(p => {
-                const isSelected = (selectedProductId > 0 && p.Id === selectedProductId) ? 'selected' : '';
-                prodOptions += `<option value="${p.Id}" ${isSelected}>${p.Name}</option>`;
+                const pId = p.Id || p.id;
+                const pName = p.Name || p.name;
+                const isSelected = (selectedProductId > 0 && pId === selectedProductId) ? 'selected' : '';
+                prodOptions += `<option value="${pId}" ${isSelected}>${pName}</option>`;
             });
 
             let locOptions = '<option value="">-- @Loc["SelectLocation"] --</option>';
-            locationsData.forEach(l => locOptions += `<option value="${l.Id}">${l.Code}</option>`);
+            locationsData.forEach(l => {
+                const lId = l.Id || l.id;
+                const lCode = l.Code || l.code;
+                locOptions += `<option value="${lId}">${lCode}</option>`;
+            });
 
             const nextYear = new Date();
             nextYear.setFullYear(nextYear.getFullYear() + 1);
@@ -152,6 +193,16 @@
                 <tr class="item-row">
                     <td>
                         <select class="form-select item-product" required>${prodOptions}</select>
+                        <div class="conversion-preview mt-1 small" style="display: none;">
+                            <span class="badge bg-teal-subtle text-teal border border-teal-subtle py-1 px-2 fw-medium conv-badge">
+                                <!-- Dynamic Preview -->
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <select class="form-select item-unit" required>
+                            <option value="">-- @Loc["Select"] --</option>
+                        </select>
                     </td>
                     <td>
                         <input type="text" class="form-control item-batch" placeholder="LOT-..." required />
@@ -179,6 +230,80 @@
             `;
         }
 
+        function populateUnits(row) {
+            const productSelect = row.querySelector('.item-product');
+            const unitSelect = row.querySelector('.item-unit');
+            const prodId = parseInt(productSelect.value) || 0;
+            unitSelect.innerHTML = '';
+
+            const prod = getProduct(prodId);
+            if (!prod) {
+                unitSelect.innerHTML = '<option value="">-- @Loc["Select"] --</option>';
+                updateRowPreview(row);
+                return;
+            }
+
+            const units = prod.Units || prod.units || [];
+            const baseUnit = prod.BaseUnit || prod.baseUnit || '@Loc["Piece"]';
+
+            if (units.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = baseUnit;
+                opt.dataset.factor = 1;
+                opt.textContent = `${baseUnit} (1)`;
+                unitSelect.appendChild(opt);
+            } else {
+                units.forEach(u => {
+                    const uName = u.UnitName || u.unitName;
+                    const uFactor = parseInt(u.ConversionFactor || u.conversionFactor) || 1;
+                    const opt = document.createElement('option');
+                    opt.value = uName;
+                    opt.dataset.factor = uFactor;
+                    opt.textContent = uFactor > 1 ? `${uName} (${uFactor} ${baseUnit})` : `${uName}`;
+                    if (u.IsBaseUnit || u.isBaseUnit) opt.selected = true;
+                    unitSelect.appendChild(opt);
+                });
+            }
+            updateRowPreview(row);
+        }
+
+        function updateRowPreview(row) {
+            const productSelect = row.querySelector('.item-product');
+            const unitSelect = row.querySelector('.item-unit');
+            const qtyInput = row.querySelector('.item-qty');
+            const priceInput = row.querySelector('.item-price');
+            const previewContainer = row.querySelector('.conversion-preview');
+            const previewBadge = row.querySelector('.conv-badge');
+
+            const prodId = parseInt(productSelect.value) || 0;
+            const prod = getProduct(prodId);
+            if (!prod) {
+                previewContainer.style.display = 'none';
+                return;
+            }
+
+            const selectedOption = unitSelect.options[unitSelect.selectedIndex];
+            const factor = selectedOption ? (parseInt(selectedOption.dataset.factor) || 1) : 1;
+            const unitName = selectedOption ? selectedOption.value : (prod.BaseUnit || '@Loc["Piece"]');
+            const baseUnit = prod.BaseUnit || prod.baseUnit || '@Loc["Piece"]';
+
+            const qty = parseInt(qtyInput.value) || 0;
+            const unitPrice = parseFloat(priceInput.value) || 0;
+            const baseQty = qty * factor;
+            const baseCost = factor > 0 ? (unitPrice / factor) : unitPrice;
+
+            if (factor > 1) {
+                previewBadge.innerHTML = `
+                    <svg class="ph-icon me-1" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <strong>${qty} ${unitName}</strong> × ${factor} = <strong>${baseQty} ${baseUnit}</strong> &bull; تكلفة الـ ${baseUnit}: <strong>${baseCost.toFixed(2)} ${currencyText}</strong>
+                `;
+                previewContainer.style.display = 'block';
+            } else {
+                previewBadge.innerHTML = `<strong>${qty} ${baseUnit}</strong>`;
+                previewContainer.style.display = 'none';
+            }
+        }
+
         function recalculateTotals() {
             let total = 0;
             document.querySelectorAll('.item-row').forEach(row => {
@@ -190,6 +315,7 @@
                     lineValSpan.textContent = line.toFixed(2);
                 }
                 total += line;
+                updateRowPreview(row);
             });
             const grandTotalEl = document.getElementById('grandTotalText');
             if (grandTotalEl) {
@@ -199,7 +325,21 @@
 
         document.getElementById('addItemRowBtn').addEventListener('click', function () {
             document.getElementById('itemsBody').insertAdjacentHTML('beforeend', createRowHtml());
+            const newRow = document.getElementById('itemsBody').lastElementChild;
+            populateUnits(newRow);
             recalculateTotals();
+        });
+
+        document.getElementById('itemsBody').addEventListener('change', function (e) {
+            if (e.target.classList.contains('item-product')) {
+                const row = e.target.closest('tr');
+                populateUnits(row);
+                recalculateTotals();
+            } else if (e.target.classList.contains('item-unit')) {
+                const row = e.target.closest('tr');
+                updateRowPreview(row);
+                recalculateTotals();
+            }
         });
 
         document.getElementById('itemsBody').addEventListener('input', function (e) {
@@ -214,13 +354,17 @@
                     e.target.closest('tr').remove();
                     recalculateTotals();
                 } else {
-                    alert('@Loc["AtLeastOneItemRequired"]');
+                    showPurchaseToast(purchaseMessages.atLeastOneItem, 'warning');
                 }
             }
         });
 
         // Initialize with 1 row (preselecting productId from URL if present)
         document.getElementById('itemsBody').innerHTML = createRowHtml(preselectedProductId);
+        const initialRow = document.getElementById('itemsBody').firstElementChild;
+        if (initialRow) {
+            populateUnits(initialRow);
+        }
         recalculateTotals();
 
         // Submit form via fetch
@@ -230,7 +374,7 @@
             const notes = document.getElementById('purchaseNotes').value.trim();
 
             if (!supplierId || !invoiceNumber) {
-                alert('@Loc["PleaseFillRequiredFields"]');
+                showPurchaseToast(purchaseMessages.fillRequiredFields, 'warning');
                 return;
             }
 
@@ -239,6 +383,10 @@
             for (let i = 0; i < rows.length; i++) {
                 const row = rows[i];
                 const productId = parseInt(row.querySelector('.item-product').value);
+                const unitSelect = row.querySelector('.item-unit');
+                const selectedOption = unitSelect.options[unitSelect.selectedIndex];
+                const unitName = selectedOption ? selectedOption.value : '';
+                const conversionFactor = selectedOption ? (parseInt(selectedOption.dataset.factor) || 1) : 1;
                 const batchNumber = row.querySelector('.item-batch').value.trim();
                 const expiryDate = row.querySelector('.item-expiry').value;
                 const locationId = parseInt(row.querySelector('.item-location').value);
@@ -246,7 +394,7 @@
                 const unitPurchasePrice = parseFloat(row.querySelector('.item-price').value);
 
                 if (!productId || !batchNumber || !expiryDate || !locationId || !quantity || !unitPurchasePrice) {
-                    alert('@Loc["PleaseFillItemRowFields"]');
+                    showPurchaseToast(purchaseMessages.fillItemRowFields, 'warning');
                     return;
                 }
 
@@ -256,7 +404,9 @@
                     expiryDate,
                     locationId,
                     quantity,
-                    unitPurchasePrice
+                    unitPurchasePrice,
+                    unitName,
+                    conversionFactor
                 });
             }
 
@@ -284,11 +434,11 @@
                 if (result.success) {
                     window.location.href = `@Url.Action("Details", "Purchases")/${result.purchaseId}`;
                 } else {
-                    alert(result.message || '@Loc["OperationFailed"]');
+                    showPurchaseToast(result.message || purchaseMessages.operationFailed, 'danger');
                     btn.disabled = false;
                 }
             } catch (err) {
-                alert('@Loc["OperationFailed"]');
+                showPurchaseToast(purchaseMessages.operationFailed, 'danger');
                 btn.disabled = false;
             }
         });

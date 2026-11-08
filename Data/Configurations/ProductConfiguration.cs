@@ -48,7 +48,14 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         // Index on CategoryId
         builder.HasIndex(p => p.CategoryId);
 
+        // Index on PharmacyId
+        builder.HasIndex(p => p.PharmacyId);
+
         // Relationships
+        builder.HasOne(p => p.Pharmacy)
+            .WithMany(ph => ph.Products)
+            .HasForeignKey(p => p.PharmacyId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Category)
             .WithMany(c => c.Products)
             .HasForeignKey(p => p.CategoryId)
