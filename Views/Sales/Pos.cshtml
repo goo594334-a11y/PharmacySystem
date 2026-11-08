@@ -5,227 +5,879 @@
 
 @{
     ViewData["Title"] = Loc["POS_Terminal"];
+    Layout = "_Layout";
     var customers = ViewBag.Customers as List<PharmacySystem.Models.Entities.Customer> ?? new();
 }
 
-<div class="container-fluid px-0">
+@section Styles {
+<style>
+    /* ── Fullscreen POS Container ── */
+    .ph-content { padding: 0 !important; }
+    .pos-root {
+        display: flex;
+        height: calc(100vh - 64px);
+        background: #090e1a;
+        color: #e2e8f0;
+        font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+        overflow: hidden;
+        direction: rtl;
+    }
+
+    /* ── Dark POS Palette ── */
+    .pos-root {
+        --pos-bg: #090e1a;
+        --pos-card: #0f172a;
+        --pos-card2: #162036;
+        --pos-card3: #1c2a47;
+        --pos-border: #1e293b;
+        --pos-border-light: #2d3f63;
+        --pos-teal: #10b981;
+        --pos-teal-dark: #059669;
+        --pos-teal-glow: rgba(16,185,129,.25);
+        --pos-blue: #0ea5e9;
+        --pos-blue-glow: rgba(14,165,233,.25);
+        --pos-text: #f1f5f9;
+        --pos-text-muted: #94a3b8;
+        --pos-input-bg: #0b1324;
+        --pos-danger: #ef4444;
+    }
+
+    /* ── Left Column: Product Search, Active Selection & Full Catalog ── */
+    .pos-left {
+        flex: 0 0 54%;
+        max-width: 54%;
+        display: flex;
+        flex-direction: column;
+        padding: 12px;
+        gap: 10px;
+        overflow: hidden;
+        border-left: 1px solid var(--pos-border);
+    }
+
+    /* ── Right Column: Invoice / Cart ── */
+    .pos-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--pos-card);
+        overflow: hidden;
+    }
+
+    /* ── Top Bar: Search Bar & Barcode Scanner ── */
+    .pos-search-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--pos-input-bg);
+        border: 1px solid var(--pos-border-light);
+        border-radius: 12px;
+        padding: 4px 12px;
+        position: relative;
+    }
+    .pos-search-box input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 0.95rem;
+        outline: none;
+        padding: 8px 4px;
+    }
+    .pos-search-box input::placeholder { color: #64748b; font-size: 0.88rem; }
+    .pos-search-box .pos-search-btn {
+        background: var(--pos-teal);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 16px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background .2s;
+    }
+    .pos-search-box .pos-search-btn:hover { background: var(--pos-teal-dark); }
+    .pos-search-icon { color: #64748b; font-size: 1.1rem; }
+
+    /* ── Instant Search Autocomplete Dropdown ── */
+    #searchDropdownResults {
+        position: absolute;
+        top: 105%;
+        right: 0;
+        left: 0;
+        background: var(--pos-card);
+        border: 1px solid var(--pos-blue);
+        border-radius: 10px;
+        max-height: 280px;
+        overflow-y: auto;
+        z-index: 1050;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .search-result-item {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--pos-border);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background .15s;
+    }
+    .search-result-item:hover { background: rgba(14,165,233,0.12); }
+    .search-result-item:last-child { border-bottom: none; }
+
+    /* ── Active Product Card (Compact, Clean, Never Squeezing Catalog) ── */
+    .pos-product-card {
+        background: var(--pos-card2);
+        border: 1px solid var(--pos-blue);
+        border-radius: 14px;
+        padding: 12px 14px;
+        box-shadow: 0 4px 15px rgba(14,165,233,0.08);
+        animation: fadeInDown .2s ease-out;
+    }
+    @@keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pos-product-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .pos-product-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1.2;
+    }
+    .pos-product-subtitle {
+        font-size: 0.78rem;
+        color: var(--pos-text-muted);
+        margin-top: 2px;
+    }
+    .pos-badge-stock {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(16,185,129,0.15);
+        color: var(--pos-teal);
+        border: 1px solid rgba(16,185,129,0.3);
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    .pos-badge-stock.out-of-stock {
+        background: rgba(239,68,68,0.15);
+        color: var(--pos-danger);
+        border-color: rgba(239,68,68,0.3);
+    }
+    .pos-close-product-btn {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0 4px;
+        line-height: 1;
+        transition: color .15s;
+    }
+    .pos-close-product-btn:hover { color: #fff; }
+
+    /* ── Selling Unit Cards (Matching Reference: Box, Strip, Tablet) ── */
+    .pos-unit-picker-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #cbd5e1;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .pos-units-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .pos-unit-box {
+        flex: 1;
+        background: var(--pos-card3);
+        border: 2px solid var(--pos-border-light);
+        border-radius: 12px;
+        padding: 8px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all .2s;
+        position: relative;
+    }
+    .pos-unit-box:hover {
+        border-color: var(--pos-blue);
+        transform: translateY(-2px);
+    }
+    .pos-unit-box.active {
+        border-color: var(--pos-blue);
+        background: rgba(14,165,233,0.15);
+        box-shadow: 0 0 14px var(--pos-blue-glow);
+    }
+    .pos-unit-box .unit-check-icon {
+        display: none;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 18px;
+        height: 18px;
+        background: var(--pos-blue);
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .pos-unit-box.active .unit-check-icon { display: flex; }
+    .pos-unit-icon {
+        font-size: 1.5rem;
+        display: block;
+        margin-bottom: 2px;
+    }
+    .pos-unit-lbl {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #fff;
+    }
+    .pos-unit-sublbl {
+        font-size: 0.68rem;
+        color: var(--pos-text-muted);
+        display: block;
+    }
+    .pos-unit-cost {
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #38bdf8;
+        margin-top: 3px;
+    }
+
+    /* ── Qty Counter + Add to Cart Bottom Strip ── */
+    .pos-add-strip {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .pos-qty-wrap {
+        display: flex;
+        align-items: center;
+        background: var(--pos-input-bg);
+        border: 1px solid var(--pos-border-light);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .pos-qty-wrap button {
+        width: 38px;
+        height: 38px;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .15s;
+    }
+    .pos-qty-wrap button:hover { background: rgba(255,255,255,0.08); }
+    .pos-qty-wrap input {
+        width: 48px;
+        height: 38px;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.15rem;
+        font-weight: 800;
+        text-align: center;
+        outline: none;
+    }
+    .pos-btn-add {
+        flex: 1;
+        background: var(--pos-blue);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        height: 42px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all .2s;
+        box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+    }
+    .pos-btn-add:hover { background: #0284c7; transform: translateY(-1px); }
+    .pos-btn-add:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Product Catalog Section (Always Prominent, Fully Scrollable) ── */
+    .pos-catalog-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--pos-card);
+        border: 1px solid var(--pos-border);
+        border-radius: 14px;
+        overflow: hidden;
+        min-height: 220px;
+    }
+    .pos-catalog-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: var(--pos-card2);
+        border-bottom: 1px solid var(--pos-border);
+    }
+    .pos-catalog-bar-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .pos-catalog-search-inline {
+        background: var(--pos-input-bg);
+        border: 1px solid var(--pos-border);
+        border-radius: 8px;
+        color: #fff;
+        padding: 4px 8px;
+        font-size: 0.78rem;
+        width: 170px;
+        outline: none;
+    }
+    .pos-catalog-search-inline::placeholder { color: #64748b; }
+
+    .pos-catalog-scroll {
+        flex: 1;
+        overflow-y: auto;
+    }
+    .pos-catalog-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .pos-catalog-table thead th {
+        background: var(--pos-card2);
+        color: var(--pos-text-muted);
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 8px 10px;
+        text-align: start;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        border-bottom: 1px solid var(--pos-border);
+    }
+    .pos-catalog-table tbody td {
+        padding: 8px 10px;
+        font-size: 0.82rem;
+        border-bottom: 1px solid rgba(30,41,59,0.7);
+    }
+    .pos-catalog-table tbody tr {
+        cursor: pointer;
+        transition: background .15s;
+    }
+    .pos-catalog-table tbody tr:hover { background: rgba(14,165,233,0.08); }
+    .pos-catalog-table tbody tr.row-selected {
+        background: rgba(14,165,233,0.18);
+        border-right: 3px solid var(--pos-blue);
+    }
+
+    /* ── Right Column: Invoice Table (Matching Reference Layout) ── */
+    .pos-inv-header {
+        background: var(--pos-card2);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--pos-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .pos-inv-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .pos-inv-scroll {
+        flex: 1;
+        overflow-y: auto;
+    }
+    .pos-inv-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .pos-inv-table thead th {
+        background: #0d1527;
+        color: var(--pos-text-muted);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 10px 10px;
+        text-align: center;
+        border-bottom: 1px solid var(--pos-border);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+    .pos-inv-table tbody td {
+        padding: 8px 10px;
+        text-align: center;
+        border-bottom: 1px solid rgba(30,41,59,0.6);
+        font-size: 0.85rem;
+    }
+    .pos-inv-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    /* Unit select dropdown inside invoice line */
+    .pos-line-unit-select {
+        background: #111a2e;
+        border: 1px solid var(--pos-border-light);
+        color: #38bdf8;
+        border-radius: 6px;
+        padding: 3px 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        cursor: pointer;
+        outline: none;
+    }
+    .pos-line-unit-select:focus { border-color: var(--pos-blue); }
+
+    /* Quantity mini-counter inside invoice line */
+    .pos-inv-qty {
+        display: inline-flex;
+        align-items: center;
+        background: var(--pos-input-bg);
+        border: 1px solid var(--pos-border);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .pos-inv-qty button {
+        width: 24px;
+        height: 24px;
+        background: transparent;
+        border: none;
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    .pos-inv-qty button:hover { background: rgba(255,255,255,0.08); }
+    .pos-inv-qty input {
+        width: 30px;
+        background: transparent;
+        border: none;
+        color: #fff;
+        text-align: center;
+        font-weight: 800;
+        font-size: 0.82rem;
+        outline: none;
+    }
+
+    .pos-trash-btn {
+        background: rgba(239,68,68,0.12);
+        border: none;
+        color: var(--pos-danger);
+        border-radius: 6px;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .15s;
+    }
+    .pos-trash-btn:hover { background: rgba(239,68,68,0.3); }
+
+    /* ── Empty Cart State ── */
+    .pos-cart-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: var(--pos-text-muted);
+    }
+    .pos-cart-empty svg { opacity: 0.3; margin-bottom: 12px; }
+
+    /* ── Invoice Settlement & Totals Footer ── */
+    .pos-inv-footer {
+        background: var(--pos-card2);
+        border-top: 1px solid var(--pos-border);
+        padding: 12px 16px 14px;
+    }
+    .pos-cust-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .pos-cust-row select {
+        flex: 1;
+        background: var(--pos-input-bg);
+        border: 1px solid var(--pos-border-light);
+        color: #fff;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
+        outline: none;
+    }
+    .pos-pay-pills {
+        display: flex;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--pos-border-light);
+    }
+    .pos-pay-pills label {
+        padding: 6px 10px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #94a3b8;
+        background: var(--pos-input-bg);
+        cursor: pointer;
+        border-right: 1px solid var(--pos-border);
+        transition: all .15s;
+    }
+    .pos-pay-pills label:last-child { border-right: none; }
+    .pos-pay-pills input:checked + label {
+        background: var(--pos-teal);
+        color: #fff;
+    }
+    .pos-pay-pills input { display: none; }
+
+    .pos-total-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 3px 0;
+        font-size: 0.88rem;
+    }
+    .pos-total-line.net-line {
+        margin-top: 8px;
+        padding-top: 10px;
+        border-top: 2px solid var(--pos-teal);
+    }
+    .pos-net-val {
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: var(--pos-teal);
+    }
+
+    .pos-bottom-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+    }
+    .pos-checkout-btn {
+        flex: 2;
+        background: var(--pos-teal);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all .2s;
+        box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+    }
+    .pos-checkout-btn:hover { background: var(--pos-teal-dark); transform: translateY(-1px); }
+    .pos-checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .pos-print-btn {
+        flex: 1;
+        background: var(--pos-card3);
+        border: 1px solid var(--pos-border-light);
+        color: #fff;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all .2s;
+    }
+    .pos-print-btn:hover { background: rgba(255,255,255,0.06); }
+    .pos-print-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
+}
+
+<div class="pos-root">
     @Html.AntiForgeryToken()
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h4 class="fw-bold mb-0">@Loc["POS_Terminal"]</h4>
-            <p class="text-muted small mb-0">@Loc["POS_Subtitle"]</p>
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- LEFT: Search, Product Details & Full Catalog Table       -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="pos-left">
+
+        <!-- Top Search Box (Barcode scanner & Drug Name) -->
+        <div class="pos-search-box">
+            <span class="pos-search-icon">🔍</span>
+            <input type="text" id="barcodeScannerInput" placeholder="امسح الباركود أو ابحث عن منتج (اكتب اسم الدواء)..." autofocus autocomplete="off" />
+            <button type="button" class="pos-search-btn" id="barcodeSearchBtn">بحث</button>
+            <div id="searchDropdownResults" class="d-none"></div>
         </div>
-        <div>
-            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">@Loc["SalesHistory"]</a>
+        <div id="barcodeFeedback" class="d-none" style="color:var(--pos-danger);font-size:0.8rem;padding:2px 6px;"></div>
+
+        <!-- Selected Product Panel (Compact, Clean, Exactly Matching Reference) -->
+        <div class="pos-product-card d-none" id="selectedProductCard">
+            <!-- Header: Product Title, Dosage Form, Stock, and Close button -->
+            <div class="pos-product-header">
+                <div>
+                    <div class="pos-product-title" id="selProdName">—</div>
+                    <div class="pos-product-subtitle" id="selProdDesc">—</div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="pos-badge-stock" id="selProdStockBadge">
+                        <span>✓</span>
+                        <span id="selProdStockText">متوفر في المخزون</span>
+                    </span>
+                    <button type="button" class="pos-close-product-btn" id="deselectProductBtn" title="إلغاء الاختيار">✕</button>
+                </div>
+            </div>
+
+            <!-- Unit Selection: Distinct Selling Unit Cards (Box, Strip, Tablet) -->
+            <div class="pos-unit-picker-title">
+                <span>اختر وحدة البيع:</span>
+            </div>
+            <div class="pos-units-row" id="unitsGrid">
+                <!-- Dynamically populated with distinct cards -->
+            </div>
+
+            <!-- Single Unit Notice (only if 1 unit exists) -->
+            <div id="singleUnitNotice" class="d-none mb-2 text-muted small">
+                <span class="badge bg-secondary" id="singleUnitBadge">—</span>
+            </div>
+
+            <!-- Quantity Counter & Add to Invoice Button in ONE compact line -->
+            <div class="pos-add-strip">
+                <div style="font-size:0.82rem;font-weight:700;color:#94a3b8;">الكمية:</div>
+                <div class="pos-qty-wrap">
+                    <button type="button" id="selQtyDecreaseBtn">−</button>
+                    <input type="number" id="selQtyInput" min="1" max="999" value="1" />
+                    <button type="button" id="selQtyIncreaseBtn">+</button>
+                </div>
+                <button type="button" class="pos-btn-add" id="addSelectedToInvoiceBtn">
+                    <span>🛒</span>
+                    <span>إضافة إلى الفاتورة</span>
+                    <span id="selLineTotalPreview" style="font-size:0.85rem;opacity:0.9;"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Available Products Catalog (Always Accessible, Never Squeezed) -->
+        <div class="pos-catalog-container">
+            <div class="pos-catalog-bar">
+                <span class="pos-catalog-bar-title">
+                    <span>📦</span>
+                    <span>المنتجات المتاحة بالمخزون</span>
+                    <span class="badge bg-secondary" style="font-size:0.7rem;" id="catalogCountBadge">@(ViewBag.Products?.Count ?? 0)</span>
+                </span>
+                <input type="text" id="quickFilterInput" class="pos-catalog-search-inline" placeholder="تصفية بالقائمة..." />
+            </div>
+            <div class="pos-catalog-scroll">
+                <table class="pos-catalog-table" id="productsCatalogTable">
+                    <thead>
+                        <tr>
+                            <th style="width:6%;">#</th>
+                            <th style="width:40%;">المنتج</th>
+                            <th style="width:20%;">الشكل</th>
+                            <th style="width:18%;">السعر</th>
+                            <th style="width:16%;">المخزون</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.Products != null)
+                        {
+                            int rNum = 0;
+                            foreach (var p in ViewBag.Products)
+                            {
+                                rNum++;
+                                <tr class="product-catalog-row"
+                                    data-id="@p.Id"
+                                    data-name="@p.Name"
+                                    data-price="@p.SellingPrice"
+                                    data-stock="@p.AvailableStock"
+                                    data-location="@p.Location"
+                                    data-barcode="@p.Barcode"
+                                    data-baseunit="@p.BaseUnit"
+                                    data-dosageform="@p.DosageForm"
+                                    data-fullpackage="@p.SellFullPackageOnly"
+                                    data-stockformatted="@p.StockFormatted"
+                                    data-units='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(p.Units))'>
+                                    <td style="color:#64748b;">@rNum</td>
+                                    <td>
+                                        <div style="font-weight:700;color:#fff;">@p.Name</div>
+                                        <div style="font-size:0.68rem;color:#64748b;font-family:monospace;">@(string.IsNullOrEmpty(p.Barcode) ? "—" : p.Barcode)</div>
+                                    </td>
+                                    <td style="color:#94a3b8;font-size:0.75rem;">@(string.IsNullOrEmpty(p.DosageForm) ? "—" : p.DosageForm)</td>
+                                    <td style="color:#38bdf8;font-weight:700;">@p.SellingPrice.ToString("N2") ج.م</td>
+                                    <td>
+                                        <span class="badge @(p.AvailableStock > 0 ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle") product-stock-badge" data-product-id="@p.Id" style="font-size:0.75rem;">
+                                            @p.AvailableStock
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="row g-3">
-        @* Left Column: Barcode Scanner & Product Search *@
-        <div class="col-12 col-lg-7">
-            @* Barcode Scanner Bar *@
-            <div class="card border-0 shadow-sm ph-card mb-3">
-                <div class="card-body p-3">
-                    <label class="form-label fw-bold small text-teal mb-1">
-                        <svg class="ph-icon me-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="10" y1="8" x2="10" y2="16"></line><line x1="14" y1="8" x2="14" y2="16"></line><line x1="17" y1="8" x2="17" y2="16"></line></svg>
-                        @Loc["ScanBarcodeOrType"]
-                    </label>
-                    <div class="input-group">
-                        <input type="text" id="barcodeScannerInput" class="form-control form-control-lg" placeholder="@Loc["BarcodeScannerPlaceholder"]" autofocus autocomplete="off" />
-                        <button type="button" id="barcodeSearchBtn" class="btn btn-teal px-4 fw-semibold">
-                            @Loc["Lookup"]
-                        </button>
-                    </div>
-                    <div id="barcodeFeedback" class="small mt-1 text-danger d-none"></div>
-                </div>
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- RIGHT: Sales Invoice (Cart) Table & Settlement           -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="pos-right">
+        <!-- Header -->
+        <div class="pos-inv-header">
+            <div class="pos-inv-title">
+                <span>🛒</span>
+                <span>فاتورة المبيعات الحالية</span>
+                <span class="badge bg-teal-subtle text-teal" id="cartCountBadge" style="font-size:0.75rem;">0 أصناف</span>
             </div>
+            <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" id="clearCartBtn" style="font-size:0.75rem;">إفراغ الفاتورة</button>
+        </div>
 
-            @* Quick Products Catalog Table *@
-            <div class="card border-0 shadow-sm ph-card overflow-hidden">
-                <div class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
-                    <span class="fw-bold small text-dark">@Loc["AvailableProducts"]</span>
-                    <input type="text" id="quickFilterInput" class="form-control form-control-sm w-50" placeholder="@Loc["FilterByNameOrBarcode"]" />
-                </div>
-                <div class="table-responsive" style="max-height: 440px; overflow-y: auto;">
-                    <table class="table table-hover align-middle mb-0 ph-table" id="productsCatalogTable">
-                        <thead class="table-light sticky-top">
-                            <tr>
-                                <th class="ps-3">@Loc["Product"]</th>
-                                <th>@Loc["PhysicalLocation"]</th>
-                                <th>@Loc["Price"]</th>
-                                <th>@Loc["Stock"]</th>
-                                <th class="text-end pe-3">@Loc["Action"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (ViewBag.Products != null)
-                            {
-                                foreach (var p in ViewBag.Products)
-                                {
-                                    <tr class="product-catalog-row" data-id="@p.Id" data-name="@p.Name" data-price="@p.SellingPrice" data-stock="@p.AvailableStock" data-location="@p.Location" data-barcode="@p.Barcode" data-baseunit="@p.BaseUnit" data-units='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(p.Units))'>
-                                        <td class="ps-3">
-                                            <div class="fw-bold text-dark small">@p.Name</div>
-                                            <div class="text-muted" style="font-size: 0.75rem;">@(string.IsNullOrEmpty(p.Barcode) ? "-" : p.Barcode)</div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-light text-secondary border">@(string.IsNullOrEmpty(p.Location) ? "-" : p.Location)</span>
-                                        </td>
-                                        <td class="fw-bold text-teal">@p.SellingPrice.ToString("N2") @Loc["CurrencySymbol"]</td>
-                                        <td>
-                                            <span class="badge @(p.AvailableStock > 0 ? "bg-success" : "bg-danger") product-stock-badge" data-product-id="@p.Id">
-                                                @p.AvailableStock
-                                            </span>
-                                        </td>
-                                        <td class="text-end pe-3">
-                                            <button type="button" class="btn btn-sm btn-outline-teal add-to-cart-btn" @(p.AvailableStock > 0 ? "" : "disabled")>
-                                                @Loc["Add"] +
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Invoice Table (Matching Reference Columns) -->
+        <div class="pos-inv-scroll">
+            <table class="pos-inv-table" id="cartTable">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">#</th>
+                        <th style="width:28%;text-align:start;">المنتج</th>
+                        <th style="width:18%;">وحدة البيع</th>
+                        <th style="width:18%;">الكمية</th>
+                        <th style="width:13%;">سعر الوحدة</th>
+                        <th style="width:12%;">الإجمالي</th>
+                        <th style="width:6%;">إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="cartBody">
+                    <!-- Dynamic cart lines -->
+                </tbody>
+            </table>
+            <!-- Empty Cart Notice -->
+            <div id="emptyCartState" class="pos-cart-empty">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <div style="font-weight:700;font-size:0.95rem;">الفاتورة فارغة</div>
+                <div style="font-size:0.8rem;color:#64748b;margin-top:4px;">اختر منتج من القائمة أو امسح الباركود للبدء في البيع</div>
             </div>
         </div>
 
-        @* Right Column: Active Cart & Checkout *@
-        <div class="col-12 col-lg-5">
-            <div class="card border-0 shadow-sm ph-card h-100 d-flex flex-column">
-                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="card-title mb-0 fw-bold d-flex align-items-center gap-2">
-                        <svg class="ph-icon text-teal" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                        <span>@Loc["ActiveCart"]</span>
-                    </h6>
-                    <button type="button" class="btn btn-sm btn-outline-danger" id="clearCartBtn">
-                        @Loc["ClearCart"]
-                    </button>
+        <!-- Invoice Settlement Footer -->
+        <div class="pos-inv-footer">
+            <!-- Customer & Payment -->
+            <div class="pos-cust-row">
+                <select id="saleCustomerId">
+                    <option value="">— عميل بدون تسجيل (نقدي) —</option>
+                    @foreach (var c in customers)
+                    {
+                        <option value="@c.Id">@c.Name (@(string.IsNullOrEmpty(c.Phone) ? "—" : c.Phone))</option>
+                    }
+                </select>
+                <div class="pos-pay-pills">
+                    <input type="radio" name="paymentMethodRadio" id="payCash" value="@PaymentMethod.Cash" checked />
+                    <label for="payCash">نقدًا (كاش)</label>
+                    <input type="radio" name="paymentMethodRadio" id="payCard" value="@PaymentMethod.Card" />
+                    <label for="payCard">بطاقة بنكية</label>
+                    <input type="radio" name="paymentMethodRadio" id="payVodafoneCash" value="@PaymentMethod.VodafoneCash" />
+                    <label for="payVodafoneCash">فودافون كاش</label>
+                    <input type="radio" name="paymentMethodRadio" id="paySplit" value="@PaymentMethod.Split" />
+                    <label for="paySplit">دفع مجزأ</label>
                 </div>
+            </div>
 
-                @* Cart Items Table *@
-                <div class="card-body p-0 flex-grow-1 overflow-auto" style="min-height: 250px; max-height: 360px;">
-                    <table class="table align-middle mb-0 ph-table" id="cartTable">
-                        <thead class="table-light sticky-top">
-                            <tr>
-                                <th class="ps-3" style="width: 45%;">@Loc["Product"]</th>
-                                <th style="width: 25%;">@Loc["Quantity"]</th>
-                                <th style="width: 20%;">@Loc["Total"]</th>
-                                <th style="width: 10%;" class="text-end pe-2"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="cartBody">
-                            <tr id="emptyCartRow">
-                                <td colspan="4" class="text-center py-5 text-muted small">
-                                    @Loc["CartIsEmptyScanPrompt"]
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                @* Checkout Panel *@
-                <div class="card-footer bg-white border-top p-3">
-                    @* Customer Selection *@
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-muted mb-1">@Loc["Customer"]</label>
-                        <select class="form-select form-select-sm" id="saleCustomerId">
-                            <option value="">-- @Loc["WalkInCustomer"] --</option>
-                            @foreach (var c in customers)
-                            {
-                                <option value="@c.Id">@c.Name (@(string.IsNullOrEmpty(c.Phone) ? "-" : c.Phone))</option>
-                            }
-                        </select>
+            <!-- Split Breakdown (if selected) -->
+            <div id="splitPaymentSection" class="p-2 mb-2 rounded border border-secondary d-none" style="background:#0b1324;">
+                <div class="d-flex gap-2">
+                    <div style="flex:1;">
+                        <span style="font-size:0.68rem;color:#94a3b8;">كاش</span>
+                        <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input text-white bg-dark border-secondary" id="splitCashInput" value="0.00" />
                     </div>
-
-                    @* Payment Method Selection *@
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-muted mb-1">@Loc["PaymentMethod"]</label>
-                        <div class="btn-group btn-group-sm w-100 flex-wrap" role="group">
-                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payCash" value="@PaymentMethod.Cash" checked />
-                            <label class="btn btn-outline-teal" for="payCash">@Loc["PaymentMethod_Cash"]</label>
-
-                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payCard" value="@PaymentMethod.Card" />
-                            <label class="btn btn-outline-teal" for="payCard">@Loc["PaymentMethod_Card"]</label>
-
-                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="payVodafoneCash" value="@PaymentMethod.VodafoneCash" />
-                            <label class="btn btn-outline-teal" for="payVodafoneCash">@Loc["PaymentMethod_VodafoneCash"]</label>
-
-                            <input type="radio" class="btn-check" name="paymentMethodRadio" id="paySplit" value="@PaymentMethod.Split" />
-                            <label class="btn btn-outline-teal" for="paySplit">@Loc["PaymentMethod_Split"]</label>
-                        </div>
+                    <div style="flex:1;">
+                        <span style="font-size:0.68rem;color:#94a3b8;">بطاقة</span>
+                        <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input text-white bg-dark border-secondary" id="splitCardInput" value="0.00" />
                     </div>
-
-                    @* Split Payment Breakdown Section *@
-                    <div id="splitPaymentSection" class="p-2 mb-3 bg-light rounded border d-none">
-                        <div class="small fw-bold text-dark mb-2">@Loc["SplitPaymentBreakdown"]</div>
-                        <div class="row g-2 mb-2">
-                            <div class="col-4">
-                                <label class="small text-muted mb-0">@Loc["PaymentMethod_Cash"]</label>
-                                <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input" id="splitCashInput" value="0.00" />
-                            </div>
-                            <div class="col-4">
-                                <label class="small text-muted mb-0">@Loc["PaymentMethod_Card"]</label>
-                                <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input" id="splitCardInput" value="0.00" />
-                            </div>
-                            <div class="col-4">
-                                <label class="small text-muted mb-0">@Loc["PaymentMethod_VodafoneCash"]</label>
-                                <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input" id="splitVodafoneInput" value="0.00" />
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center small">
-                            <span class="text-muted">@Loc["RemainingToCover"]</span>
-                            <span class="fw-bold text-danger" id="splitRemainingBadge">0.00 @Loc["CurrencySymbol"]</span>
-                        </div>
-                    </div>
-
-                    @* Total Amount *@
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                        <span class="fw-bold text-dark">@Loc["TotalAmount"]:</span>
-                        <span class="fs-4 fw-bold text-teal" id="cartGrandTotal">0.00 @Loc["CurrencySymbol"]</span>
-                    </div>
-
-                    @* Action Buttons: Complete Sale (Primary) vs Complete & Print (Secondary) *@
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-teal py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" id="checkoutBtn" disabled>
-                            <svg class="ph-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            <span>@Loc["CompleteSale"]</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary py-1 small d-flex align-items-center justify-content-center gap-1" id="checkoutAndPrintBtn" disabled>
-                            <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                            <span>@Loc["CompleteSaleAndPrint"]</span>
-                        </button>
+                    <div style="flex:1;">
+                        <span style="font-size:0.68rem;color:#94a3b8;">فودافون كاش</span>
+                        <input type="number" step="0.01" min="0" class="form-control form-control-sm split-input text-white bg-dark border-secondary" id="splitVodafoneInput" value="0.00" />
                     </div>
                 </div>
+                <div class="d-flex justify-content-between align-items-center mt-1" style="font-size:0.75rem;">
+                    <span style="color:#94a3b8;">المتبقي لتغطية الفاتورة:</span>
+                    <span id="splitRemainingBadge" style="font-weight:700;color:var(--pos-danger);">0.00</span>
+                </div>
+            </div>
+
+            <!-- Summary Totals -->
+            <div class="pos-total-line">
+                <span style="color:#94a3b8;font-weight:600;">إجمالي المنتجات</span>
+                <span style="color:#fff;font-weight:700;" id="cartSubtotal">0.00 ج.م</span>
+            </div>
+            <div class="pos-total-line">
+                <span style="color:#94a3b8;font-weight:600;">الخصم %</span>
+                <div class="d-flex align-items-center gap-2">
+                    <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm text-center text-white bg-dark border-secondary" style="width:65px;height:26px;font-size:0.8rem;" id="discountInput" value="0.00" />
+                    <span style="color:#fff;font-weight:600;font-size:0.85rem;" id="discountAmount">0.00 ج.م</span>
+                </div>
+            </div>
+            <div class="pos-total-line net-line">
+                <span style="color:#fff;font-weight:800;font-size:1.1rem;display:flex;align-items:center;gap:6px;">
+                    <span style="color:var(--pos-teal);">✓</span>
+                    <span>الصافي</span>
+                </span>
+                <span class="pos-net-val" id="cartGrandTotal">0.00 ج.م</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pos-bottom-buttons">
+                <button type="button" class="pos-print-btn" id="checkoutAndPrintBtn" disabled>
+                    <span>🖨</span>
+                    <span>طباعة الفاتورة</span>
+                </button>
+                <button type="button" class="pos-checkout-btn" id="checkoutBtn" disabled>
+                    <span>✓</span>
+                    <span>إتمام عملية البيع (F10)</span>
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-@* Sale Success Modal *@
-<div class="modal fade" id="saleSuccessModal" tabindex="-1" aria-labelledby="saleSuccessModalLabel" aria-hidden="true" data-bs-backdrop="static">
+<!-- Sale Success Modal -->
+<div class="modal fade" id="saleSuccessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
+        <div class="modal-content border-0 shadow" style="background:#0f172a;color:#fff;border-radius:16px;border:1px solid #1e293b;">
             <div class="modal-body text-center p-4">
-                <div class="ph-brand-icon bg-success-subtle text-success rounded-circle mx-auto mb-3 p-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 64px; height: 64px;">
-                    <svg class="ph-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <div style="width:64px;height:64px;border-radius:50%;background:rgba(16,185,129,0.15);color:var(--pos-teal);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h5 class="fw-bold text-dark mb-1" id="saleSuccessModalLabel">@Loc["SaleCompletedSuccessfully"]</h5>
-                <p class="text-muted small mb-3" id="saleSuccessDetails"></p>
-                <div class="p-3 bg-light rounded mb-4">
-                    <div class="small text-muted mb-1">@Loc["InvoiceNumber"]</div>
-                    <div class="fw-bold fs-5 text-teal" id="saleSuccessInvoiceNumber">INV-0000</div>
-                    <div class="small text-muted mt-2">@Loc["TotalAmount"]: <strong class="text-dark fs-6" id="saleSuccessTotalAmount">0.00</strong> @Loc["CurrencySymbol"]</div>
+                <h5 style="font-weight:800;">تمت عملية البيع بنجاح!</h5>
+                <p style="color:#94a3b8;font-size:0.88rem;" id="saleSuccessDetails"></p>
+                <div style="background:#090e1a;border-radius:12px;padding:14px;margin:12px 0;border:1px solid #1e293b;">
+                    <div style="font-size:0.75rem;color:#94a3b8;">رقم الفاتورة</div>
+                    <div style="font-size:1.3rem;font-weight:800;color:var(--pos-teal);" id="saleSuccessInvoiceNumber">INV-0000</div>
+                    <div style="font-size:0.82rem;color:#94a3b8;margin-top:6px;">المبلغ الإجمالي: <strong style="color:#fff;font-size:1.05rem;" id="saleSuccessTotalAmount">0.00</strong> ج.م</div>
                 </div>
-
-                <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
-                    <button type="button" class="btn btn-teal px-4 fw-semibold" id="modalStartNewSaleBtn" data-bs-dismiss="modal">
-                        @Loc["StartNewSale"]
-                    </button>
-                    <a href="#" target="_blank" class="btn btn-teal px-3 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm" id="modalPrintInvoiceLink">
-                        <svg class="ph-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                        <span>@Loc["PrintCustomerReceipt"]</span>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-teal px-4 fw-bold" id="modalStartNewSaleBtn" data-bs-dismiss="modal">بدء بيع جديد</button>
+                    <a href="#" target="_blank" class="btn btn-outline-light px-3 fw-semibold d-inline-flex align-items-center gap-2" id="modalPrintInvoiceLink">
+                        <span>🖨</span>
+                        <span>طباعة إيصال العميل</span>
                     </a>
                 </div>
             </div>
@@ -233,491 +885,762 @@
     </div>
 </div>
 
-@* POS Toast Notification Container *@
-<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
-    <div id="posToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+<!-- POS Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1200;">
+    <div id="posToast" class="toast align-items-center text-white border-0 shadow" role="alert">
         <div class="d-flex">
             <div class="toast-body fs-6 fw-medium" id="posToastBody"></div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        const posMessages = {
-            stockInsufficient: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["StockInsufficientNotice"].Value)),
-            productOutOfStock: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["ProductOutOfStock"].Value)),
-            saleCompletedSuccessfully: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["SaleCompletedSuccessfully"].Value)),
-            operationFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["OperationFailed"].Value)),
-            cartIsEmptyPrompt: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["CartIsEmptyScanPrompt"].Value)),
-            currencySymbol: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["CurrencySymbol"].Value)),
-            splitMismatch: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["SplitSumMismatchError"].Value)),
-            fullyCovered: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["FullyCovered"].Value)),
-            errorLookingUpBarcode: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["ErrorLookingUpBarcode"].Value)),
-            productNotFoundForBarcode: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["ProductNotFoundForBarcode"].Value)),
-            posAvailableLabel: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["POS_AvailableLabel"].Value)),
-            posBaseUnitsInStock: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Loc["POS_BaseUnitsInStock"].Value))
-        };
+<script>
+    // ═══════════════════════════════════════════
+    // Unit Icons & Display Labels Map
+    // ═══════════════════════════════════════════
+    function getUnitMeta(rawName) {
+        const lower = (rawName || '').toLowerCase();
+        if (lower.includes('box') || lower.includes('علب')) {
+            return { icon: '📦', ar: 'علبة', en: '(Box)' };
+        } else if (lower.includes('strip') || lower.includes('شريط')) {
+            return { icon: '💊', ar: 'شريط', en: '(Strip)' };
+        } else if (lower.includes('tablet') || lower.includes('قرص') || lower.includes('حبة')) {
+            return { icon: '⚪', ar: 'قرص', en: '(Tablet)' };
+        } else if (lower.includes('bottle') || lower.includes('زجاج')) {
+            return { icon: '🧴', ar: 'زجاجة', en: '(Bottle)' };
+        } else if (lower.includes('tube') || lower.includes('أنبوب') || lower.includes('مرهم') || lower.includes('كريم')) {
+            return { icon: '🧴', ar: 'أنبوبة', en: '(Tube)' };
+        } else if (lower.includes('ampoule') || lower.includes('أمبول') || lower.includes('حقن')) {
+            return { icon: '💉', ar: 'أمبول', en: '(Ampoule)' };
+        } else if (lower.includes('sachet') || lower.includes('كيس') || lower.includes('فوار')) {
+            return { icon: '📋', ar: 'كيس', en: '(Sachet)' };
+        } else {
+            return { icon: '📦', ar: rawName || 'وحدة', en: '' };
+        }
+    }
 
-        function showToast(msg, type = 'danger') {
-            const toastEl = document.getElementById('posToast');
-            const bodyEl = document.getElementById('posToastBody');
-            if (toastEl && bodyEl && typeof bootstrap !== 'undefined') {
-                toastEl.className = `toast align-items-center text-white border-0 shadow bg-${type}`;
-                bodyEl.textContent = msg;
-                const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
-                toast.show();
-            } else {
-                alert(msg);
-            }
+    // ═══════════════════════════════════════════
+    // Cart & Selection State
+    // ═══════════════════════════════════════════
+    const cart = [];
+    let currentSelectedProduct = null;
+    let currentSelectedUnit = null;
+    let successModal = null;
+
+    function showToast(msg, type = 'danger') {
+        const toastEl = document.getElementById('posToast');
+        const bodyEl = document.getElementById('posToastBody');
+        if (toastEl && bodyEl && typeof bootstrap !== 'undefined') {
+            toastEl.className = `toast align-items-center text-white border-0 shadow bg-${type}`;
+            bodyEl.textContent = msg;
+            bootstrap.Toast.getOrCreateInstance(toastEl).show();
+        } else {
+            alert(msg);
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // DOM Ready
+    // ═══════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalEl = document.getElementById('saleSuccessModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            successModal = new bootstrap.Modal(modalEl);
         }
 
-        const cart = [];
-        let successModal = null;
+        renderCart();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var modalEl = document.getElementById('saleSuccessModal');
-            if (modalEl && typeof bootstrap !== 'undefined') {
-                successModal = new bootstrap.Modal(modalEl);
-            }
-
-            // Split payment radio listener
-            document.querySelectorAll('input[name="paymentMethodRadio"]').forEach(radio => {
-                radio.addEventListener('change', function () {
-                    const splitSec = document.getElementById('splitPaymentSection');
-                    if (this.value === '@PaymentMethod.Split' || this.value === '5' || this.value === 'Split') {
-                        splitSec.classList.remove('d-none');
-                        let grandTotal = 0;
-                        cart.forEach(i => grandTotal += (i.quantity * i.price));
-                        document.getElementById('splitCashInput').value = grandTotal.toFixed(2);
-                        document.getElementById('splitCardInput').value = '0.00';
-                        document.getElementById('splitVodafoneInput').value = '0.00';
-                        updateSplitRemaining();
-                    } else {
-                        splitSec.classList.add('d-none');
-                    }
-                });
-            });
-
-            document.querySelectorAll('.split-input').forEach(input => {
-                input.addEventListener('input', updateSplitRemaining);
+        // Split payment radio
+        document.querySelectorAll('input[name="paymentMethodRadio"]').forEach(r => {
+            r.addEventListener('change', function () {
+                const splitSec = document.getElementById('splitPaymentSection');
+                if (this.value === '@PaymentMethod.Split' || this.value === '5' || this.value === 'Split') {
+                    splitSec.classList.remove('d-none');
+                    let total = 0;
+                    cart.forEach(i => total += i.quantity * i.price);
+                    document.getElementById('splitCashInput').value = total.toFixed(2);
+                    document.getElementById('splitCardInput').value = '0.00';
+                    document.getElementById('splitVodafoneInput').value = '0.00';
+                    updateSplitRemaining();
+                } else {
+                    splitSec.classList.add('d-none');
+                }
             });
         });
+        document.querySelectorAll('.split-input').forEach(i => i.addEventListener('input', updateSplitRemaining));
 
-        function updateSplitRemaining() {
-            let grandTotal = 0;
-            cart.forEach(i => grandTotal += (i.quantity * i.price));
+        // Quantity controls
+        document.getElementById('selQtyIncreaseBtn').addEventListener('click', () => {
+            const inp = document.getElementById('selQtyInput');
+            let val = parseInt(inp.value) || 1;
+            const max = parseInt(inp.getAttribute('max')) || 999;
+            if (val < max) { inp.value = val + 1; updateSelectedLinePreview(); }
+            else showToast('الكمية المطلوبة تتجاوز المخزون المتاح', 'warning');
+        });
+        document.getElementById('selQtyDecreaseBtn').addEventListener('click', () => {
+            const inp = document.getElementById('selQtyInput');
+            let val = parseInt(inp.value) || 1;
+            if (val > 1) { inp.value = val - 1; updateSelectedLinePreview(); }
+        });
+        document.getElementById('selQtyInput').addEventListener('input', function () {
+            let val = parseInt(this.value) || 1;
+            const max = parseInt(this.getAttribute('max')) || 999;
+            if (val > max) { showToast('الكمية المطلوبة تتجاوز المخزون المتاح', 'warning'); val = max; this.value = val; }
+            if (val < 1) { val = 1; this.value = val; }
+            updateSelectedLinePreview();
+        });
+        document.getElementById('selQtyInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); document.getElementById('addSelectedToInvoiceBtn').click(); }
+        });
 
-            const cash = parseFloat(document.getElementById('splitCashInput')?.value) || 0;
-            const card = parseFloat(document.getElementById('splitCardInput')?.value) || 0;
-            const vodafone = parseFloat(document.getElementById('splitVodafoneInput')?.value) || 0;
+        // Close/Deselect product button
+        document.getElementById('deselectProductBtn').addEventListener('click', deselectProduct);
 
-            const remaining = grandTotal - (cash + card + vodafone);
-            const badge = document.getElementById('splitRemainingBadge');
-            if (badge) {
-                if (Math.abs(remaining) < 0.01) {
-                    badge.textContent = posMessages.fullyCovered;
-                    badge.className = 'fw-bold text-success';
-                } else {
-                    badge.textContent = `${remaining.toFixed(2)} ${posMessages.currencySymbol}`;
-                    badge.className = 'fw-bold text-danger';
-                }
+        // Add to invoice button
+        document.getElementById('addSelectedToInvoiceBtn').addEventListener('click', () => {
+            if (!currentSelectedProduct || !currentSelectedUnit) return;
+            const qty = parseInt(document.getElementById('selQtyInput').value) || 1;
+            addItemToCart(currentSelectedProduct, currentSelectedUnit, qty);
+        });
+
+        // Clear cart
+        document.getElementById('clearCartBtn').addEventListener('click', () => {
+            if (cart.length === 0) return;
+            cart.length = 0;
+            renderCart();
+            if (currentSelectedProduct) applySelectedUnitValues();
+        });
+
+        // Discount input
+        document.getElementById('discountInput').addEventListener('input', updateTotals);
+
+        // Keyboard shortcuts: / focuses search, F10 completes sale
+        document.addEventListener('keydown', e => {
+            if (e.key === '/' && document.activeElement !== document.getElementById('barcodeScannerInput') && document.activeElement !== document.getElementById('quickFilterInput')) {
+                e.preventDefault();
+                document.getElementById('barcodeScannerInput').focus();
+                document.getElementById('barcodeScannerInput').select();
+            } else if (e.key === 'F10') {
+                e.preventDefault();
+                const btn = document.getElementById('checkoutBtn');
+                if (btn && !btn.disabled) btn.click();
             }
-        }
+        });
 
-        function renderCart() {
-            const tbody = document.getElementById('cartBody');
-            const checkoutBtn = document.getElementById('checkoutBtn');
-            const checkoutAndPrintBtn = document.getElementById('checkoutAndPrintBtn');
+        // Live autocomplete search on top input
+        const searchInput = document.getElementById('barcodeScannerInput');
+        const searchDropdown = document.getElementById('searchDropdownResults');
 
-            if (cart.length === 0) {
-                tbody.innerHTML = `<tr id="emptyCartRow"><td colspan="4" class="text-center py-5 text-muted small">${posMessages.cartIsEmptyPrompt}</td></tr>`;
-                document.getElementById('cartGrandTotal').textContent = `0.00 ${posMessages.currencySymbol}`;
-                checkoutBtn.disabled = true;
-                checkoutAndPrintBtn.disabled = true;
-                updateSplitRemaining();
+        searchInput.addEventListener('input', function () {
+            const query = this.value.trim().toLowerCase();
+            if (!query) {
+                searchDropdown.classList.add('d-none');
+                searchDropdown.innerHTML = '';
                 return;
             }
 
-            let total = 0;
-            let html = '';
-            cart.forEach((item, index) => {
-                const lineTotal = item.quantity * item.price;
-                total += lineTotal;
+            const rows = document.querySelectorAll('.product-catalog-row');
+            const matches = [];
 
-                let unitOptions = '';
-                if (item.units && item.units.length > 0) {
-                    item.units.forEach(u => {
-                        const sel = u.unitName === item.selectedUnit ? 'selected' : '';
-                        unitOptions += `<option value="${u.unitName}" ${sel}>${u.unitName} (${u.sellingPrice.toFixed(2)})</option>`;
+            rows.forEach(r => {
+                const name = (r.getAttribute('data-name') || '').toLowerCase();
+                const barcode = (r.getAttribute('data-barcode') || '').toLowerCase();
+                if (name.includes(query) || barcode.includes(query)) {
+                    matches.push({
+                        id: parseInt(r.getAttribute('data-id')),
+                        name: r.getAttribute('data-name'),
+                        price: r.getAttribute('data-price'),
+                        stock: r.getAttribute('data-stock'),
+                        location: r.getAttribute('data-location'),
+                        barcode: r.getAttribute('data-barcode'),
+                        baseUnit: r.getAttribute('data-baseunit'),
+                        dosageForm: r.getAttribute('data-dosageform'),
+                        fullpackage: r.getAttribute('data-fullpackage'),
+                        stockformatted: r.getAttribute('data-stockformatted'),
+                        units: r.getAttribute('data-units')
                     });
-                } else {
-                    unitOptions = `<option value="${item.selectedUnit}" selected>${item.selectedUnit}</option>`;
                 }
-
-                html += `
-                    <tr>
-                        <td class="ps-3">
-                            <div class="fw-semibold text-dark small">${item.name}</div>
-                            <div class="btn-group btn-group-sm cart-unit-pill-group flex-wrap gap-1 mt-1" role="group">
-                                ${(item.units || []).map(u => {
-                                    const isActive = u.unitName === item.selectedUnit;
-                                    const btnClass = isActive ? 'btn-teal text-white fw-bold shadow-xs' : 'btn-outline-secondary bg-light text-dark';
-                                    return `<button type="button" class="btn btn-sm py-0 px-2 rounded-2 cart-unit-btn ${btnClass}" data-index="${index}" data-unit="${u.unitName}" style="font-size: 0.75rem;">
-                                        ${u.unitName} (${u.sellingPrice.toFixed(2)})
-                                    </button>`;
-                                }).join('')}
-                            </div>
-                            <div class="text-muted mt-1 d-flex align-items-center gap-1" style="font-size: 0.72rem;">
-                                <span>${posMessages.posAvailableLabel} <strong class="text-teal">${item.maxStock}</strong> ${item.selectedUnit}</span>
-                                <span>&bull; ${item.totalBaseStock} ${posMessages.posBaseUnitsInStock}</span>
-                                ${item.location ? `<span>&bull; ${item.location}</span>` : ''}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group input-group-sm">
-                                <button type="button" class="btn btn-outline-secondary btn-decrease" data-index="${index}">-</button>
-                                <input type="number" class="form-control text-center p-0 cart-qty-input" data-index="${index}" min="1" max="${item.maxStock}" value="${item.quantity}" />
-                                <button type="button" class="btn btn-outline-secondary btn-increase" data-index="${index}">+</button>
-                            </div>
-                        </td>
-                        <td class="fw-bold small text-dark">${lineTotal.toFixed(2)}</td>
-                        <td class="text-end pe-2">
-                            <button type="button" class="btn btn-sm btn-link text-danger p-0 btn-remove-item" data-index="${index}">&times;</button>
-                        </td>
-                    </tr>
-                `;
             });
 
-            tbody.innerHTML = html;
-            document.getElementById('cartGrandTotal').textContent = `${total.toFixed(2)} ${posMessages.currencySymbol}`;
-            checkoutBtn.disabled = false;
-            checkoutAndPrintBtn.disabled = false;
-            updateSplitRemaining();
+            if (matches.length > 0) {
+                let html = '';
+                matches.slice(0, 6).forEach(m => {
+                    html += `
+                        <div class="search-result-item" data-id="${m.id}">
+                            <div>
+                                <div style="font-weight:700;color:#fff;">${m.name}</div>
+                                <div style="font-size:0.7rem;color:#94a3b8;">${m.dosageForm || ''} &bull; ${m.barcode ? 'باركود: ' + m.barcode : ''}</div>
+                            </div>
+                            <div class="text-end">
+                                <div style="color:#38bdf8;font-weight:700;">${parseFloat(m.price).toFixed(2)} ج.م</div>
+                                <span class="badge ${parseInt(m.stock) > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}" style="font-size:0.7rem;">مخزون: ${m.stock}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                searchDropdown.innerHTML = html;
+                searchDropdown.classList.remove('d-none');
+            } else {
+                searchDropdown.classList.add('d-none');
+            }
+        });
+
+        // Click search dropdown item
+        searchDropdown.addEventListener('click', function (e) {
+            const item = e.target.closest('.search-result-item');
+            if (!item) return;
+            const id = parseInt(item.getAttribute('data-id'));
+            const row = document.querySelector(`.product-catalog-row[data-id="${id}"]`);
+            if (row) {
+                row.click();
+            }
+            searchDropdown.classList.add('d-none');
+            searchInput.value = '';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.pos-search-box')) {
+                searchDropdown.classList.add('d-none');
+            }
+        });
+    });
+
+    // ═══════════════════════════════════════════
+    // Product Selection & Distinct Unit Processing
+    // ═══════════════════════════════════════════
+    function selectProduct(product, preferredUnitName = null) {
+        currentSelectedProduct = product;
+
+        // Parse units safely
+        let rawUnits = [];
+        if (typeof product.units === 'string' && product.units.trim().length > 0) {
+            try { rawUnits = JSON.parse(product.units); } catch (e) {}
+        } else if (Array.isArray(product.units)) {
+            rawUnits = product.units;
         }
 
-        function addToCart(product) {
-            let units = [];
-            if (typeof product.units === 'string' && product.units.trim().length > 0) {
-                try { units = JSON.parse(product.units); } catch (e) {}
-            } else if (Array.isArray(product.units)) {
-                units = product.units;
-            }
+        // Filter and deduplicate units: NEVER accept empty unit names
+        const cleanUnits = [];
+        const seen = new Set();
 
-            if (!units || units.length === 0) {
-                units = [{
-                    unitName: product.baseUnit || 'Piece',
-                    conversionFactor: 1,
-                    sellingPrice: parseFloat(product.price) || 0,
-                    isBaseUnit: true
-                }];
-            } else {
-                // Normalize property naming (support both PascalCase and camelCase)
-                units = units.map(u => ({
-                    unitName: u.unitName || u.UnitName || product.baseUnit || 'Piece',
+        if (Array.isArray(rawUnits)) {
+            rawUnits.forEach(u => {
+                const name = (u.unitName || u.UnitName || '').trim();
+                if (!name || seen.has(name.toLowerCase())) return;
+                seen.add(name.toLowerCase());
+                cleanUnits.push({
+                    unitName: name,
                     conversionFactor: parseInt(u.conversionFactor || u.ConversionFactor) || 1,
                     sellingPrice: parseFloat(u.sellingPrice || u.SellingPrice) || parseFloat(product.price) || 0,
-                    isBaseUnit: !!(u.isBaseUnit || u.IsBaseUnit)
-                }));
+                    isBaseUnit: !!(u.isBaseUnit || u.IsBaseUnit),
+                    barcode: u.barcode || u.Barcode || ''
+                });
+            });
+        }
+
+        // If no units, create 1 clean default
+        if (cleanUnits.length === 0) {
+            cleanUnits.push({
+                unitName: product.baseUnit || 'علبة / Box',
+                conversionFactor: 1,
+                sellingPrice: parseFloat(product.price) || 0,
+                isBaseUnit: true
+            });
+        }
+
+        product.normalizedUnits = cleanUnits;
+
+        // Show product card
+        const card = document.getElementById('selectedProductCard');
+        card.classList.remove('d-none');
+
+        document.getElementById('selProdName').textContent = product.name;
+        document.getElementById('selProdDesc').textContent = `${product.dosageForm || 'أدوية'} ${product.barcode ? '• باركود: ' + product.barcode : ''}`;
+
+        const totalStock = parseInt(product.stock) || 0;
+        const stockBadge = document.getElementById('selProdStockBadge');
+        const stockText = document.getElementById('selProdStockText');
+        stockText.textContent = totalStock > 0 ? `متوفر بالمخزون (${product.stockformatted || totalStock})` : 'نفذ من المخزون';
+        stockBadge.className = totalStock > 0 ? 'pos-badge-stock' : 'pos-badge-stock out-of-stock';
+
+        const isSingleUnit = (cleanUnits.length <= 1) || (product.fullpackage === 'true' || product.fullpackage === true);
+        const grid = document.getElementById('unitsGrid');
+        const singleNotice = document.getElementById('singleUnitNotice');
+
+        if (isSingleUnit) {
+            grid.classList.add('d-none');
+            singleNotice.classList.remove('d-none');
+            currentSelectedUnit = cleanUnits[0];
+            document.getElementById('singleUnitBadge').textContent = `${currentSelectedUnit.unitName} — ${currentSelectedUnit.sellingPrice.toFixed(2)} ج.م (يباع بالعبوة الكاملة)`;
+        } else {
+            singleNotice.classList.add('d-none');
+            grid.classList.remove('d-none');
+            grid.innerHTML = '';
+
+            const targetName = preferredUnitName || cleanUnits[0].unitName;
+            currentSelectedUnit = cleanUnits.find(u => u.unitName.toLowerCase() === targetName.toLowerCase()) || cleanUnits[0];
+
+            cleanUnits.forEach(u => {
+                const meta = getUnitMeta(u.unitName);
+                const isSelected = u.unitName.toLowerCase() === currentSelectedUnit.unitName.toLowerCase();
+                const box = document.createElement('div');
+                box.className = `pos-unit-box${isSelected ? ' active' : ''}`;
+                box.setAttribute('data-unit-name', u.unitName);
+                box.innerHTML = `
+                    <div class="unit-check-icon">✓</div>
+                    <span class="pos-unit-icon">${meta.icon}</span>
+                    <div class="pos-unit-lbl">${meta.ar}</div>
+                    <span class="pos-unit-sublbl">${meta.en}</span>
+                    <div class="pos-unit-cost">${u.sellingPrice.toFixed(2)} ج.م</div>
+                `;
+                box.addEventListener('click', () => setUnitForSelectedProduct(u));
+                grid.appendChild(box);
+            });
+        }
+
+        applySelectedUnitValues();
+
+        // Highlight catalog row
+        document.querySelectorAll('.product-catalog-row').forEach(r => {
+            r.classList.toggle('row-selected', parseInt(r.getAttribute('data-id')) === product.id);
+        });
+
+        // Focus qty
+        const qtyInp = document.getElementById('selQtyInput');
+        qtyInp.value = 1;
+        qtyInp.focus();
+        qtyInp.select();
+    }
+
+    function setUnitForSelectedProduct(unit) {
+        currentSelectedUnit = unit;
+        document.querySelectorAll('.pos-unit-box').forEach(b => {
+            const isMatch = b.getAttribute('data-unit-name').toLowerCase() === unit.unitName.toLowerCase();
+            b.classList.toggle('active', isMatch);
+        });
+        applySelectedUnitValues();
+    }
+
+    function applySelectedUnitValues() {
+        if (!currentSelectedProduct || !currentSelectedUnit) return;
+
+        const totalBase = parseInt(currentSelectedProduct.stock) || 0;
+        const factor = currentSelectedUnit.conversionFactor || 1;
+        const usedBase = cart.filter(i => i.productId === currentSelectedProduct.id).reduce((s, i) => s + i.quantity * i.conversionFactor, 0);
+        const remainingBase = Math.max(0, totalBase - usedBase);
+        const maxUnits = Math.max(0, Math.floor(remainingBase / factor));
+
+        const qtyInput = document.getElementById('selQtyInput');
+        qtyInput.setAttribute('max', Math.max(1, maxUnits));
+        if (parseInt(qtyInput.value) > maxUnits && maxUnits > 0) qtyInput.value = maxUnits;
+
+        const addBtn = document.getElementById('addSelectedToInvoiceBtn');
+        addBtn.disabled = maxUnits <= 0;
+
+        updateSelectedLinePreview();
+    }
+
+    function updateSelectedLinePreview() {
+        if (!currentSelectedUnit) return;
+        const qty = parseInt(document.getElementById('selQtyInput').value) || 1;
+        const total = qty * currentSelectedUnit.sellingPrice;
+        document.getElementById('selLineTotalPreview').textContent = `(${total.toFixed(2)} ج.م)`;
+    }
+
+    function deselectProduct() {
+        currentSelectedProduct = null;
+        currentSelectedUnit = null;
+        document.getElementById('selectedProductCard').classList.add('d-none');
+        document.querySelectorAll('.product-catalog-row').forEach(r => r.classList.remove('row-selected'));
+        document.getElementById('barcodeScannerInput').focus();
+    }
+
+    // ═══════════════════════════════════════════
+    // Cart / Invoice Operations
+    // ═══════════════════════════════════════════
+    function addItemToCart(product, unit, quantity = 1) {
+        const factor = unit.conversionFactor || 1;
+        const requiredBase = quantity * factor;
+        const totalBase = parseInt(product.stock) || 0;
+        const currentUsedBase = cart.filter(i => i.productId === product.id).reduce((s, i) => s + i.quantity * i.conversionFactor, 0);
+
+        if (currentUsedBase + requiredBase > totalBase) {
+            showToast('المخزون المتبقي غير كافٍ لهذه العملية', 'warning');
+            return;
+        }
+
+        const existing = cart.find(i => i.productId === product.id && i.unitName.toLowerCase() === unit.unitName.toLowerCase());
+        if (existing) {
+            existing.quantity += quantity;
+        } else {
+            cart.push({
+                productId: product.id,
+                name: product.name,
+                unitName: unit.unitName,
+                conversionFactor: factor,
+                price: unit.sellingPrice,
+                quantity: quantity,
+                totalBaseStock: totalBase,
+                units: product.normalizedUnits || [unit]
+            });
+        }
+
+        renderCart();
+        applySelectedUnitValues();
+        showToast(`تمت إضافة ${product.name} (${quantity} ${unit.unitName})`, 'success');
+        document.getElementById('barcodeScannerInput').focus();
+    }
+
+    function renderCart() {
+        const tbody = document.getElementById('cartBody');
+        const emptyState = document.getElementById('emptyCartState');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const printBtn = document.getElementById('checkoutAndPrintBtn');
+        const countBadge = document.getElementById('cartCountBadge');
+
+        countBadge.textContent = `${cart.length} أصناف`;
+
+        if (cart.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.classList.remove('d-none');
+            checkoutBtn.disabled = true;
+            printBtn.disabled = true;
+            updateTotals();
+            return;
+        }
+
+        emptyState.classList.add('d-none');
+        let html = '';
+
+        cart.forEach((item, idx) => {
+            const lineTotal = item.quantity * item.price;
+            const otherBase = cart.filter((c, ci) => c.productId === item.productId && ci !== idx).reduce((s, c) => s + c.quantity * c.conversionFactor, 0);
+            const maxForLine = Math.floor((item.totalBaseStock - otherBase) / item.conversionFactor);
+
+            // Unit options
+            let unitOptions = '';
+            if (item.units && item.units.length > 1) {
+                item.units.forEach(u => {
+                    const meta = getUnitMeta(u.unitName);
+                    const isSel = u.unitName.toLowerCase() === item.unitName.toLowerCase();
+                    unitOptions += `<option value="${u.unitName}" data-price="${u.sellingPrice}" data-factor="${u.conversionFactor}" ${isSel ? 'selected' : ''}>${meta.ar} ${meta.en}</option>`;
+                });
+            } else {
+                const meta = getUnitMeta(item.unitName);
+                unitOptions = `<option value="${item.unitName}" selected>${meta.ar} ${meta.en}</option>`;
             }
 
-            const selectedUnitName = product.selectedUnit || units[0].unitName;
-            const currentUnit = units.find(u => u.unitName === selectedUnitName) || units[0];
-            const totalBaseStock = parseInt(product.stock) || 0;
-            const conversionFactor = currentUnit.conversionFactor || 1;
-            const maxStock = Math.max(1, Math.floor(totalBaseStock / conversionFactor));
+            html += `
+            <tr>
+                <td style="color:#64748b;font-weight:700;">${idx + 1}</td>
+                <td style="text-align:start;font-weight:700;color:#fff;">${item.name}</td>
+                <td>
+                    <select class="pos-line-unit-select cart-unit-select" data-index="${idx}">
+                        ${unitOptions}
+                    </select>
+                </td>
+                <td>
+                    <div class="pos-inv-qty">
+                        <button type="button" class="btn-cart-dec" data-index="${idx}">−</button>
+                        <input type="number" class="cart-qty-input" data-index="${idx}" min="1" max="${maxForLine}" value="${item.quantity}" />
+                        <button type="button" class="btn-cart-inc" data-index="${idx}">+</button>
+                    </div>
+                </td>
+                <td style="color:#38bdf8;font-weight:700;">${item.price.toFixed(2)}</td>
+                <td style="color:#fff;font-weight:800;">${lineTotal.toFixed(2)}</td>
+                <td>
+                    <button type="button" class="pos-trash-btn btn-cart-remove" data-index="${idx}" title="حذف">✕</button>
+                </td>
+            </tr>`;
+        });
 
-            const existing = cart.find(i => i.id === product.id && i.selectedUnit === currentUnit.unitName);
-            if (existing) {
-                if (existing.quantity < existing.maxStock) {
-                    existing.quantity += 1;
+        tbody.innerHTML = html;
+        checkoutBtn.disabled = false;
+        printBtn.disabled = false;
+        updateTotals();
+    }
+
+    function updateTotals() {
+        let subtotal = 0;
+        cart.forEach(i => subtotal += i.quantity * i.price);
+
+        const discountPct = parseFloat(document.getElementById('discountInput').value) || 0;
+        const discountAmt = subtotal * (discountPct / 100);
+        const net = Math.max(0, subtotal - discountAmt);
+
+        document.getElementById('cartSubtotal').textContent = `${subtotal.toFixed(2)} ج.م`;
+        document.getElementById('discountAmount').textContent = `${discountAmt.toFixed(2)} ج.م`;
+        document.getElementById('cartGrandTotal').textContent = `${net.toFixed(2)} ج.م`;
+        updateSplitRemaining();
+    }
+
+    // Cart event listeners (delegation)
+    document.getElementById('cartBody').addEventListener('click', function (e) {
+        const incBtn = e.target.closest('.btn-cart-inc');
+        const decBtn = e.target.closest('.btn-cart-dec');
+        const remBtn = e.target.closest('.btn-cart-remove');
+
+        if (incBtn) {
+            const idx = parseInt(incBtn.getAttribute('data-index'));
+            const item = cart[idx];
+            const otherBase = cart.filter((c, ci) => c.productId === item.productId && ci !== idx).reduce((s, c) => s + c.quantity * c.conversionFactor, 0);
+            const max = Math.floor((item.totalBaseStock - otherBase) / item.conversionFactor);
+            if (item.quantity < max) {
+                item.quantity++;
+                renderCart();
+                if (currentSelectedProduct?.id === item.productId) applySelectedUnitValues();
+            } else {
+                showToast('المخزون المتبقي غير كافٍ', 'warning');
+            }
+        } else if (decBtn) {
+            const idx = parseInt(decBtn.getAttribute('data-index'));
+            if (cart[idx].quantity > 1) {
+                cart[idx].quantity--;
+                renderCart();
+                if (currentSelectedProduct?.id === cart[idx].productId) applySelectedUnitValues();
+            }
+        } else if (remBtn) {
+            const idx = parseInt(remBtn.getAttribute('data-index'));
+            const removed = cart[idx];
+            cart.splice(idx, 1);
+            renderCart();
+            if (currentSelectedProduct?.id === removed.productId) applySelectedUnitValues();
+        }
+    });
+
+    document.getElementById('cartBody').addEventListener('change', function (e) {
+        if (e.target.classList.contains('cart-qty-input')) {
+            const idx = parseInt(e.target.getAttribute('data-index'));
+            const item = cart[idx];
+            const otherBase = cart.filter((c, ci) => c.productId === item.productId && ci !== idx).reduce((s, c) => s + c.quantity * c.conversionFactor, 0);
+            const max = Math.floor((item.totalBaseStock - otherBase) / item.conversionFactor);
+            let val = parseInt(e.target.value) || 1;
+            if (val > max) { showToast('المخزون المتبقي غير كافٍ', 'warning'); val = max; }
+            if (val < 1) val = 1;
+            item.quantity = val;
+            renderCart();
+            if (currentSelectedProduct?.id === item.productId) applySelectedUnitValues();
+        }
+        if (e.target.classList.contains('cart-unit-select')) {
+            const idx = parseInt(e.target.getAttribute('data-index'));
+            const item = cart[idx];
+            const opt = e.target.options[e.target.selectedIndex];
+            const newName = opt.value;
+            const newPrice = parseFloat(opt.getAttribute('data-price')) || 0;
+            const newFactor = parseInt(opt.getAttribute('data-factor')) || 1;
+
+            const existingIdx = cart.findIndex((c, ci) => c.productId === item.productId && c.unitName.toLowerCase() === newName.toLowerCase() && ci !== idx);
+            if (existingIdx >= 0) {
+                cart[existingIdx].quantity += item.quantity;
+                cart.splice(idx, 1);
+            } else {
+                item.unitName = newName;
+                item.price = newPrice;
+                item.conversionFactor = newFactor;
+            }
+            renderCart();
+            if (currentSelectedProduct?.id === item.productId) applySelectedUnitValues();
+        }
+    });
+
+    // ═══════════════════════════════════════════
+    // Catalog Table Interactions & Quick Filter
+    // ═══════════════════════════════════════════
+    document.getElementById('productsCatalogTable').addEventListener('click', function (e) {
+        const row = e.target.closest('.product-catalog-row');
+        if (!row) return;
+
+        const product = {
+            id: parseInt(row.getAttribute('data-id')),
+            name: row.getAttribute('data-name'),
+            price: row.getAttribute('data-price'),
+            stock: row.getAttribute('data-stock'),
+            location: row.getAttribute('data-location'),
+            barcode: row.getAttribute('data-barcode'),
+            baseUnit: row.getAttribute('data-baseunit'),
+            dosageForm: row.getAttribute('data-dosageform'),
+            fullpackage: row.getAttribute('data-fullpackage'),
+            stockformatted: row.getAttribute('data-stockformatted'),
+            units: row.getAttribute('data-units')
+        };
+        selectProduct(product);
+    });
+
+    // Quick filter
+    document.getElementById('quickFilterInput').addEventListener('input', function (e) {
+        const filter = e.target.value.toLowerCase().trim();
+        let visibleCount = 0;
+        document.querySelectorAll('.product-catalog-row').forEach(row => {
+            const name = (row.getAttribute('data-name') || '').toLowerCase();
+            const barcode = (row.getAttribute('data-barcode') || '').toLowerCase();
+            const match = name.includes(filter) || barcode.includes(filter);
+            row.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+        document.getElementById('catalogCountBadge').textContent = visibleCount;
+    });
+
+    // ═══════════════════════════════════════════
+    // Barcode Scanner Action
+    // ═══════════════════════════════════════════
+    async function handleBarcodeLookup() {
+        const input = document.getElementById('barcodeScannerInput');
+        const code = input.value.trim();
+        const feedback = document.getElementById('barcodeFeedback');
+        if (!code) return;
+
+        try {
+            const res = await fetch(`@Url.Action("LookupByBarcode", "Products")?query=${encodeURIComponent(code)}`);
+            const json = await res.json();
+            if (json.found && json.data) {
+                feedback.classList.add('d-none');
+                if (json.data.availableStock <= 0) {
+                    feedback.textContent = `المنتج نفذ من المخزون (${json.data.name})`;
+                    feedback.classList.remove('d-none');
                 } else {
-                    showToast(posMessages.stockInsufficient, 'warning');
+                    selectProduct({
+                        id: json.data.id, name: json.data.name, price: json.data.sellingPrice,
+                        stock: json.data.availableStock, location: json.data.physicalLocation,
+                        barcode: json.data.barcode, baseUnit: json.data.baseUnitName,
+                        dosageForm: json.data.dosageForm, fullpackage: json.data.sellFullPackageOnly,
+                        stockformatted: json.data.stockFormatted, selectedunit: json.data.selectedUnitName,
+                        units: json.data.units
+                    }, json.data.selectedUnitName);
+                    input.value = '';
                 }
             } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    totalBaseStock: totalBaseStock,
-                    price: currentUnit.sellingPrice,
-                    units: units,
-                    selectedUnit: currentUnit.unitName,
-                    conversionFactor: conversionFactor,
-                    maxStock: maxStock,
-                    location: product.location,
-                    quantity: 1
-                });
-            }
-            renderCart();
-        }
-
-        // Add from catalog table
-        document.getElementById('productsCatalogTable').addEventListener('click', function (e) {
-            const btn = e.target.closest('.add-to-cart-btn');
-            if (!btn) return;
-            const row = btn.closest('tr');
-            addToCart({
-                id: parseInt(row.getAttribute('data-id')),
-                name: row.getAttribute('data-name'),
-                price: row.getAttribute('data-price'),
-                stock: row.getAttribute('data-stock'),
-                location: row.getAttribute('data-location'),
-                baseUnit: row.getAttribute('data-baseunit'),
-                units: row.getAttribute('data-units')
-            });
-        });
-
-        // Cart table interactions (increase, decrease, remove, unit change)
-        document.getElementById('cartBody').addEventListener('click', function (e) {
-            if (e.target.closest('.btn-increase')) {
-                const idx = parseInt(e.target.closest('.btn-increase').getAttribute('data-index'));
-                if (cart[idx].quantity < cart[idx].maxStock) {
-                    cart[idx].quantity += 1;
-                    renderCart();
-                } else {
-                    showToast(posMessages.stockInsufficient, 'warning');
-                }
-            } else if (e.target.closest('.btn-decrease')) {
-                const idx = parseInt(e.target.closest('.btn-decrease').getAttribute('data-index'));
-                if (cart[idx].quantity > 1) {
-                    cart[idx].quantity -= 1;
-                    renderCart();
-                }
-            } else if (e.target.closest('.btn-remove-item')) {
-                const idx = parseInt(e.target.closest('.btn-remove-item').getAttribute('data-index'));
-                cart.splice(idx, 1);
-                renderCart();
-            } else if (e.target.closest('.cart-unit-btn')) {
-                const btn = e.target.closest('.cart-unit-btn');
-                const idx = parseInt(btn.getAttribute('data-index'));
-                const newUnitName = btn.getAttribute('data-unit');
-                const item = cart[idx];
-                const newUnit = item.units.find(u => u.unitName === newUnitName);
-                if (newUnit) {
-                    item.selectedUnit = newUnit.unitName;
-                    item.conversionFactor = newUnit.conversionFactor || 1;
-                    item.price = newUnit.sellingPrice;
-                    item.maxStock = Math.max(1, Math.floor(item.totalBaseStock / item.conversionFactor));
-                    if (item.quantity > item.maxStock) {
-                        item.quantity = item.maxStock;
-                    }
-                    renderCart();
-                }
-            }
-        });
-
-        document.getElementById('cartBody').addEventListener('change', function (e) {
-            if (e.target.classList.contains('cart-qty-input')) {
-                const idx = parseInt(e.target.getAttribute('data-index'));
-                let val = parseInt(e.target.value) || 1;
-                if (val > cart[idx].maxStock) {
-                    showToast(posMessages.stockInsufficient, 'warning');
-                    val = cart[idx].maxStock;
-                }
-                if (val < 1) val = 1;
-                cart[idx].quantity = val;
-                renderCart();
-            } else if (e.target.classList.contains('cart-unit-select')) {
-                const idx = parseInt(e.target.getAttribute('data-index'));
-                const newUnitName = e.target.value;
-                const item = cart[idx];
-                const newUnit = item.units.find(u => u.unitName === newUnitName);
-                if (newUnit) {
-                    item.selectedUnit = newUnit.unitName;
-                    item.conversionFactor = newUnit.conversionFactor || 1;
-                    item.price = newUnit.sellingPrice;
-                    item.maxStock = Math.max(1, Math.floor(item.totalBaseStock / item.conversionFactor));
-                    if (item.quantity > item.maxStock) {
-                        item.quantity = item.maxStock;
-                    }
-                    renderCart();
-                }
-            }
-        });
-
-        document.getElementById('clearCartBtn').addEventListener('click', function () {
-            cart.length = 0;
-            renderCart();
-        });
-
-        // Barcode Scanner input
-        async function handleBarcodeLookup() {
-            const input = document.getElementById('barcodeScannerInput');
-            const code = input.value.trim();
-            const feedback = document.getElementById('barcodeFeedback');
-
-            if (!code) return;
-
-            try {
-                const res = await fetch(`@Url.Action("LookupByBarcode", "Products")?query=${encodeURIComponent(code)}`);
-                const json = await res.json();
-
-                if (json.found && json.data) {
-                    feedback.classList.add('d-none');
-                    if (json.data.availableStock <= 0) {
-                        feedback.textContent = `${posMessages.productOutOfStock} (${json.data.name})`;
-                        feedback.classList.remove('d-none');
-                    } else {
-                        addToCart({
-                            id: json.data.id,
-                            name: json.data.name,
-                            price: json.data.sellingPrice,
-                            stock: json.data.availableStock,
-                            location: json.data.physicalLocation,
-                            baseUnit: json.data.baseUnitName,
-                            selectedUnit: json.data.selectedUnitName,
-                            units: json.data.units
-                        });
-                        input.value = '';
-                    }
-                } else {
-                    feedback.textContent = `${posMessages.productNotFoundForBarcode}: ${code}`;
-                    feedback.classList.remove('d-none');
-                }
-            } catch (err) {
-                feedback.textContent = posMessages.errorLookingUpBarcode;
+                feedback.textContent = `لم يتم العثور على منتج بهذا الكود: ${code}`;
                 feedback.classList.remove('d-none');
             }
-            input.focus();
+        } catch (err) {
+            feedback.textContent = 'حدث خطأ أثناء البحث عن الباركود';
+            feedback.classList.remove('d-none');
+        }
+    }
+
+    document.getElementById('barcodeSearchBtn').addEventListener('click', handleBarcodeLookup);
+    document.getElementById('barcodeScannerInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); handleBarcodeLookup(); }
+    });
+
+    // ═══════════════════════════════════════════
+    // Split Payment & Checkout
+    // ═══════════════════════════════════════════
+    function updateSplitRemaining() {
+        let grandTotal = 0;
+        cart.forEach(i => grandTotal += i.quantity * i.price);
+        const discountPct = parseFloat(document.getElementById('discountInput').value) || 0;
+        grandTotal -= grandTotal * (discountPct / 100);
+
+        const cash = parseFloat(document.getElementById('splitCashInput')?.value) || 0;
+        const card = parseFloat(document.getElementById('splitCardInput')?.value) || 0;
+        const vodafone = parseFloat(document.getElementById('splitVodafoneInput')?.value) || 0;
+        const remaining = grandTotal - (cash + card + vodafone);
+        const badge = document.getElementById('splitRemainingBadge');
+        if (badge) {
+            if (Math.abs(remaining) < 0.01) {
+                badge.textContent = 'مغطى بالكامل ✓';
+                badge.style.color = 'var(--pos-teal)';
+            } else {
+                badge.textContent = `${remaining.toFixed(2)} ج.م`;
+                badge.style.color = 'var(--pos-danger)';
+            }
+        }
+    }
+
+    async function executeCheckout(shouldPrint) {
+        if (cart.length === 0) return;
+        const btn = shouldPrint ? document.getElementById('checkoutAndPrintBtn') : document.getElementById('checkoutBtn');
+        const otherBtn = shouldPrint ? document.getElementById('checkoutBtn') : document.getElementById('checkoutAndPrintBtn');
+        btn.disabled = true; otherBtn.disabled = true;
+
+        const customerIdVal = document.getElementById('saleCustomerId').value;
+        const customerId = customerIdVal ? parseInt(customerIdVal) : null;
+        const paymentMethod = document.querySelector('input[name="paymentMethodRadio"]:checked')?.value || 'Cash';
+
+        let cashAmount = null, cardAmount = null, vodafoneCashAmount = null;
+        const discountPct = parseFloat(document.getElementById('discountInput').value) || 0;
+
+        if (paymentMethod === '@PaymentMethod.Split' || paymentMethod === '5' || paymentMethod === 'Split') {
+            cashAmount = parseFloat(document.getElementById('splitCashInput')?.value) || 0;
+            cardAmount = parseFloat(document.getElementById('splitCardInput')?.value) || 0;
+            vodafoneCashAmount = parseFloat(document.getElementById('splitVodafoneInput')?.value) || 0;
+
+            let grandTotal = 0;
+            cart.forEach(i => grandTotal += i.quantity * i.price);
+            grandTotal -= grandTotal * (discountPct / 100);
+
+            if (Math.abs(grandTotal - (cashAmount + cardAmount + vodafoneCashAmount)) > 0.05) {
+                showToast(`مجموع مبالغ الدفع المجزأ لا يساوي الصافي المطلوب (${grandTotal.toFixed(2)} ج.م)`, 'warning');
+                btn.disabled = false; otherBtn.disabled = false;
+                return;
+            }
         }
 
-        document.getElementById('barcodeSearchBtn').addEventListener('click', handleBarcodeLookup);
-        document.getElementById('barcodeScannerInput').addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleBarcodeLookup();
-            }
-        });
+        const payload = {
+            customerId, paymentMethod, cashAmount, cardAmount, vodafoneCashAmount,
+            items: cart.map(i => ({
+                productId: i.productId, quantity: i.quantity,
+                unitName: i.unitName, conversionFactor: i.conversionFactor, unitPrice: i.price
+            }))
+        };
 
-        // Quick Catalog Filter
-        document.getElementById('quickFilterInput').addEventListener('input', function (e) {
-            const filter = e.target.value.toLowerCase();
-            document.querySelectorAll('.product-catalog-row').forEach(row => {
-                const name = (row.getAttribute('data-name') || '').toLowerCase();
-                const barcode = (row.getAttribute('data-barcode') || '').toLowerCase();
-                row.style.display = (name.includes(filter) || barcode.includes(filter)) ? '' : 'none';
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+        try {
+            const res = await fetch('@Url.Action("ProcessSale", "Sales")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                body: JSON.stringify(payload)
             });
-        });
+            const json = await res.json();
 
-        // Core Checkout Process
-        async function executeCheckout(shouldPrint) {
-            if (cart.length === 0) return;
-
-            const btn = shouldPrint ? document.getElementById('checkoutAndPrintBtn') : document.getElementById('checkoutBtn');
-            const otherBtn = shouldPrint ? document.getElementById('checkoutBtn') : document.getElementById('checkoutAndPrintBtn');
-
-            btn.disabled = true;
-            otherBtn.disabled = true;
-
-            const customerIdVal = document.getElementById('saleCustomerId').value;
-            const customerId = customerIdVal ? parseInt(customerIdVal) : null;
-            const paymentMethod = document.querySelector('input[name="paymentMethodRadio"]:checked')?.value || 'Cash';
-
-            let cashAmount = null, cardAmount = null, vodafoneCashAmount = null;
-
-            if (paymentMethod === '@PaymentMethod.Split' || paymentMethod === '5' || paymentMethod === 'Split') {
-                cashAmount = parseFloat(document.getElementById('splitCashInput')?.value) || 0;
-                cardAmount = parseFloat(document.getElementById('splitCardInput')?.value) || 0;
-                vodafoneCashAmount = parseFloat(document.getElementById('splitVodafoneInput')?.value) || 0;
-
-                let grandTotal = 0;
-                cart.forEach(i => grandTotal += (i.quantity * i.price));
-
-                if (Math.abs(grandTotal - (cashAmount + cardAmount + vodafoneCashAmount)) > 0.05) {
-                    showToast(`${posMessages.splitMismatch} (${grandTotal.toFixed(2)})`, 'warning');
-                    btn.disabled = false;
-                    otherBtn.disabled = false;
-                    return;
-                }
-            }
-
-            const payload = {
-                customerId: customerId,
-                paymentMethod: paymentMethod,
-                cashAmount: cashAmount,
-                cardAmount: cardAmount,
-                vodafoneCashAmount: vodafoneCashAmount,
-                items: cart.map(i => ({
-                    productId: i.id,
-                    quantity: i.quantity,
-                    unitName: i.selectedUnit,
-                    conversionFactor: i.conversionFactor,
-                    unitPrice: i.price
-                }))
-            };
-
-            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
-
-            try {
-                const res = await fetch('@Url.Action("ProcessSale", "Sales")', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const json = await res.json();
-                if (json.success) {
-                    // Update catalog stock counts on page dynamically
-                    cart.forEach(item => {
-                        const stockBadge = document.querySelector(`.product-stock-badge[data-product-id="${item.id}"]`);
-                        const row = document.querySelector(`.product-catalog-row[data-id="${item.id}"]`);
-                        if (stockBadge && row) {
-                            let curr = parseInt(row.getAttribute('data-stock')) || 0;
-                            let allocatedBase = item.quantity * item.conversionFactor;
-                            let updated = Math.max(0, curr - allocatedBase);
-                            row.setAttribute('data-stock', updated);
-                            stockBadge.textContent = updated;
-                            if (updated <= 0) {
-                                stockBadge.className = 'badge bg-danger product-stock-badge';
-                                const addBtn = row.querySelector('.add-to-cart-btn');
-                                if (addBtn) addBtn.disabled = true;
-                            }
-                        }
-                    });
-
-                    // Clear cart
-                    cart.length = 0;
-                    renderCart();
-
-                    if (shouldPrint) {
-                        window.location.href = json.redirectUrl;
-                    } else {
-                        document.getElementById('saleSuccessInvoiceNumber').textContent = json.invoiceNumber || 'INV-SUCCESS';
-                        document.getElementById('saleSuccessTotalAmount').textContent = (json.totalAmount || 0).toFixed(2);
-                        document.getElementById('modalPrintInvoiceLink').href = json.redirectUrl || '#';
-
-                        if (successModal) {
-                            successModal.show();
-                        } else {
-                            showToast(`${posMessages.saleCompletedSuccessfully} #${json.invoiceNumber}`, 'success');
+            if (json.success) {
+                // Update catalog stock on screen
+                cart.forEach(item => {
+                    const badge = document.querySelector(`.product-stock-badge[data-product-id="${item.productId}"]`);
+                    const row = document.querySelector(`.product-catalog-row[data-id="${item.productId}"]`);
+                    if (badge && row) {
+                        let curr = parseInt(row.getAttribute('data-stock')) || 0;
+                        let used = item.quantity * item.conversionFactor;
+                        let updated = Math.max(0, curr - used);
+                        row.setAttribute('data-stock', updated);
+                        badge.textContent = updated;
+                        if (updated <= 0) {
+                            badge.className = 'badge bg-danger-subtle text-danger border border-danger-subtle product-stock-badge';
                         }
                     }
+                });
+
+                deselectProduct();
+                cart.length = 0;
+                document.getElementById('discountInput').value = '0.00';
+                renderCart();
+
+                if (shouldPrint) {
+                    window.location.href = json.redirectUrl;
                 } else {
-                    showToast(json.message || posMessages.operationFailed, 'danger');
-                    btn.disabled = false;
-                    otherBtn.disabled = false;
+                    document.getElementById('saleSuccessInvoiceNumber').textContent = json.invoiceNumber || 'INV-SUCCESS';
+                    document.getElementById('saleSuccessTotalAmount').textContent = (json.totalAmount || 0).toFixed(2);
+                    document.getElementById('modalPrintInvoiceLink').href = json.redirectUrl || '#';
+                    if (successModal) successModal.show();
+                    else showToast(`تم إتمام البيع بنجاح! فاتورة #${json.invoiceNumber}`, 'success');
                 }
-            } catch (err) {
-                showToast(posMessages.operationFailed, 'danger');
-                btn.disabled = false;
-                otherBtn.disabled = false;
+            } else {
+                showToast(json.message || 'فشلت العملية', 'danger');
+                btn.disabled = false; otherBtn.disabled = false;
             }
+        } catch (err) {
+            showToast('حدث خطأ أثناء إتمام عملية البيع', 'danger');
+            btn.disabled = false; otherBtn.disabled = false;
         }
+    }
 
-        document.getElementById('checkoutBtn').addEventListener('click', function () {
-            executeCheckout(false);
-        });
-
-        document.getElementById('checkoutAndPrintBtn').addEventListener('click', function () {
-            executeCheckout(true);
-        });
-
-        document.getElementById('modalStartNewSaleBtn').addEventListener('click', function () {
-            document.getElementById('barcodeScannerInput').focus();
-        });
-    </script>
+    document.getElementById('checkoutBtn').addEventListener('click', () => executeCheckout(false));
+    document.getElementById('checkoutAndPrintBtn').addEventListener('click', () => executeCheckout(true));
+    document.getElementById('modalStartNewSaleBtn').addEventListener('click', () => document.getElementById('barcodeScannerInput').focus());
+</script>
 }

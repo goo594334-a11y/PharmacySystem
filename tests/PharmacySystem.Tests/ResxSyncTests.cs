@@ -159,7 +159,19 @@ public class ResxSyncTests
             ["AddCustomSmallerUnit"] = ("+ إضافة وحدة تجزئة مخصصة", "+ Add Custom Smaller Unit"),
             ["SmallerUnitName"] = ("اسم الوحدة الأصغر (للتجزئة)", "Smaller Unit Name"),
             ["ContainsCount"] = ("العدد داخل العبوة", "Count in Package"),
-            ["EGP"] = ("ج.م", "EGP")
+            ["EGP"] = ("ج.م", "EGP"),
+            ["SelectedProduct"] = ("الدواء المحدد", "Selected Product"),
+            ["AddToInvoice"] = ("إضافة إلى الفاتورة", "Add to Invoice"),
+            ["SelectProductPrompt"] = ("اختر دواء من القائمة أو امسح الباركود", "Select a product from the list or scan barcode"),
+            ["SingleSellingUnitNotice"] = ("يباع بالعبوة الكاملة فقط", "Sold as full package only"),
+            ["PermittedSellingUnits"] = ("وحدات البيع المتاحة", "Available Selling Units"),
+            ["LineTotal"] = ("الإجمالي", "Line Total"),
+            ["RemoveItem"] = ("حذف", "Remove"),
+            ["InvoiceItems"] = ("أصناف الفاتورة", "Invoice Items"),
+            ["ItemsCount"] = ("عدد الأصناف", "Items Count"),
+            ["PharmacyCreatedSuccessfully"] = ("تم تسجيل الصيدلية وإنشاء حساب المسؤول بنجاح. يمكنك الآن تسجيل الدخول.", "Pharmacy registered and administrator account created successfully. You may now log in."),
+            ["ItemAddedSuccessfully"] = ("تمت إضافة الصنف للفاتورة", "Item added to invoice"),
+            ["NoUnitsAvailable"] = ("لا توجد وحدات بيع متاحة", "No selling units available")
         };
 
         var testDir = AppContext.BaseDirectory;

@@ -1799,4 +1799,15 @@
   <data name="SmallerUnitName" xml:space="preserve"><value>Smaller Unit Name</value></data>
   <data name="ContainsCount" xml:space="preserve"><value>Count in Package</value></data>
   <data name="EGP" xml:space="preserve"><value>EGP</value></data>
+  <data name="SelectedProduct" xml:space="preserve"><value>Selected Product</value></data>
+  <data name="AddToInvoice" xml:space="preserve"><value>Add to Invoice</value></data>
+  <data name="SelectProductPrompt" xml:space="preserve"><value>Select a product from the list or scan barcode</value></data>
+  <data name="SingleSellingUnitNotice" xml:space="preserve"><value>Sold as full package only</value></data>
+  <data name="PermittedSellingUnits" xml:space="preserve"><value>Available Selling Units</value></data>
+  <data name="RemoveItem" xml:space="preserve"><value>Remove</value></data>
+  <data name="InvoiceItems" xml:space="preserve"><value>Invoice Items</value></data>
+  <data name="ItemsCount" xml:space="preserve"><value>Items Count</value></data>
+  <data name="PharmacyCreatedSuccessfully" xml:space="preserve"><value>Pharmacy registered and administrator account created successfully. You may now log in.</value></data>
+  <data name="ItemAddedSuccessfully" xml:space="preserve"><value>Item added to invoice</value></data>
+  <data name="NoUnitsAvailable" xml:space="preserve"><value>No selling units available</value></data>
 </root>

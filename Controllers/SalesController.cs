@@ -146,7 +146,8 @@ public class SalesController : Controller
                 BaseUnit = packaging.BaseUnitName,
                 DosageForm = packaging.DosageForm,
                 SellFullPackageOnly = packaging.SellFullPackageOnly,
-                Units = permittedUnits
+                Units = permittedUnits,
+                StockFormatted = _packagingService.FormatStockBreakdown(available, packaging)
             };
         }).ToList();
 

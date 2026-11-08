@@ -1056,4 +1056,121 @@ public class ProductUnitsAndPackagingTests
         Assert.Equal(1, sachet.ConversionFactor);
         Assert.Equal(6.00m, sachet.SellingPrice);
     }
+
+    [Fact]
+    public async Task PosSale_MultiProductMultiUnit_ProcessesCorrectlyAndReducesStock()
+    {
+        // Arrange
+        using var context = CreateDbContext();
+        var packagingService = new ProductPackagingService();
+        var fefoService = new FefoAllocationService();
+        var saleService = new SaleTransactionService(context, fefoService, packagingService);
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        // Product 1: Splittable Tablets (Box = 20 tablets, Strip = 10 tablets, Tablet = 1 tablet)
+        var tabletUnits = new List<ProductUnitDto>
+        {
+            new ProductUnitDto { UnitName = "قرص", ConversionFactor = 1, SellingPrice = 3.00m, IsBaseUnit = true, AllowSale = true },
+            new ProductUnitDto { UnitName = "شريط", ConversionFactor = 10, SellingPrice = 30.00m, IsBaseUnit = false, AllowSale = true },
+            new ProductUnitDto { UnitName = "علبة", ConversionFactor = 20, SellingPrice = 60.00m, IsBaseUnit = false, AllowSale = true }
+        };
+        var p1Config = packagingService.BuildPackagingConfig("قرص", 60.00m, "111", tabletUnits, "أقراص", false);
+        var p1Desc = packagingService.EmbedPackaging("Panadol Advance 500mg", p1Config);
+
+        var product1 = new Product
+        {
+            Id = 101,
+            Name = "Panadol Advance",
+            Barcode = "111",
+            SellingPrice = 60.00m,
+            Description = p1Desc,
+            IsActive = true,
+            PharmacyId = 1
+        };
+
+        // Product 2: Single Unit Syrup (Bottle only, FullPackageOnly = true)
+        var syrupUnits = new List<ProductUnitDto>
+        {
+            new ProductUnitDto { UnitName = "زجاجة", ConversionFactor = 1, SellingPrice = 45.00m, IsBaseUnit = true, AllowSale = true }
+        };
+        var p2Config = packagingService.BuildPackagingConfig("زجاجة", 45.00m, "222", syrupUnits, "شراب", true);
+        var p2Desc = packagingService.EmbedPackaging("Bronchicum Syrup 100ml", p2Config);
+
+        var product2 = new Product
+        {
+            Id = 102,
+            Name = "Bronchicum Syrup",
+            Barcode = "222",
+            SellingPrice = 45.00m,
+            Description = p2Desc,
+            IsActive = true,
+            PharmacyId = 1
+        };
+
+        var location = new Location { Id = 1, Code = "LOC-A", Name = "Main Shelf", PharmacyId = 1 };
+        var user = new User { Id = 1, FullName = "Pharmacist", Email = "rx@pharmacy.com", Role = UserRole.Pharmacist, PharmacyId = 1, IsActive = true };
+
+        context.Locations.Add(location);
+        context.Users.Add(user);
+        context.Products.AddRange(product1, product2);
+
+        // Seed stock: 100 tablets of Panadol, 10 bottles of Syrup
+        var batch1 = new Batch
+        {
+            Id = 201,
+            ProductId = 101,
+            BatchNumber = "B-PAN-01",
+            QuantityOnHand = 100,
+            PurchasePrice = 1.50m,
+            ExpiryDate = today.AddYears(1),
+            LocationId = 1
+        };
+
+        var batch2 = new Batch
+        {
+            Id = 202,
+            ProductId = 102,
+            BatchNumber = "B-BRO-01",
+            QuantityOnHand = 10,
+            PurchasePrice = 30.00m,
+            ExpiryDate = today.AddYears(1),
+            LocationId = 1
+        };
+
+        context.Batches.AddRange(batch1, batch2);
+        await context.SaveChangesAsync();
+
+        // Act: Sell 1 Box of Panadol (20 tablets) + 2 Strips of Panadol (20 tablets) + 1 Bottle of Syrup
+        // Total Panadol base deducted = 20 + 20 = 40 tablets -> remaining 60 tablets
+        // Total Syrup base deducted = 1 bottle -> remaining 9 bottles
+        var saleRequest = new CreateSaleRequest(
+            CustomerId: null,
+            UserId: 1,
+            InvoiceNumber: "INV-POS-TEST-001",
+            PaymentMethod: PaymentMethod.Cash,
+            Items: new List<SaleItemRequest>
+            {
+                new SaleItemRequest(ProductId: 101, Quantity: 1, UnitName: "علبة", ConversionFactor: 20, UnitPrice: 60.00m),
+                new SaleItemRequest(ProductId: 101, Quantity: 2, UnitName: "شريط", ConversionFactor: 10, UnitPrice: 30.00m),
+                new SaleItemRequest(ProductId: 102, Quantity: 1, UnitName: "زجاجة", ConversionFactor: 1, UnitPrice: 45.00m)
+            }
+        );
+
+        var sale = await saleService.ProcessSaleAsync(saleRequest);
+
+        // Assert
+        Assert.NotNull(sale);
+        Assert.Equal(3, sale.SaleItems.Count);
+        // Total: 1*60 + 2*30 + 1*45 = 60 + 60 + 45 = 165.00
+        Assert.Equal(165.00m, sale.TotalAmount);
+
+        var updatedBatch1 = await context.Batches.FindAsync(201);
+        Assert.NotNull(updatedBatch1);
+        Assert.Equal(60, updatedBatch1.QuantityOnHand);
+
+        var updatedBatch2 = await context.Batches.FindAsync(202);
+        Assert.NotNull(updatedBatch2);
+        Assert.Equal(9, updatedBatch2.QuantityOnHand);
+    }
 }

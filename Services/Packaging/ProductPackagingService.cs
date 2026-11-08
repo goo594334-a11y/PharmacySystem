@@ -31,7 +31,11 @@ public class ProductPackagingService : IProductPackagingService
                             var parsed = JsonSerializer.Deserialize<ProductPackagingConfig>(json);
                             if (parsed != null && parsed.PermittedUnits.Count > 0)
                             {
-                                return parsed;
+                                SanitizeConfig(parsed, product.SellingPrice, product.Barcode);
+                                if (parsed.PermittedUnits.Count > 0)
+                                {
+                                    return parsed;
+                                }
                             }
                         }
                         catch
@@ -117,7 +121,7 @@ public class ProductPackagingService : IProductPackagingService
         {
             // If configured for Full Package Only, return only the top-level full package unit
             var fullUnit = config.PermittedUnits
-                .Where(u => u.AllowSale)
+                .Where(u => u.AllowSale && !string.IsNullOrWhiteSpace(u.UnitName))
                 .OrderByDescending(u => u.ConversionFactor)
                 .FirstOrDefault() 
                 ?? config.PermittedUnits.OrderByDescending(u => u.ConversionFactor).FirstOrDefault();
@@ -125,7 +129,12 @@ public class ProductPackagingService : IProductPackagingService
             return fullUnit != null ? new List<ProductUnitDto> { fullUnit } : new List<ProductUnitDto>();
         }
 
-        return config.PermittedUnits.Where(u => u.AllowSale).ToList();
+        return config.PermittedUnits
+            .Where(u => u.AllowSale && !string.IsNullOrWhiteSpace(u.UnitName))
+            .GroupBy(u => u.UnitName.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .OrderByDescending(u => u.ConversionFactor)
+            .ToList();
     }
 
     public ProductUnitDto GetUnitOrDefault(Product product, string? unitName)
@@ -267,11 +276,15 @@ public class ProductPackagingService : IProductPackagingService
 
         if (units != null)
         {
-            foreach (var u in units.Where(u => !u.IsBaseUnit && !string.Equals(u.UnitName, config.BaseUnitName, StringComparison.OrdinalIgnoreCase)))
+            foreach (var u in units.Where(u => !string.IsNullOrWhiteSpace(u.UnitName) && !u.IsBaseUnit && !string.Equals(u.UnitName.Trim(), config.BaseUnitName, StringComparison.OrdinalIgnoreCase)))
             {
+                var trimmedName = u.UnitName.Trim();
+                if (config.PermittedUnits.Any(existing => string.Equals(existing.UnitName, trimmedName, StringComparison.OrdinalIgnoreCase)))
+                    continue;
+
                 config.PermittedUnits.Add(new ProductUnitDto
                 {
-                    UnitName = u.UnitName.Trim(),
+                    UnitName = trimmedName,
                     ConversionFactor = u.ConversionFactor > 0 ? u.ConversionFactor : 1,
                     SellingPrice = u.SellingPrice > 0 ? u.SellingPrice : basePrice,
                     Barcode = string.IsNullOrWhiteSpace(u.Barcode) ? null : u.Barcode.Trim(),
@@ -335,7 +348,11 @@ public class ProductPackagingService : IProductPackagingService
                             var parsed = JsonSerializer.Deserialize<ProductPackagingConfig>(json);
                             if (parsed != null && parsed.PermittedUnits.Count > 0)
                             {
-                                return parsed;
+                                SanitizeConfig(parsed, fallbackPrice, fallbackBarcode);
+                                if (parsed.PermittedUnits.Count > 0)
+                                {
+                                    return parsed;
+                                }
                             }
                         }
                         catch { }
@@ -378,6 +395,58 @@ public class ProductPackagingService : IProductPackagingService
         }
 
         return parts.Count > 0 ? string.Join(" و ", parts) : "0";
+    }
+
+    private static void SanitizeConfig(ProductPackagingConfig config, decimal fallbackPrice, string? fallbackBarcode)
+    {
+        if (config == null) return;
+        if (string.IsNullOrWhiteSpace(config.BaseUnitName))
+        {
+            config.BaseUnitName = "علبة / Box";
+        }
+        else
+        {
+            config.BaseUnitName = config.BaseUnitName.Trim();
+        }
+
+        if (config.PermittedUnits == null)
+        {
+            config.PermittedUnits = new List<ProductUnitDto>();
+        }
+
+        // 1. Remove empty or whitespace unit names
+        config.PermittedUnits.RemoveAll(u => string.IsNullOrWhiteSpace(u.UnitName));
+
+        // 2. Deduplicate by UnitName (keep the first)
+        var deduped = config.PermittedUnits
+            .GroupBy(u => u.UnitName.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .ToList();
+        config.PermittedUnits = deduped;
+
+        // 3. If empty, create default base unit
+        if (config.PermittedUnits.Count == 0)
+        {
+            config.PermittedUnits.Add(new ProductUnitDto
+            {
+                UnitName = config.BaseUnitName,
+                ConversionFactor = 1,
+                SellingPrice = fallbackPrice,
+                Barcode = fallbackBarcode,
+                IsBaseUnit = true,
+                AllowSale = true,
+                AllowPurchase = true
+            });
+        }
+
+        // 4. Ensure exactly one base unit
+        if (!config.PermittedUnits.Any(u => u.IsBaseUnit))
+        {
+            var matched = config.PermittedUnits.FirstOrDefault(u => string.Equals(u.UnitName, config.BaseUnitName, StringComparison.OrdinalIgnoreCase))
+                ?? config.PermittedUnits.FirstOrDefault(u => u.ConversionFactor == 1)
+                ?? config.PermittedUnits.First();
+            matched.IsBaseUnit = true;
+        }
     }
 
     private static string StripPackagingTag(string? description)

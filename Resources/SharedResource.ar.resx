@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -1967,4 +1967,23 @@
   <data name="SmallerUnitName" xml:space="preserve"><value>اسم الوحدة الأصغر (للتجزئة)</value></data>
   <data name="ContainsCount" xml:space="preserve"><value>العدد داخل العبوة</value></data>
   <data name="EGP" xml:space="preserve"><value>ج.م</value></data>
+  <data name="SelectedProduct" xml:space="preserve"><value>الدواء المحدد</value></data>
+  <data name="AddToInvoice" xml:space="preserve"><value>إضافة إلى الفاتورة</value></data>
+  <data name="SelectProductPrompt" xml:space="preserve"><value>اختر دواء من القائمة أو امسح الباركود</value></data>
+  <data name="SingleSellingUnitNotice" xml:space="preserve"><value>يباع بالعبوة الكاملة فقط</value></data>
+  <data name="PermittedSellingUnits" xml:space="preserve"><value>وحدات البيع المتاحة</value></data>
+  <data name="RemoveItem" xml:space="preserve"><value>حذف</value></data>
+  <data name="InvoiceItems" xml:space="preserve"><value>أصناف الفاتورة</value></data>
+  <data name="ItemsCount" xml:space="preserve"><value>عدد الأصناف</value></data>
+  <data name="PharmacyCreatedSuccessfully" xml:space="preserve"><value>تم تسجيل الصيدلية وإنشاء حساب المسؤول بنجاح. يمكنك الآن تسجيل الدخول.</value></data>
+  <data name="ItemAddedSuccessfully" xml:space="preserve"><value>تمت إضافة الصنف للفاتورة</value></data>
+  <data name="NoUnitsAvailable" xml:space="preserve"><value>لا توجد وحدات بيع متاحة</value></data>
+  <data name="CurrentSalesInvoice" xml:space="preserve"><value>فاتورة المبيعات الحالية</value></data>
+  <data name="ChooseSellingUnit" xml:space="preserve"><value>اختر وحدة البيع</value></data>
+  <data name="ProductsTotal" xml:space="preserve"><value>إجمالي المنتجات</value></data>
+  <data name="NetTotal" xml:space="preserve"><value>الصافي</value></data>
+  <data name="PrintReceipt" xml:space="preserve"><value>طباعة الفاتورة</value></data>
+  <data name="InternalBarcode" xml:space="preserve"><value>الباركود الداخلي</value></data>
+  <data name="AvailableInStock" xml:space="preserve"><value>متوفر في المخزون</value></data>
+  <data name="Discount" xml:space="preserve"><value>الخصم</value></data>
 </root>

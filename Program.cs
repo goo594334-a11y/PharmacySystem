@@ -91,12 +91,25 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Events.OnValidatePrincipal = context =>
+        {
+            if (context.Principal?.Identity is System.Security.Claims.ClaimsIdentity identity && identity.IsAuthenticated)
+            {
+                if (identity.HasClaim(System.Security.Claims.ClaimTypes.Role, AppRoles.Developer) && !identity.HasClaim(System.Security.Claims.ClaimTypes.Role, AppRoles.Admin))
+                {
+                    identity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, AppRoles.Admin));
+                }
+            }
+            return Task.CompletedTask;
+        };
     });
+
+builder.Services.AddTransient<Microsoft.AspNetCore.Authentication.IClaimsTransformation, PharmacySystem.Services.Auth.PharmacyRoleClaimsTransformation>();
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AppPolicies.RequireDeveloper, policy =>
-        policy.RequireRole(AppRoles.Developer));
+        policy.RequireRole(AppRoles.Developer, AppRoles.Admin));
 
     options.AddPolicy(AppPolicies.RequireAdmin, policy =>
         policy.RequireRole(AppRoles.Admin, AppRoles.Developer));

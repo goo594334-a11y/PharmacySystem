@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using PharmacySystem.Authorization;
 using PharmacySystem.Data;
 using PharmacySystem.Enums;
 using PharmacySystem.Models.Entities;
@@ -126,15 +127,22 @@ public class AuthService : IAuthService
 
     public async Task SignInAsync(HttpContext httpContext, User user, bool isPersistent)
     {
+        var roleName = user.Role == UserRole.Developer ? AppRoles.Admin : user.Role.ToString();
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Name, user.Email),
-            new(ClaimTypes.Role, user.Role.ToString()),
+            new(ClaimTypes.Role, roleName),
             new("DisplayName", user.FullName),
             new("MustChangePassword", user.MustChangePassword.ToString())
         };
+
+        if (user.Role == UserRole.Developer)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, AppRoles.Developer));
+        }
 
         if (user.PharmacyId.HasValue)
         {

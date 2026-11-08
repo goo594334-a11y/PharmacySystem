@@ -1173,13 +1173,14 @@
             }
 
             customUnits.forEach(u => {
+                if (!u.name || !u.name.trim()) return;
                 const uCount = parseInt(u.count) || 1;
                 const uPrice = parseFloat(u.price) || 0;
                 unitsList.push({
-                    unitName: u.name,
+                    unitName: u.name.trim(),
                     conversionFactor: uCount,
                     sellingPrice: uPrice,
-                    barcode: u.barcode || null,
+                    barcode: u.barcode ? u.barcode.trim() : null,
                     isBaseUnit: false,
                     allowSale: true,
                     allowPurchase: true

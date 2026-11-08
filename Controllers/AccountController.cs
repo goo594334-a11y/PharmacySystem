@@ -127,14 +127,16 @@ public class AccountController : Controller
         var pharmacy = new Pharmacy
         {
             Name = model.PharmacyName.Trim(),
-            Code = "STATUS:PENDING_APPROVAL",
+            Code = $"PHARM-{DateTime.UtcNow:yyyyMMddHHmm}",
             Phone = model.Phone?.Trim(),
             Address = model.Address?.Trim(),
             CreatedAt = DateTime.UtcNow,
-            IsActive = false
+            IsActive = true
         };
         _dbContext.Pharmacies.Add(pharmacy);
         await _dbContext.SaveChangesAsync();
+
+        pharmacy.Code = $"PHARM-{pharmacy.Id:D4}";
 
         var adminUser = new User
         {
@@ -142,7 +144,7 @@ public class AccountController : Controller
             Email = normalizedEmail,
             Role = PharmacySystem.Enums.UserRole.Admin,
             PharmacyId = pharmacy.Id,
-            IsActive = false,
+            IsActive = true,
             MustChangePassword = false,
             CreatedAt = DateTime.UtcNow
         };
@@ -153,7 +155,7 @@ public class AccountController : Controller
         _dbContext.AuditLogs.Add(new AuditLog
         {
             PharmacyId = pharmacy.Id,
-            Action = "PharmacyRegistrationRequested",
+            Action = "PharmacyRegistered",
             EntityName = nameof(Pharmacy),
             EntityId = pharmacy.Id.ToString(),
             Timestamp = DateTime.UtcNow
@@ -161,25 +163,8 @@ public class AccountController : Controller
 
         await _dbContext.SaveChangesAsync();
 
-        try
-        {
-            // IgnoreQueryFilters: finding the developer is a system-level operation, not tenant-scoped
-            var dev = await _dbContext.Users.IgnoreQueryFilters().AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Role == PharmacySystem.Enums.UserRole.Developer);
-            if (dev != null && !string.IsNullOrWhiteSpace(dev.Email))
-            {
-                await _emailService.SendEmailAsync(
-                    dev.Email,
-                    "New Pharmacy Registration Request",
-                    $"A new pharmacy registration request has been submitted by {adminUser.FullName} ({adminUser.Email}) for '{pharmacy.Name}'. Please log into the developer dashboard to review and approve/reject.");
-            }
-        }
-        catch
-        {
-            // Logging without throwing
-        }
-
-        return View("RegistrationPending");
+        TempData.SetSuccess(_loc["OperationSuccess"], _loc["PharmacyCreatedSuccessfully"]);
+        return RedirectToAction(nameof(Login));
     }
 
     [HttpPost]

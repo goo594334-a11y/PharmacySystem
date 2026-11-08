@@ -33,7 +33,7 @@ public class NotificationService : INotificationService
             {
                 Title = _loc["LowStockAlerts"],
                 Message = string.Format(_loc["LowStockAlertNotification"], lowStockProducts.Count),
-                ActionUrl = "/Inventory/LowStock",
+                ActionUrl = "/Inventory/LowStock",  // Maps to InventoryController.LowStock()
                 Severity = NotificationSeverity.Warning,
                 Timestamp = DateTime.UtcNow
             });
@@ -47,7 +47,7 @@ public class NotificationService : INotificationService
             {
                 Title = _loc["NearExpiryAlerts"],
                 Message = string.Format(_loc["NearExpiryAlertNotification"], nearExpiryBatches.Count),
-                ActionUrl = "/Inventory/NearExpiry",
+                ActionUrl = "/Inventory/Expiry",  // Maps to InventoryController.Expiry()
                 Severity = NotificationSeverity.Warning,
                 Timestamp = DateTime.UtcNow
             });
@@ -61,7 +61,7 @@ public class NotificationService : INotificationService
             {
                 Title = _loc["ExpiredBatches"],
                 Message = string.Format(_loc["ExpiredBatchAlertNotification"], expiredBatches.Count),
-                ActionUrl = "/Inventory/Expired",
+                ActionUrl = "/Inventory/Expired",  // Maps to InventoryController.Expired()
                 Severity = NotificationSeverity.Danger,
                 Timestamp = DateTime.UtcNow
             });

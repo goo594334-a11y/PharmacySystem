@@ -122,7 +122,7 @@ public class ManualGeneratorTests
         sb.Append(MakeBulletItem("6. نقطة البيع السريعة (POS) وسياسة الصرف (FEFO) واختصارات الكيبورد"));
         sb.Append(MakeBulletItem("7. نظام المرتجعات والتسويات المخزنية وإعدام التوالف"));
         sb.Append(MakeBulletItem("8. إدارة الصلاحيات والعزل التام لبيانات الصيدليات (Multi-Tenant Isolation)"));
-        sb.Append(MakeBulletItem("9. بوابة المطور والموافقة على الصيدليات الجديدة (Developer Portal)"));
+        sb.Append(MakeBulletItem("9. تسجيل الصيدليات وتهيئة الحسابات الإدارية المستقلة"));
         sb.Append(MakeBulletItem("10. التقارير المالية وحركات الصندوق والتدقيق الشامل"));
         sb.Append(MakeDivider());
 
@@ -134,7 +134,7 @@ public class ManualGeneratorTests
         sb.Append(MakeBulletItem("التطبيق الآلي واللحظي لقاعدة ما ينتهي أولاً يخرج أولاً (FEFO) لمنع ركود وتلف الأدوية."));
         sb.Append(MakeBulletItem("نقطة بيع فورية (POS) مزودة بأزرار تبديل الوحدات السريعة، تقسيم المدفوعات، ودعم الباركود."));
         sb.Append(MakeBulletItem("عزل كامل ومتعدد المستأجرين (Multi-Tenant Isolation) لحماية خصوصية وسرية كل صيدلية."));
-        sb.Append(MakeBulletItem("بوابة متقدمة للمطور (Developer Portal) للموافقة على اشتراكات الصيدليات ومراقبة النظام."));
+        sb.Append(MakeBulletItem("تسجيل فوري للصيدليات الجديدة وبدء العمل الإداري والمخزني المستقل بدون تعقيد."));
 
         // Section 2
         sb.Append(MakeHeading1("2. تسجيل الدخول وأمان الحسابات واستعادة كلمة المرور"));
@@ -220,15 +220,11 @@ public class ManualGeneratorTests
         sb.Append(MakeBulletItem("  - الصيدلي / الكاشير (Pharmacist): عمليات البيع، البحث عن الأدوية، وإصدار مرتجعات البيع المصرح بها."));
 
         // Section 9
-        sb.Append(MakeHeading1("9. بوابة المطور والموافقة على الصيدليات الجديدة (Developer Portal)"));
-        sb.Append(MakeParagraph("عند تسجيل صيدلية جديدة من خلال صفحة التسجيل العامة، لا تدخل الصيدلية مباشرة في حيز التشغيل حفاظاً على المعايير المؤسسية:"));
-        sb.Append(MakeBulletItem("تدخل الصيدلية فور التسجيل في حالة 'قيد المراجعة والموافقة' (Pending Approval) ويتم حجب تسجيل دخول مسؤوليها مؤقتاً."));
-        sb.Append(MakeBulletItem("يتلقى المطور إشعاراً في لوحة التحكم المركزية (/Developer) لمراجعة بيانات الترخيص والصيدلية."));
-        sb.Append(MakeBulletItem("إجراءات المطور:"));
-        sb.Append(MakeBulletItem("  1. الموافقة (Approve): تفعيل الصيدلية وتوليد كود رسمي لها وتنشيط حساب مديرها، وإرسال بريد ترحيبي."));
-        sb.Append(MakeBulletItem("  2. الرفض (Reject): رفض الطلب غير المستوفي للشروط مع ذكر السبب."));
-        sb.Append(MakeBulletItem("  3. التعليق (Suspend): إيقاف نشاط أي صيدلية متعثرة أو مخالفة للشروط فوراً مع منع دخول كافة مستخدميها."));
-        sb.Append(MakeBulletItem("  4. إعادة التنشيط (Activate): إعادة تشغيل الصيدليات المعلقة بعد زوال سبب التعليق."));
+        sb.Append(MakeHeading1("9. تسجيل الصيدليات وتهيئة الحسابات الإدارية المستقلة"));
+        sb.Append(MakeParagraph("عند تسجيل صيدلية جديدة من خلال صفحة التسجيل، يتم تفعيل الحساب فوراً لبدء العمل:"));
+        sb.Append(MakeBulletItem("تنشيط مباشر للصيدلية مع توليد كود موحد للنظام (Pharmacy Code)."));
+        sb.Append(MakeBulletItem("تفعيل حساب المدير الأول فور إتمام التسجيل ليتمكن من تسجيل الدخول وإعداد بيانات صيدليته."));
+        sb.Append(MakeBulletItem("عزل كامل وفوري للمخزون والبيانات بما يضمن سرية وخصوصية كل منشأة."));
 
         // Section 10
         sb.Append(MakeHeading1("10. التقارير المالية وحركات الصندوق والتدقيق الشامل"));
